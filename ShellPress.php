@@ -20,6 +20,9 @@ class ShellPress {
 	protected $temp_options;
 	protected $views;
 
+
+	
+
 	function init( $arguments ) {
 
 		spl_autoload_register( array( $this, 'autoloader' ) );
