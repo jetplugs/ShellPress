@@ -1,5 +1,5 @@
 <?php
-namespace shellpress;
+namespace shellpress_1_0_0;
 
 
 
@@ -11,5 +11,12 @@ class ShellPress {
 
 	protected $options;
 	protected $views;
+
+
+
+
+	function init( Array $args ) {
+		
+	}
 
 }
