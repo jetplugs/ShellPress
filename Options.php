@@ -1,28 +1,17 @@
 <?php
 namespace shellpress_1_0_0;
 
+use shellpress_1_0_0\Classes\Component;
+
 
 
 
 /**
  * Options handler
  */
-class Options {
+class Options extends Component {
 
-	protected $app;
-
-
-
-
-	function _construct( ShellPress $app ) {
-
-		$this->app = $app;
-
-		return $this;
-
-	}
-
-	function setup( $args ) {
+	function init( $args ) {
 
         // TODO
 
