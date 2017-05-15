@@ -11,6 +11,8 @@ use shellpress_1_0_0\Classes\Component;
  */
 class Options extends Component {
 
+    private $options_namespace;
+
 	function init( $args ) {
 
         // TODO
