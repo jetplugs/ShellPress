@@ -11,8 +11,12 @@ use shellpress_1_0_0\Classes\Component;
  */
 class Options extends Component {
 
-    private $options_namespace;
+    protected $namespace;   //TODO
 
+    /**
+     * Initialize options handler
+     * @param array $args
+     */
 	function init( $args ) {
 
         // TODO
@@ -20,19 +24,41 @@ class Options extends Component {
 	}
 
     /**
-     * @param $path - mixed, array or string
-     * @param $var - string of end array segment
+     * @param mixed $path - array or string
+     * @param (optional) string $var - string of end array segment
      */
 
 	function get( $path, $var = null ) {
 
-        if( is_array( $path ) ){
+	    $option = get_option( $this->namespace );
 
-            // TODO
+	    if( is_string( $var ) ){        // if isset var
 
-        } else if( is_string( $path ) ){
+            if( is_array( $path ) ){
 
-            // TODO
+                foreach( $path as $node ){
+
+
+
+                }
+
+            } else if( is_string( $path ) ){
+
+                // TODO
+
+            }
+
+        } else {                        // if ! isset var
+
+            if( is_array( $path ) ){
+
+                // TODO
+
+            } else if( is_string( $path ) ){
+
+                // TODO
+
+            }
 
         }
 

@@ -25,12 +25,13 @@ class ShellPress {
 
 	function init( Array $args ) {
 
-        /**
-         * First of all - include and register autoloader
-         */
+	    //  ----------------------------------------
+	    //  PSR4 Autloader init
+	    //  ----------------------------------------
+
         if( ! class_exists( 'Psr4AutoloaderClass' ) ){
 
-            require( __DIR__ . '/lib/external/Psr4AutoloaderClass.php' );
+            require(__DIR__ . '/lib/External/Psr4Autoloader/Psr4AutoloaderClass.php');
 
         }
 
@@ -38,12 +39,19 @@ class ShellPress {
         $this->autoloader->register();
         $this->autoloader->addNamespace( 'shellpress_1_0_0', __DIR__ );
 
+        //  ----------------------------------------
+        //  Options handler init
+        //  ----------------------------------------
 
 	    $this->options = new Options( $this );
 	    $this->options->init( array() );
 
-	    $this->autoloader->addNamespace( 'Katzgrau\KLogger', __DIR__ . '/lib/external/KLogger' );
-	    $this->autoloader->addNamespace( 'Psr\Log', __DIR__ . '/lib/external/Psr/Log' );
+	    //  ----------------------------------------
+	    //  Logger handler init
+	    //  ----------------------------------------
+
+	    $this->autoloader->addNamespace( 'Katzgrau\KLogger', __DIR__ . '/lib/External/KLogger');
+	    $this->autoloader->addNamespace( 'Psr\Log', __DIR__ . '/lib/External/Psr/Log');
 	    $this->log = new Logger( __DIR__, \Psr\Log\LogLevel::DEBUG );
 
 

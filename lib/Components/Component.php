@@ -1,5 +1,5 @@
 <?php
-namespace shellpress_1_0_0\Classes;
+namespace shellpress_1_0_0\Components;
 
 use shellpress_1_0_0\ShellPress;
 
