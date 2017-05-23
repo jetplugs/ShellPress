@@ -2,3 +2,6 @@
 /modules.xml
 /vcs.xml
 /workspace.xml
+/dictionaries/
+/inspectionProfiles/
+*.xml
