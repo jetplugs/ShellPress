@@ -25,6 +25,12 @@ class ShellPress {
 
 	function init( Array $args ) {
 
+		$default_args = array(
+			'options'	=>	array(
+								'namespace'		=>	'shellpress_app'
+							)
+		);
+
 	    //  ----------------------------------------
 	    //  PSR4 Autloader init
 	    //  ----------------------------------------
@@ -44,14 +50,16 @@ class ShellPress {
         //  ----------------------------------------
 
 	    $this->options = new Options( $this );
-	    $this->options->init( array() );
+	    $this->options->init( array(
+	    	'namespace'		=>	''
+	    ) );
 
 	    //  ----------------------------------------
 	    //  Logger handler init
 	    //  ----------------------------------------
 
-	    $this->autoloader->addNamespace( 'Katzgrau\KLogger', __DIR__ . '/lib/External/KLogger');
-	    $this->autoloader->addNamespace( 'Psr\Log', __DIR__ . '/lib/External/Psr/Log');
+	    $this->autoloader->addNamespace( 'Katzgrau\KLogger', 	__DIR__ . '/lib/External/KLogger');
+	    $this->autoloader->addNamespace( 'Psr\Log', 			__DIR__ . '/lib/External/Psr/Log');
 	    $this->log = new Logger( __DIR__, \Psr\Log\LogLevel::DEBUG );
 
 
