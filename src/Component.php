@@ -1,7 +1,5 @@
 <?php
-namespace shellpress_1_0_0\Components;
-
-use shellpress_1_0_0\ShellPress;
+namespace shellpress\v1_0_0\src;
 
 
 
@@ -18,7 +16,7 @@ class Component {
 
 
 
-    function _construct( ShellPress $app ) {
+    function _construct( $app ) {
 
         $this->app = $app;
 

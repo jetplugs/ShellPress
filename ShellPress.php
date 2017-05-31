@@ -1,8 +1,5 @@
 <?php
-namespace shellpress_1_0_0;
-
-use Psr4AutoloaderClass;
-use Katzgrau\KLogger\Logger;
+namespace shellpress\v1_0_0;
 
 
 
@@ -23,7 +20,7 @@ class ShellPress {
      * @param array $args
      */
 
-	function init( Array $args ) {
+	protected function init( Array $args ) {
 
 		$default_args = array(
 			'options'	=>	array(
@@ -35,21 +32,21 @@ class ShellPress {
 	    //  PSR4 Autloader init
 	    //  ----------------------------------------
 
-        if( ! class_exists( 'Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
-            require(__DIR__ . '/lib/External/Psr4Autoloader/Psr4AutoloaderClass.php');
+            require( 'lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
         }
 
-        $this->autoloader = new Psr4AutoloaderClass();
+        $this->autoloader = new lib\Psr4Autoloader\Psr4AutoloaderClass();
         $this->autoloader->register();
-        $this->autoloader->addNamespace( 'shellpress_1_0_0', __DIR__ );
+        $this->autoloader->addNamespace( 'shellpress\v1_0_0', __DIR__ );
 
         //  ----------------------------------------
         //  Options handler init
         //  ----------------------------------------
 
-	    $this->options = new Options( $this );
+	    $this->options = new src\Options( $this );
 	    $this->options->init( array(
 	    	'namespace'		=>	''
 	    ) );
@@ -58,9 +55,9 @@ class ShellPress {
 	    //  Logger handler init
 	    //  ----------------------------------------
 
-	    $this->autoloader->addNamespace( 'Katzgrau\KLogger', 	__DIR__ . '/lib/External/KLogger');
-	    $this->autoloader->addNamespace( 'Psr\Log', 			__DIR__ . '/lib/External/Psr/Log');
-	    $this->log = new Logger( __DIR__, \Psr\Log\LogLevel::DEBUG );
+//	    $this->autoloader->addNamespace( 'Katzgrau\KLogger', __DIR__ . '/lib/External/KLogger');
+//	    $this->autoloader->addNamespace( 'Psr\Log', __DIR__ . '/lib/External/Psr/Log');
+//	    $this->log = new Logger( __DIR__, \Psr\Log\LogLevel::DEBUG );
 
 
 		
