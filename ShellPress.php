@@ -34,7 +34,7 @@ class ShellPress {
 
         if( ! class_exists( 'shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
-            require( 'lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
+            require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
         }
 
