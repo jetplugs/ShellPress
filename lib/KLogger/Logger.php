@@ -1,5 +1,5 @@
 <?php
-namespace Katzgrau\KLogger;
+namespace shellpress\v1_0_0\lib\KLogger;
 
 use DateTime;
 use RuntimeException;
