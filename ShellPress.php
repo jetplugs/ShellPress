@@ -1,7 +1,8 @@
 <?php
 namespace shellpress\v1_0_0;
 
-
+use shellpress\v1_0_0\lib\KLogger\Logger;
+use shellpress\v1_0_0\lib\Psr\Log\LogLevel;
 
 
 /**
@@ -47,19 +48,13 @@ class ShellPress {
         //  ----------------------------------------
 
 	    $this->options = new src\Options( $this );
-	    $this->options->init( array(
-	    	'namespace'		=>	''
-	    ) );
+	    $this->options->init( array() );
 
 	    //  ----------------------------------------
 	    //  Logger handler init
 	    //  ----------------------------------------
 
-//	    $this->autoloader->addNamespace( 'Katzgrau\KLogger', __DIR__ . '/lib/External/KLogger');
-//	    $this->autoloader->addNamespace( 'Psr\Log', __DIR__ . '/lib/External/Psr/Log');
-//	    $this->log = new Logger( __DIR__, \Psr\Log\LogLevel::DEBUG );
-
-
+	    $this->log = new Logger( __DIR__, LogLevel::DEBUG );
 		
 	}
 

@@ -3,8 +3,8 @@ namespace shellpress\v1_0_0\lib\KLogger;
 
 use DateTime;
 use RuntimeException;
-use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
+use shellpress\v1_0_0\lib\Psr\Log\AbstractLogger;
+use shellpress\v1_0_0\lib\Psr\Log\LogLevel;
 
 /**
  * Finally, a light, permissions-checking logging class.
