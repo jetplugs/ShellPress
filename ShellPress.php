@@ -4,6 +4,8 @@ namespace shellpress\v1_0_0;
 use shellpress\v1_0_0\lib\KLogger\Logger;
 use shellpress\v1_0_0\lib\Psr\Log\LogLevel;
 use shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_0\src\Options;
+use shellpress\v1_0_0\src\Pages\PagesHandler;
 
 
 /**
@@ -12,8 +14,20 @@ use shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
  */
 class ShellPress {
 
+    /**
+     * @var Options
+     */
 	protected $options;
-	protected $views;
+
+    /**
+     * @var
+     */
+    protected $widgets;
+
+    /**
+     * @var PagesHandler
+     */
+    protected $pages;
 
     /**
      * @var Psr4AutoloaderClass
@@ -27,16 +41,31 @@ class ShellPress {
 
 
     /**
+     * You should call this method just after
+     * object creation. __construct method is a
+     * good place to do that.
+     *
      * @param array $args
      */
 
-	protected function init( Array $args ) {
+	protected function init( $args ) {
 
-		$default_args = array(
+	    //  ----------------------------------------
+	    //  Prepare safe arguments
+	    //  ----------------------------------------
+
+		$init_args = array(
 			'options'	=>	array(
-								'namespace'		=>	'shellpress_app'
-							)
+                'namespace'		=>	'shellpress_app'
+            ),
+            'logger'    =>  array(
+                'directory'     =>  __DIR__ . 'log',
+                'loglevel'      =>  'DEBUG',
+                'args'          =>  array()
+            )
 		);
+
+		$init_args = array_merge_recursive( $init_args, $args );   // merge init arguments with custom
 
 	    //  ----------------------------------------
 	    //  PSR4 Autloader init
@@ -53,18 +82,24 @@ class ShellPress {
         $this->autoloader->addNamespace( 'shellpress\v1_0_0', __DIR__ );
 
         //  ----------------------------------------
-        //  Options handler init
+        //  Options handling init
         //  ----------------------------------------
 
 	    $this->options = new src\Options( $this );
-	    $this->options->init( array() );
+	    $this->options->init( $init_args['options'] );
 
 	    //  ----------------------------------------
-	    //  Logger handler init
+	    //  Logging handling init
 	    //  ----------------------------------------
 
-	    $this->log = new Logger( __DIR__, LogLevel::DEBUG );
-		
+	    $this->log = new Logger( $init_args['logger']['directory'], LogLevel::DEBUG, $init_args['logger']['args'] );
+
+	    //  ----------------------------------------
+	    //  Pages handling init
+	    //  ----------------------------------------
+
+        $this->pages = new PagesHandler( $this );
+
 	}
 
 }
