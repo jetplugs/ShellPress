@@ -12,16 +12,11 @@ class PagesHandler extends Component {
     protected $pages = array();
 
     /**
-     * @var string - it will be used for prefixing page slugs etc.
-     */
-    protected $prefix;
-
-    /**
      * @param string $prefix
      */
-    public function init( $prefix ) {
+    public function init( $args ) {
 
-        $this->prefix = $prefix;
+
 
     }
 
@@ -31,7 +26,11 @@ class PagesHandler extends Component {
     public function addPage( $name ,$args ) {
 
         $page_args = array(
-            'prefix'    =>  $this->prefix
+            'prefix'    =>  $this->app->prefix(),
+            'title'     =>  '',
+            'parent'    =>  null,
+            'icon'      =>  'dashicons-admin-plugins',
+            'callable'  =>  null
         );
 
         $page_args = array_merge_recursive( $page_args, $args );    //  safe merging

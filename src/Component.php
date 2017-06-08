@@ -1,7 +1,7 @@
 <?php
 namespace shellpress\v1_0_0\src;
 
-
+use shellpress\v1_0_0\ShellPress;
 
 
 /**
@@ -11,11 +11,15 @@ namespace shellpress\v1_0_0\src;
  */
 class Component {
 
+    /**
+     * @var ShellPress
+     */
     protected $app;
 
 
-
-
+    /**
+     * @param ShellPress $app
+     */
     function _construct( $app ) {
 
         $this->app = $app;
