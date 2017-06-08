@@ -99,10 +99,11 @@ class ShellPress {
 
 		$this->initArgs = array_merge_recursive( $defaultInitArgs, $initArgs );   // merge default init arguments with specified by developer
 
-        \add_action( 'plugins_loaded',      array( $this, 'sp_initAutoloader' ) );
-        \add_action( 'plugins_loaded',      array( $this, 'sp_initOptions' ) );
-        \add_action( 'plugins_loaded',      array( $this, 'sp_initLogger' ) );
-        \add_action( 'admin_init',          array( $this, 'sp_initPageHandler' ) );
+        add_action( 'plugins_loaded',      array( $this, 'sp_initAutoloader' ) );
+        add_action( 'plugins_loaded',      array( $this, 'sp_initOptions' ) );
+        add_action( 'plugins_loaded',      array( $this, 'sp_initLogger' ) );
+        add_action( 'init',                array( $this, 'sp_initPageHandler' ) );
+        add_action( 'admin_init',          array( $this->pages, 'flushPages' ), 20 );   //TODO
 
 	}
 
@@ -136,7 +137,7 @@ class ShellPress {
      */
     public function url( $relative_path = null ) {
 
-        $url = \plugin_dir_url( $this->mainPluginFile );    //  plugin directory url with trailing slash
+        $url = plugin_dir_url( $this->mainPluginFile );    //  plugin directory url with trailing slash
         $url = rtrim( $url, DIRECTORY_SEPARATOR );  //  remove trailing slash
 
         if( $relative_path === null ){
