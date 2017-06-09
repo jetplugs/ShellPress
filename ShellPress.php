@@ -4,7 +4,6 @@ namespace shellpress\v1_0_0;
 use shellpress\v1_0_0\lib\KLogger\Logger;
 use shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_0_0\src\Options;
-use shellpress\v1_0_0\src\Pages\PagesHandler;
 
 
 /**
@@ -17,16 +16,6 @@ class ShellPress {
      * @var Options
      */
 	public $options;
-
-    /**
-     * @var
-     */
-    public $widgets;
-
-    /**
-     * @var PagesHandler
-     */
-    public $pages;
 
     /**
      * @var Psr4AutoloaderClass
@@ -79,11 +68,6 @@ class ShellPress {
                     'namespace'		=>	$this->nameSpace
                 )
             ),
-            'pages'	=>	array(
-                'args'          => array(
-
-                )
-            ),
             'logger'    =>  array(
                 'directory'         =>  $this->path( '/log' ),
                 'logLevel'          =>  'debug',
@@ -102,7 +86,6 @@ class ShellPress {
         add_action( 'plugins_loaded',      array( $this, 'sp_initAutoloader' ) );
         add_action( 'plugins_loaded',      array( $this, 'sp_initOptions' ) );
         add_action( 'plugins_loaded',      array( $this, 'sp_initLogger' ) );
-        add_action( 'admin_menu',          array( $this, 'sp_initPageHandler' ) );
 
 	}
 
@@ -214,18 +197,6 @@ class ShellPress {
             $this->initArgs['logger']['logLevel'],
             $this->initArgs['logger']['args']
         );
-
-    }
-
-    /**
-     * Initialize Admin pages handler.
-     * This should be called as an action.
-     */
-    public function sp_initPageHandler() {
-
-        $this->pages = new PagesHandler( $this );
-        $this->pages->init( $this->initArgs['pages']['args'] );
-        $this->pages->flushPages();
 
     }
 
