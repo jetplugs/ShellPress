@@ -53,7 +53,7 @@ class ShellPress {
      * @param array|null $args - additional components arguments
      */
 
-	public function initShellPress( $mainPluginFile, $nameSpace, $initArgs = null) {
+	public function initShellPress( $mainPluginFile, $nameSpace, $initArgs = array() ) {
 
 	    $this->mainPluginFile = $mainPluginFile;
 	    $this->nameSpace = $nameSpace;
