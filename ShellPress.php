@@ -53,7 +53,7 @@ class ShellPress {
      * @param array|null $args - additional components arguments
      */
 
-	protected function init( $mainPluginFile, $nameSpace, $initArgs = null) {
+	public function initShellPress( $mainPluginFile, $nameSpace, $initArgs = null) {
 
 	    $this->mainPluginFile = $mainPluginFile;
 	    $this->nameSpace = $nameSpace;
@@ -83,9 +83,13 @@ class ShellPress {
 
 		$this->initArgs = array_merge_recursive( $defaultInitArgs, $initArgs );   // merge default init arguments with specified by developer
 
-        add_action( 'plugins_loaded',      array( $this, 'sp_initAutoloader' ) );
-        add_action( 'plugins_loaded',      array( $this, 'sp_initOptions' ) );
-        add_action( 'plugins_loaded',      array( $this, 'sp_initLogger' ) );
+        //  -----------------------------------
+        //  Initialize helpers
+        //  -----------------------------------
+
+        $this->sp_initAutoloader();
+        $this->sp_initOptions();
+        $this->sp_initLogger();
 
 	}
 
