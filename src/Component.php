@@ -14,13 +14,13 @@ class Component {
     /**
      * @var ShellPress
      */
-    protected $app;
+    public $app;
 
 
     /**
      * @param ShellPress $app
      */
-    function _construct( $app ) {
+    public function _construct( $app ) {
 
         $this->app = $app;
 

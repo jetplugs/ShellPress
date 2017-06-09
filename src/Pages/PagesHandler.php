@@ -2,6 +2,7 @@
 namespace shellpress\v1_0_0\src\Pages;
 
 
+use shellpress\v1_0_0\ShellPress;
 use shellpress\v1_0_0\src\Component;
 
 class PagesHandler extends Component {
@@ -12,11 +13,31 @@ class PagesHandler extends Component {
     protected $pages = array();
 
     /**
+     * PagesHandler constructor.
+     * @param ShellPress $app
+     */
+    function __construct( $app ){
+
+        parent::_construct( $app );
+
+    }
+
+    /**
      * @param string $prefix
      */
     public function init( $args ) {
 
+        /**
+         * PREFIX/factory/adminpage/handler
+         * @returns PagesHandler
+         */
+        do_action( $this->app->prefix( '/factory/adminpage/handler' ), $this );
 
+        /**
+         * PREFIX/factory/adminpage/list
+         * Apply filter for direct pages array modification
+         */
+        $this->pages = apply_filters( $this->app->prefix( '/factory/adminpage/list' ), $this->pages );
 
     }
 
@@ -37,7 +58,7 @@ class PagesHandler extends Component {
             'callable'      =>  null
         );
 
-        $pageArgs = array_merge_recursive( $default_pageArgs, $pageArgs );    //  safe merging
+        $pageArgs = array_merge( $default_pageArgs, $pageArgs );    //  safe merging
 
         $this->pages[$slug] = $pageArgs;
 
@@ -52,13 +73,11 @@ class PagesHandler extends Component {
 
     }
 
+    /**
+     * The most important method.
+     * Call it to execute code for admin pages creation.
+     */
     public function flushPages() {
-
-        //TODO
-        wp_die( var_dump( $this->app ) );
-
-        //  leave hook for plugins
-        $this->pages = apply_filters( $this->app->prefix( '/pages/list' ), $this->pages );
 
         foreach( $this->pages as $page ){
 

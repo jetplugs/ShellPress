@@ -36,7 +36,7 @@ class ShellPress {
     /**
      * @var Logger
      */
-	protected $log;
+	public $log;
 
     /**
      * @var string
@@ -102,8 +102,7 @@ class ShellPress {
         add_action( 'plugins_loaded',      array( $this, 'sp_initAutoloader' ) );
         add_action( 'plugins_loaded',      array( $this, 'sp_initOptions' ) );
         add_action( 'plugins_loaded',      array( $this, 'sp_initLogger' ) );
-        add_action( 'init',                array( $this, 'sp_initPageHandler' ) );
-        add_action( 'admin_init',          array( $this->pages, 'flushPages' ), 20 );   //TODO
+        add_action( 'admin_menu',          array( $this, 'sp_initPageHandler' ) );
 
 	}
 
@@ -226,6 +225,7 @@ class ShellPress {
 
         $this->pages = new PagesHandler( $this );
         $this->pages->init( $this->initArgs['pages']['args'] );
+        $this->pages->flushPages();
 
     }
 
