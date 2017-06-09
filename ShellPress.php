@@ -50,10 +50,10 @@ class ShellPress {
      *
      * @param string $mainPluginFile - absolute path to main plugin file (__FILE__).
      * @param string $nameSpace - simple namespace which will be used to prefix everything in plugin
-     * @param array $args - additional components arguments
+     * @param array|null $args - additional components arguments
      */
 
-	protected function init( $mainPluginFile, $nameSpace, $initArgs ) {
+	protected function init( $mainPluginFile, $nameSpace, $initArgs = null) {
 
 	    $this->mainPluginFile = $mainPluginFile;
 	    $this->nameSpace = $nameSpace;
