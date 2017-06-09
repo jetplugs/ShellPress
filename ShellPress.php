@@ -30,7 +30,7 @@ class ShellPress {
     /**
      * @var string
      */
-    private $mainPluginFile;
+    protected $mainPluginFile;
 
     /**
      * @var string
