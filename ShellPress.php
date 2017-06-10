@@ -69,7 +69,7 @@ class ShellPress {
                 )
             ),
             'logger'    =>  array(
-                'directory'         =>  $this->path( '/log' ),
+                'directory'         =>  $this->pluginPath( '/log' ),
                 'logLevel'          =>  'debug',
                 'args'              =>  array(
                     'dateFormat'        =>  'Y-m-d G:i:s.u',
@@ -100,7 +100,7 @@ class ShellPress {
      * @param string $string
      * @return string
      */
-	public function prefix( $string = null ) {
+	public function pluginPrefix($string = null ) {
 
         if( $string === null ){
 
@@ -121,7 +121,7 @@ class ShellPress {
      * @param string $relative_path
      * @return string - URL
      */
-    public function url( $relative_path = null ) {
+    public function pluginUrl($relative_path = null ) {
 
         $url = plugin_dir_url( $this->mainPluginFile );    //  plugin directory url with trailing slash
         $url = rtrim( $url, DIRECTORY_SEPARATOR );  //  remove trailing slash
@@ -145,7 +145,7 @@ class ShellPress {
      * @param string $relative_path
      * @return string - absolute path
      */
-    public function path( $relative_path = null ) {
+    public function pluginPath($relative_path = null ) {
 
         $path = \dirname( $this->mainPluginFile );  // plugin directory path
 
