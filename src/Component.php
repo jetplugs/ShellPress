@@ -20,7 +20,7 @@ class Component {
     /**
      * @param ShellPress $app
      */
-    public function _construct( $app ) {
+    public function __construct( $app ) {
 
         $this->app = $app;
 
