@@ -1,8 +1,8 @@
 <?php
 namespace shellpress\v1_0_0;
 
-use shellpress\v1_0_0\lib\KLogger\Logger;
 use shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_0\src\Logger;
 use shellpress\v1_0_0\src\Options;
 
 

@@ -26,7 +26,7 @@ use shellpress\v1_0_0\lib\Psr\Log\LogLevel;
 /**
  * Class documentation
  */
-class Logger extends AbstractLogger
+class KLogger extends AbstractLogger
 {
     /**
      * KLogger options
