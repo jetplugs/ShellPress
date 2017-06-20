@@ -39,4 +39,20 @@ class WPListTable extends WP_List_Table {
 
     }
 
+    /**
+     * This method gets visual output by using output buffering.
+     *
+     * @param string $text
+     * @param string $inputId
+     *
+     * @return string - HTML
+     */
+    function getSearchBox( $text, $inputId ) {
+
+        ob_start();
+        parent::search_box( $text, $inputId );
+        return ob_get_clean();
+
+    }
+
 }
