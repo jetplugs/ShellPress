@@ -46,7 +46,7 @@ class WPListTable extends WP_List_Table {
     }
 
     /**
-     * This method gets visual output by using output buffering.
+     * This method gets visual output of search box by using output buffering.
      *
      * @param string $text
      * @param string $inputId
@@ -58,6 +58,35 @@ class WPListTable extends WP_List_Table {
         ob_start();
         parent::search_box( $text, $inputId );
         return ob_get_clean();
+
+    }
+
+    /**
+     * This method gets visual output of search box by using output buffering.
+     * Additionally search box is wrapped by its own form.
+     *
+     * @param string $text
+     * @param string $inputId
+     * @param string $formActionUrl
+     *
+     * @return string - HTML
+     */
+    function getSearchBoxPacked( $text, $inputId, $formActionUrl = null ) {
+
+        if( $formActionUrl === null ){
+
+            //  prevent display errors when those arguments are already set
+            $formActionUrl = remove_query_arg( array( 's', 'paged' ) );
+
+        }
+
+        $html = '';
+
+        $html .= sprintf( '<form method="post" action="%1$s">', $formActionUrl );
+        $html .= $this->getSearchBox( $text, $inputId );
+        $html .= sprintf( '</form>' );
+
+        return $html;
 
     }
 
