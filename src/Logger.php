@@ -28,7 +28,7 @@ class Logger extends KLogger {
      *
      * @return bool|string - returns formatted log string or false when error
      */
-    public function getLog( $isAscending = true, $filePath = null ) {
+    public function getPreformattedLog( $isAscending = true, $filePath = null ) {
 
         if( $filePath === null ){
 
@@ -48,7 +48,7 @@ class Logger extends KLogger {
 
             }
 
-            return implode( '<br/>', $rows );   //  glue all parts together with html break line code
+            return sprintf( '<pre>%1$s</pre>', implode( PHP_EOL, $rows ) );   //  glue all parts together with \n ( new line )
 
         } else {
 
