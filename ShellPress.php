@@ -93,6 +93,10 @@ class ShellPress {
 
 	}
 
+	//  ================================================================================
+	//  GETTERS
+	//  ================================================================================
+
     /**
      * Simple function to get prefix or
      * prefixing given string.
@@ -160,6 +164,22 @@ class ShellPress {
         }
 
     }
+
+    /**
+     * It gets main plugin file path.
+     * @see initShellPress()
+     *
+     * @return string - full path to main plugin file (__FILE__)
+     */
+    public function getPluginFile() {
+
+        return $this->mainPluginFile;
+
+    }
+
+    //  ================================================================================
+    //  INITIALIZATION
+    //  ================================================================================
 
     /**
      * Initialize PSR4 Autoloader.
