@@ -1,14 +1,20 @@
 <?php
-namespace shellpress\v1_0_0;
+namespace shellpress\v1_0_1;
 
-use shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_0\src\Logger;
-use shellpress\v1_0_0\src\Options;
+use shellpress\v1_0_1\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_1\src\Logger;
+use shellpress\v1_0_1\src\Options;
 
 
 /**
  * Core class of plugin.
  * To use it, simple extend it.
+ *
+ * Changelog
+ * ----------------------------------
+ * v1_0_1:
+ * + added default namespace register
+ *
  */
 class ShellPress {
 
@@ -195,8 +201,13 @@ class ShellPress {
 
         $this->autoloader = new Psr4AutoloaderClass();
         $this->autoloader->register();
-        $this->autoloader->addNamespace( 'shellpress\v1_0_0', __DIR__ );
+        $this->autoloader->addNamespace( 'shellpress\v1_0_1', __DIR__ );
 
+        /**
+         * @since v1_0_1
+         */
+
+        $this->autoloader->addNamespace( $this->nameSpace, $this->mainPluginFile );
     }
 
     /**
