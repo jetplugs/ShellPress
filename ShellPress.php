@@ -13,7 +13,6 @@ use shellpress\v1_0_1\src\Options;
  * Changelog
  * ----------------------------------
  * v1_0_1:
- * + added default namespace register
  *
  */
 class ShellPress {
@@ -55,14 +54,14 @@ class ShellPress {
      * good place to do that.
      *
      * @param string $mainPluginFile - absolute path to main plugin file (__FILE__).
-     * @param string $nameSpace - simple namespace which will be used to prefix everything in plugin
-     * @param array|null $args - additional components arguments
+     * @param string $pluginPrefix - will be used to prefix everything in plugin
+     * @param array|null $initArgs - additional components arguments
      */
 
-	public function initShellPress( $mainPluginFile, $nameSpace, $initArgs = array() ) {
+	public function initShellPress($mainPluginFile, $pluginPrefix, $initArgs = array() ) {
 
 	    $this->mainPluginFile = $mainPluginFile;
-	    $this->nameSpace = $nameSpace;
+	    $this->nameSpace = $pluginPrefix;
 
 	    //  ----------------------------------------
 	    //  Prepare safe arguments
@@ -203,11 +202,6 @@ class ShellPress {
         $this->autoloader->register();
         $this->autoloader->addNamespace( 'shellpress\v1_0_1', __DIR__ );
 
-        /**
-         * @since v1_0_1
-         */
-
-        $this->autoloader->addNamespace( $this->nameSpace, $this->mainPluginFile );
     }
 
     /**
