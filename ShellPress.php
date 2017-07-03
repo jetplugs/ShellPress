@@ -109,7 +109,7 @@ class ShellPress {
      * @param string $string
      * @return string
      */
-	public function pluginPrefix($string = null ) {
+	public function pluginPrefix( $string = null ) {
 
         if( $string === null ){
 
@@ -128,11 +128,12 @@ class ShellPress {
      * Example usage: $this->url( '/assets/style.css' );
      *
      * @param string $relative_path
+     *
      * @return string - URL
      */
-    public function pluginUrl($relative_path = null ) {
+    public function pluginUrl( $relative_path = null ) {
 
-        $url = plugin_dir_url( $this->mainPluginFile );    //  plugin directory url with trailing slash
+        $url = plugin_dir_url( $this->mainPluginFile );     //  plugin directory url with trailing slash
         $url = rtrim( $url, DIRECTORY_SEPARATOR );  //  remove trailing slash
 
         if( $relative_path === null ){
@@ -142,6 +143,30 @@ class ShellPress {
         } else {
 
             return $url . $relative_path;
+
+        }
+
+    }
+
+    /**
+     * Prefixes given string with current template directory url.
+     * Example usage: $this->url( '/assets/style.css' );
+     *
+     * @param null $relative_path
+     *
+     * @return string
+     */
+    public function themeUrl( $relative_path = null ) {
+
+        $url = get_stylesheet_directory_uri();      //  current template directory without trailing slash
+
+        if( $relative_path ){
+
+            return $url . $relative_path;
+
+        } else {
+
+            return $url;
 
         }
 
