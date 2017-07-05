@@ -1,8 +1,8 @@
 <?php
-namespace shellpress\v1_0_1\src;
+namespace shellpress\v1_0_2\src;
 
-use shellpress\v1_0_1\lib\KLogger\KLogger;
-use shellpress\v1_0_1\lib\Psr\Log\LogLevel;
+use shellpress\v1_0_2\lib\KLogger\KLogger;
+use shellpress\v1_0_2\lib\Psr\Log\LogLevel;
 
 class Logger extends KLogger {
 
@@ -14,9 +14,9 @@ class Logger extends KLogger {
      * @param string $logLevelThreshold
      * @param array $options
      */
-    function __construct($logDirectory, $logLevelThreshold = LogLevel::DEBUG, array $options = array()) {
+    function __construct( $logDirectory, $logLevelThreshold = LogLevel::DEBUG, array $options = array() ) {
 
-        parent::__construct($logDirectory, $logLevelThreshold, $options);
+        parent::__construct( $logDirectory, $logLevelThreshold, $options );
 
     }
 

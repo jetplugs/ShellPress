@@ -1,16 +1,11 @@
 <?php
-namespace shellpress\v1_0_1\src\Shared;
+namespace shellpress\v1_0_2\src\Shared;
 
 
-use shellpress\v1_0_1\lib\_Includes\WP_List_Table;
-use shellpress\v1_0_1\ShellPress;
+use shellpress\v1_0_2\lib\_Includes\WP_List_Table;
+use shellpress\v1_0_2\ShellPress;
 
 class WPListTable extends WP_List_Table {
-
-    /**
-     * @var ShellPress
-     */
-    public $app;
 
     /**
      * WPListTable constructor.
@@ -18,11 +13,9 @@ class WPListTable extends WP_List_Table {
      * @param ShellPress $app
      * @param array $args
      */
-    function __construct( $app, $args = array() ) {
+    public function __construct( $args = array() ) {
 
         parent::__construct( $args );
-
-        $this->app = $app;
 
         //  ----------------------------------------
         //  Actions and filters
