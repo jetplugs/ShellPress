@@ -45,6 +45,11 @@ class ShellPress {
      */
     static private $initArgs;
 
+    /**
+     * @var string
+     */
+    static private $pluginVersion;
+
 
     /**
      * You should call this method just after
@@ -53,13 +58,15 @@ class ShellPress {
      *
      * @param string $mainPluginFile - absolute path to main plugin file (__FILE__).
      * @param string $pluginPrefix - will be used to prefix everything in plugin
+     * @param string $version - set your plugin version. It will be used in scripts suffixing etc.
      * @param array|null $initArgs - additional components arguments
      */
 
-	public function initShellPress( $mainPluginFile, $pluginPrefix, $initArgs = array() ) {
+	public function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
 
-	    self::$mainPluginFile = $mainPluginFile;
-	    self::$pluginPrefix = $pluginPrefix;
+	    self::$mainPluginFile   = $mainPluginFile;
+	    self::$pluginPrefix     = $pluginPrefix;
+	    self::$pluginVersion    = $pluginVersion;
 
 	    //  ----------------------------------------
 	    //  Prepare safe arguments
@@ -201,6 +208,17 @@ class ShellPress {
     public function getMainPluginFile() {
 
         return self::$mainPluginFile;
+
+    }
+
+    /**
+     * Gets version of instance.
+     *
+     * @return string
+     */
+    public static function getPluginVersion() {
+
+        return self::$pluginVersion;
 
     }
 
