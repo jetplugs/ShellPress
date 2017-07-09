@@ -3,7 +3,6 @@ namespace shellpress\v1_0_2;
 
 use shellpress\v1_0_2\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_0_2\src\Logger;
-use shellpress\v1_0_2\src\Options;
 
 
 /**
@@ -12,6 +11,9 @@ use shellpress\v1_0_2\src\Options;
  *
  * Changelog
  * ----------------------------------
+ * v1_0_3:
+ * + Requirement checker
+ *
  * v1_0_2:
  * + Refactored to static
  *
