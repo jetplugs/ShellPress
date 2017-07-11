@@ -22,34 +22,22 @@ use shellpress\v1_0_3\src\Logger;
  */
 class ShellPress {
 
-    /**
-     * @var Psr4AutoloaderClass
-     */
+    /** @var Psr4AutoloaderClass */
 	public static $autoloader;
 
-    /**
-     * @var Logger
-     */
+    /** @var Logger */
 	public static $log;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $mainPluginFile;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private static $pluginPrefix;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private static $initArgs;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private static $pluginVersion;
 
 
