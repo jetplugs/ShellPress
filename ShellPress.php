@@ -203,7 +203,7 @@ class ShellPress {
      */
 	private static function _initAutoloader() {
 
-        if( ! class_exists( 'shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_0_3\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
             require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
