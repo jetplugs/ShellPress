@@ -1,8 +1,8 @@
 <?php
-namespace shellpress\v1_0_2\src;
+namespace shellpress\v1_0_3\src;
 
-use shellpress\v1_0_2\lib\KLogger\KLogger;
-use shellpress\v1_0_2\lib\Psr\Log\LogLevel;
+use shellpress\v1_0_3\lib\KLogger\KLogger;
+use shellpress\v1_0_3\lib\Psr\Log\LogLevel;
 
 class Logger extends KLogger {
 

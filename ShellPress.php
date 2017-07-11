@@ -1,8 +1,8 @@
 <?php
-namespace shellpress\v1_0_2;
+namespace shellpress\v1_0_3;
 
-use shellpress\v1_0_2\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_2\src\Logger;
+use shellpress\v1_0_3\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_3\src\Logger;
 
 
 /**
@@ -25,38 +25,36 @@ class ShellPress {
     /**
      * @var Psr4AutoloaderClass
      */
-	static public $autoloader;
+	public static $autoloader;
 
     /**
      * @var Logger
      */
-	static public $log;
+	public static $log;
 
     /**
      * @var string
      */
-    static protected $mainPluginFile;
+    protected static $mainPluginFile;
 
     /**
      * @var string
      */
-    static private $pluginPrefix;
+    private static $pluginPrefix;
 
     /**
      * @var array
      */
-    static private $initArgs;
+    private static $initArgs;
 
     /**
      * @var string
      */
-    static private $pluginVersion;
+    private static $pluginVersion;
 
 
     /**
-     * You should call this method just after
-     * object creation. __construct method is a
-     * good place to do that.
+     * Call this method as soon as possible!
      *
      * @param string $mainPluginFile - absolute path to main plugin file (__FILE__).
      * @param string $pluginPrefix - will be used to prefix everything in plugin
@@ -64,7 +62,7 @@ class ShellPress {
      * @param array|null $initArgs - additional components arguments
      */
 
-	static public function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
+	public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
 
 	    self::$mainPluginFile   = $mainPluginFile;
 	    self::$pluginPrefix     = $pluginPrefix;
@@ -115,7 +113,7 @@ class ShellPress {
      * @param string $stringToPrefix
      * @return string
      */
-	static public function getPrefix( $stringToPrefix = null ) {
+	public static function getPrefix( $stringToPrefix = null ) {
 
         if( $stringToPrefix === null ){
 
@@ -137,7 +135,7 @@ class ShellPress {
      *
      * @return string - URL
      */
-    static public function getUrl($relativePath = null ) {
+    public static function getUrl($relativePath = null ) {
 
         $url = plugin_dir_url( self::getMainPluginFile() );     //  plugin directory url with trailing slash
         $url = rtrim( $url, DIRECTORY_SEPARATOR );  //  remove trailing slash
@@ -162,7 +160,7 @@ class ShellPress {
      *
      * @return string
      */
-    static public function themeUrl( $relative_path = null ) {
+    public static function themeUrl( $relative_path = null ) {
 
         $url = get_stylesheet_directory_uri();      //  current template directory without trailing slash
 
@@ -185,7 +183,7 @@ class ShellPress {
      * @param string $relativePath
      * @return string - absolute path
      */
-    public function getPath( $relativePath = null ) {
+    public static function getPath( $relativePath = null ) {
 
         $path = dirname( self::getMainPluginFile() );  // plugin directory path
 
@@ -207,7 +205,7 @@ class ShellPress {
      *
      * @return string - full path to main plugin file (__FILE__)
      */
-    public function getMainPluginFile() {
+    public static function getMainPluginFile() {
 
         return self::$mainPluginFile;
 
@@ -232,7 +230,7 @@ class ShellPress {
      * Initialize PSR4 Autoloader.
      * This should be called as an action.
      */
-	public function _initAutoloader() {
+	public static function _initAutoloader() {
 
         if( ! class_exists( 'shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
@@ -242,7 +240,7 @@ class ShellPress {
 
         self::$autoloader = new Psr4AutoloaderClass();
         self::$autoloader->register();
-        self::$autoloader->addNamespace( 'shellpress\v1_0_2', __DIR__ );
+        self::$autoloader->addNamespace( 'shellpress\v1_0_3', __DIR__ );
 
     }
 
@@ -250,7 +248,7 @@ class ShellPress {
      * Initialize Logging handler.
      * This should be called as an action.
      */
-    public function _initLogger() {
+    public static function _initLogger() {
 
         $loggerArgs = self::$initArgs['logger'];
         
