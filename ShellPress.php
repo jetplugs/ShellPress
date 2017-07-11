@@ -96,7 +96,7 @@ class ShellPress {
 
     /**
      * Simple function to get prefix or
-     * prefixing given string.
+     * to prepand given string with prefix.
      *
      * @param string $stringToPrefix
      * @return string
@@ -116,17 +116,24 @@ class ShellPress {
     }
 
     /**
-     * Prefixes given string with plugin directory url.
-     * Example usage: self::url( '/assets/style.css' );
+     * Prepands given string with plugin directory url.
+     * Example usage: self::getUrl( '/assets/style.css' );
      *
      * @param string $relativePath
      *
      * @return string - URL
      */
-    public static function getUrl($relativePath = null ) {
+    public static function getUrl( $relativePath = null ) {
 
-        $url = plugin_dir_url( self::getMainPluginFile() );     //  plugin directory url with trailing slash
-        $url = rtrim( $url, DIRECTORY_SEPARATOR );  //  remove trailing slash
+        $delimeter = 'wp-content';
+        $pluginDir = dirname( self::getMainPluginFile() );
+
+        $pathParts = explode( $delimeter , $pluginDir, 2 );     //  slice path by delimeter string
+
+        $wpContentDirUrl = content_url();                       //  `wp-content` directory url
+
+        $url = $wpContentDirUrl . $pathParts[1];                //  sum of wp-content url + relative path to plugin dir
+        $url = rtrim( $url, DIRECTORY_SEPARATOR );              //  remove trailing slash
 
         if( $relativePath === null ){
 
@@ -135,30 +142,6 @@ class ShellPress {
         } else {
 
             return $url . $relativePath;
-
-        }
-
-    }
-
-    /**
-     * Prefixes given string with current template directory url.
-     * Example usage: self::url( '/assets/style.css' );
-     *
-     * @param null $relative_path
-     *
-     * @return string
-     */
-    public static function themeUrl( $relative_path = null ) {
-
-        $url = get_stylesheet_directory_uri();      //  current template directory without trailing slash
-
-        if( $relative_path ){
-
-            return $url . $relative_path;
-
-        } else {
-
-            return $url;
 
         }
 
@@ -218,7 +201,7 @@ class ShellPress {
      * Initialize PSR4 Autoloader.
      * This should be called as an action.
      */
-	public static function _initAutoloader() {
+	private static function _initAutoloader() {
 
         if( ! class_exists( 'shellpress\v1_0_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
@@ -236,7 +219,7 @@ class ShellPress {
      * Initialize Logging handler.
      * This should be called as an action.
      */
-    public static function _initLogger() {
+    private static function _initLogger() {
 
         $loggerArgs = self::$initArgs['logger'];
         
