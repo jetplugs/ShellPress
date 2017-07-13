@@ -29,7 +29,7 @@ class ShellPress {
 	public static $log;
 
     /** @var string */
-    protected static $mainPluginFile;
+    private static $mainPluginFile;
 
     /** @var string */
     private static $pluginPrefix;
