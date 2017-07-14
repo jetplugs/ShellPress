@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_3\lib\Psr4Autoloader;
+namespace shellpress\v1_0_4\lib\Psr4Autoloader;
 /**
  * An example of a general-purpose implementation that includes the optional
  * functionality of allowing multiple base directories for a single namespace

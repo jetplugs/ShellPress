@@ -1,8 +1,8 @@
 <?php
-namespace shellpress\v1_0_3;
+namespace shellpress\v1_0_4;
 
-use shellpress\v1_0_3\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_3\src\Logger;
+use shellpress\v1_0_4\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_4\src\Logger;
 
 
 /**
@@ -11,8 +11,12 @@ use shellpress\v1_0_3\src\Logger;
  *
  * Changelog
  * ----------------------------------
+ * v1_0_4:
+ * + Every class property has been moved to single array
+ *
  * v1_0_3:
  * + Requirement checker
+ * + Changed properties visibility
  *
  * v1_0_2:
  * + Refactored to static
@@ -22,52 +26,45 @@ use shellpress\v1_0_3\src\Logger;
  */
 class ShellPress {
 
-    /** @var Psr4AutoloaderClass */
-	public static $autoloader;
-
-    /** @var Logger */
-	public static $log;
-
-    /** @var string */
-    private static $mainPluginFile;
-
-    /** @var string */
-    private static $pluginPrefix;
-
-    /** @var array */
-    private static $initArgs;
-
-    /** @var string */
-    private static $pluginVersion;
-
+    /**
+     * You need to redefine it in your static class!!
+     * @var array
+     */
+    protected static $sp;   //  <-- Copy this line!!!
 
     /**
      * Call this method as soon as possible!
      *
-     * @param string $mainPluginFile - absolute path to main plugin file (__FILE__).
-     * @param string $pluginPrefix - will be used to prefix everything in plugin
-     * @param string $version - set your plugin version. It will be used in scripts suffixing etc.
-     * @param array|null $initArgs - additional components arguments
+     * @param string $mainPluginFile    - absolute path to main plugin file (__FILE__).
+     * @param string $pluginPrefix      - will be used to prefix everything in plugin
+     * @param string $pluginVersion     - set your plugin version. It will be used in scripts suffixing etc.
+     * @param array|null $initArgs      - additional components arguments
      */
 
 	public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
-
-	    self::$mainPluginFile   = $mainPluginFile;
-	    self::$pluginPrefix     = $pluginPrefix;
-	    self::$pluginVersion    = $pluginVersion;
 
 	    //  ----------------------------------------
 	    //  Prepare safe arguments
 	    //  ----------------------------------------
 
 		$defaultInitArgs = array(
-			'options'	=>	array(
-			    'args'          => array(
-                    'namespace'		=>	self::getPrefix()
+		    'app'           =>  array(
+		        'mainPluginFile'        =>  $mainPluginFile,
+                'pluginPrefix'          =>  $pluginPrefix,
+                'pluginVersion'         =>  $pluginVersion
+            ),
+			'options'	    =>	array(
+			    'object'        =>  null,
+			    'args'          =>  array(
+                    'namespace'		=>	$pluginPrefix
                 )
             ),
-            'logger'    =>  array(
-                'directory'         =>  self::getPath( '/log' ),
+            'autoloader'    =>  array(
+                'object'    =>  null
+            ),
+            'logger'        =>  array(
+                'object'            =>  null,
+                'directory'         =>  dirname( $mainPluginFile ) . '/log',
                 'logLevel'          =>  'debug',
                 'args'              =>  array(
                     'dateFormat'        =>  'Y-m-d G:i:s.u',
@@ -79,14 +76,14 @@ class ShellPress {
             )
 		);
 
-		self::$initArgs = array_merge_recursive( $defaultInitArgs, $initArgs );   // merge default init arguments with specified by developer
+		static::$sp = array_merge_recursive( $defaultInitArgs, $initArgs );   // merge default init arguments with specified by developer
 
         //  -----------------------------------
-        //  Initialize helpers
+        //  Initialize components
         //  -----------------------------------
 
-        self::_initAutoloader();
-        self::_initLogger();
+        static::_initAutoloader();
+        static::_initLogger();
 
 	}
 
@@ -105,11 +102,11 @@ class ShellPress {
 
         if( $stringToPrefix === null ){
 
-            return self::$pluginPrefix;
+            return static::$sp['app']['pluginPrefix'];
 
         } else {
 
-            return self::$pluginPrefix . $stringToPrefix;
+            return static::$sp['app']['pluginPrefix'] . $stringToPrefix;
 
         }
 
@@ -117,7 +114,7 @@ class ShellPress {
 
     /**
      * Prepands given string with plugin directory url.
-     * Example usage: self::getUrl( '/assets/style.css' );
+     * Example usage: static::getUrl( '/assets/style.css' );
      *
      * @param string $relativePath
      *
@@ -126,7 +123,7 @@ class ShellPress {
     public static function getUrl( $relativePath = null ) {
 
         $delimeter = 'wp-content';
-        $pluginDir = dirname( self::getMainPluginFile() );
+        $pluginDir = dirname( static::getMainPluginFile() );
 
         $pathParts = explode( $delimeter , $pluginDir, 2 );     //  slice path by delimeter string
 
@@ -149,14 +146,14 @@ class ShellPress {
 
     /**
      * Prefixes given string with plugin directory path.
-     * Example usage: self::path( '/dir/another/file.php' );
+     * Example usage: static::path( '/dir/another/file.php' );
      *
      * @param string $relativePath
      * @return string - absolute path
      */
     public static function getPath( $relativePath = null ) {
 
-        $path = dirname( self::getMainPluginFile() );  // plugin directory path
+        $path = dirname( static::getMainPluginFile() );  // plugin directory path
 
         if( $relativePath === null ){
 
@@ -178,7 +175,7 @@ class ShellPress {
      */
     public static function getMainPluginFile() {
 
-        return self::$mainPluginFile;
+        return static::$sp['app']['mainPluginFile'];
 
     }
 
@@ -189,7 +186,7 @@ class ShellPress {
      */
     public static function getPluginVersion() {
 
-        return self::$pluginVersion;
+        return static::$sp['app']['pluginVersion'];
 
     }
 
@@ -203,15 +200,17 @@ class ShellPress {
      */
 	private static function _initAutoloader() {
 
-        if( ! class_exists( 'shellpress\v1_0_3\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_0_4\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
             require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
         }
 
-        self::$autoloader = new Psr4AutoloaderClass();
-        self::$autoloader->register();
-        self::$autoloader->addNamespace( 'shellpress\v1_0_3', __DIR__ );
+        $autoloaderArgs = & static::$sp['autoloader'];    //  reference
+
+        $autoloaderArgs['object'] = new Psr4AutoloaderClass();
+        $autoloaderArgs['object']->register();
+        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_4', __DIR__ );
 
     }
 
@@ -221,13 +220,39 @@ class ShellPress {
      */
     private static function _initLogger() {
 
-        $loggerArgs = self::$initArgs['logger'];
+        $loggerArgs = & static::$sp['logger'];  //  reference
         
-        self::$log = new Logger(
+        static::$sp['object'] = new Logger(
             $loggerArgs['directory'],
             $loggerArgs['logLevel'],
             $loggerArgs['args']
         );
+
+    }
+
+    //  ================================================================================
+    //  COMPONONETS
+    //  ================================================================================
+
+    /**
+     * Gets logger object.
+     *
+     * @return Logger
+     */
+    public static function logger() {
+
+        return static::$sp['logger']['object'];
+
+    }
+
+    /**
+     * Gets autoloader object.
+     *
+     * @return Psr4AutoloaderClass
+     */
+    public static function autoloader() {
+
+        return static::$sp['autoloader']['object'];
 
     }
 

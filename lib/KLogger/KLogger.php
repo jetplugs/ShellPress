@@ -1,10 +1,10 @@
 <?php
-namespace shellpress\v1_0_3\lib\KLogger;
+namespace shellpress\v1_0_4\lib\KLogger;
 
 use DateTime;
 use RuntimeException;
-use shellpress\v1_0_3\lib\Psr\Log\AbstractLogger;
-use shellpress\v1_0_3\lib\Psr\Log\LogLevel;
+use shellpress\v1_0_4\lib\Psr\Log\AbstractLogger;
+use shellpress\v1_0_4\lib\Psr\Log\LogLevel;
 
 /**
  * Finally, a light, permissions-checking logging class.
