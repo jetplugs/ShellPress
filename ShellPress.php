@@ -44,7 +44,7 @@ class ShellPress {
 	public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
 
 	    //  ----------------------------------------
-	    //  Prepare safe arguments
+	    //  Prepare arguments
 	    //  ----------------------------------------
 
 		$defaultInitArgs = array(
@@ -222,7 +222,7 @@ class ShellPress {
 
         $loggerArgs = & static::$sp['logger'];  //  reference
         
-        static::$sp['object'] = new Logger(
+        $loggerArgs['object'] = new Logger(
             $loggerArgs['directory'],
             $loggerArgs['logLevel'],
             $loggerArgs['args']
