@@ -2,6 +2,7 @@
 namespace shellpress\v1_0_4;
 
 use shellpress\v1_0_4\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_4\src\Factory\Factory;
 use shellpress\v1_0_4\src\Logger;
 
 
@@ -58,6 +59,9 @@ class ShellPress {
 			    'args'          =>  array(
                     'namespace'		=>	$pluginPrefix
                 )
+            ),
+            'factory'       =>  array(
+                'object'        =>  null
             ),
             'autoloader'    =>  array(
                 'object'    =>  null
@@ -196,7 +200,6 @@ class ShellPress {
 
     /**
      * Initialize PSR4 Autoloader.
-     * This should be called as an action.
      */
 	private static function _initAutoloader() {
 
@@ -216,7 +219,6 @@ class ShellPress {
 
     /**
      * Initialize Logging handler.
-     * This should be called as an action.
      */
     private static function _initLogger() {
 
@@ -227,6 +229,17 @@ class ShellPress {
             $loggerArgs['logLevel'],
             $loggerArgs['args']
         );
+
+    }
+
+    /**
+     * Initialize Factory.
+     */
+    public static function _initFactory() {
+
+        $factoryArgs = & static::$sp['factory'];    //  reference
+
+        $factoryArgs['object']  =   new Factory();
 
     }
 
@@ -253,6 +266,17 @@ class ShellPress {
     public static function autoloader() {
 
         return static::$sp['autoloader']['object'];
+
+    }
+
+    /**
+     * Gets factory object.
+     *
+     * @return Factory
+     */
+    public static function factory() {
+
+        return static::$sp['factory']['object'];
 
     }
 
