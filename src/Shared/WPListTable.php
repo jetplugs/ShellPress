@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_0_2\src\Shared;
+namespace shellpress\v1_0_4\src\Shared;
 
 
-use shellpress\v1_0_2\lib\_Includes\WP_List_Table;
-use shellpress\v1_0_2\ShellPress;
+use shellpress\v1_0_4\lib\_Includes\WP_List_Table;
+use shellpress\v1_0_4\ShellPress;
 
 class WPListTable extends WP_List_Table {
 
