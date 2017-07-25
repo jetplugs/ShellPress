@@ -83,6 +83,44 @@ class WPListTable extends WP_List_Table {
 
     }
 
+    /**
+     * Just returns $_REQUEST['order'] or string 'asc'.
+     *
+     * @return string
+     */
+    public function getOrder() {
+
+        if( isset( $_REQUEST['order'] ) && empty( $_REQUEST['order'] ) ){
+
+            return $_REQUEST['order'];
+
+        } else {
+
+            return 'asc';
+
+        }
+
+    }
+
+    /**
+     * Just returns $_REQUEST['orderby'] or string 'id'.
+     *
+     * @return string
+     */
+    public function getOrderBy() {
+
+        if( isset( $_REQUEST['orderby'] ) && empty( $_REQUEST['orderby'] ) ){
+
+            return $_REQUEST['orderby'];
+
+        } else {
+
+            return 'id';
+
+        }
+
+    }
+
     //  ================================================================================
     //  FILTERS
     //  ================================================================================
@@ -101,8 +139,8 @@ class WPListTable extends WP_List_Table {
 
         if( isset( $_POST['s'] ) ){
 
-            $url = add_query_arg( 's', $_POST['s'], $url );      //  adds search argument
-            $url = remove_query_arg( 'paged', $url );       //  removes current paged argument, because we handle NEW search
+            $url = add_query_arg( 's', $_POST['s'], $url );         //  adds search argument
+            $url = remove_query_arg( 'paged', $url );               //  removes current paged argument, because we handle NEW search
 
         }
 
