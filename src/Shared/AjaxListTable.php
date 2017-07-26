@@ -23,6 +23,9 @@ class AjaxListTable extends WP_Ajax_List_Table {
     /** @var string */
     private $ajaxActionName;
 
+    /** @var bool */
+    private $isSearchboxVisible = false;
+
     public $example_data = array(
         array(
             'ID'		=> 1,
@@ -89,12 +92,6 @@ class AjaxListTable extends WP_Ajax_List_Table {
             'title'		=> 'Source Code',
             'rating'	=> 'PG-13',
             'director'	=> 'Duncan Jones'
-        ),
-        array(
-            'ID'		=> 12,
-            'title'		=> 'Django Unchained',
-            'rating'	=> 'R',
-            'director'	=> 'Quentin Tarantino'
         )
     );
 
@@ -236,11 +233,11 @@ class AjaxListTable extends WP_Ajax_List_Table {
          */
         $this->set_pagination_args(
             array(
-                'total_items'	    => $total_items,
-                'per_page'	        => $per_page,
-                'total_pages'	    => ceil( $total_items / $per_page ),
-                'orderby'	        => ! empty( $_REQUEST['orderby'] ) && '' != $_REQUEST['orderby'] ? $_REQUEST['orderby'] : 'title',
-                'order'		        => ! empty( $_REQUEST['order'] ) && '' != $_REQUEST['order'] ? $_REQUEST['order'] : 'asc'
+                'total_items'	    =>  $total_items,
+                'per_page'	        =>  $per_page,
+                'total_pages'	    =>  ceil( $total_items / $per_page ),
+                'orderby'	        =>  $this->getOrderBy(),
+                'order'		        =>  $this->getOrder()
             )
         );
 
@@ -378,6 +375,63 @@ class AjaxListTable extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * Gets search box visibility.
+     *
+     * @param bool $isVisible - if set, this method works as setter
+     *
+     * @return bool
+     */
+    public function isSearchBoxVisible( $isVisible = null ) {
+
+        if( $isVisible !== null ){
+
+            $this->isSearchboxVisible = $isVisible;
+
+        }
+
+        return $this->isSearchboxVisible;
+
+    }
+
+    /**
+     * Just returns $_REQUEST['order'] or string 'asc'.
+     *
+     * @return string
+     */
+    public function getOrder() {
+
+        if( isset( $_REQUEST['order'] ) && empty( $_REQUEST['order'] ) ){
+
+            return $_REQUEST['order'];
+
+        } else {
+
+            return 'asc';
+
+        }
+
+    }
+
+    /**
+     * Just returns $_REQUEST['orderby'] or string 'id'.
+     *
+     * @return string
+     */
+    public function getOrderBy() {
+
+        if( isset( $_REQUEST['orderby'] ) && empty( $_REQUEST['orderby'] ) ){
+
+            return $_REQUEST['orderby'];
+
+        } else {
+
+            return 'id';
+
+        }
+
+    }
+
     //  ================================================================================
     //  ACTIONS
     //  ================================================================================
@@ -394,6 +448,12 @@ class AjaxListTable extends WP_Ajax_List_Table {
         $this->prepare_items();
 
         ob_start();
+
+        if( $this->isSearchboxVisible() ){
+
+            $this->search_box( __( "Search" ), $this->getSlug() );
+
+        }
 
         $this->display();
 
