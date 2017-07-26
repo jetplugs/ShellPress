@@ -393,10 +393,9 @@ class AjaxListTable extends WP_Ajax_List_Table {
 
         $this->prepare_items();
 
-        extract( $this->_args );
-        extract( $this->_pagination_args, EXTR_SKIP );
-
         ob_start();
+
+        print_r( $_REQUEST );
 
         $this->display();
 
