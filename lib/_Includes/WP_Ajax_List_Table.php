@@ -553,10 +553,10 @@ class WP_Ajax_List_Table {
 		}
 
 		$extra_checks = "AND post_status != 'auto-draft'";
-		if ( ! isset( $_GET['post_status'] ) || 'trash' !== $_GET['post_status'] ) {
+		if ( ! isset( $_REQUEST['post_status'] ) || 'trash' !== $_REQUEST['post_status'] ) {
 			$extra_checks .= " AND post_status != 'trash'";
-		} elseif ( isset( $_GET['post_status'] ) ) {
-			$extra_checks = $wpdb->prepare( ' AND post_status = %s', $_GET['post_status'] );
+		} elseif ( isset( $_REQUEST['post_status'] ) ) {
+			$extra_checks = $wpdb->prepare( ' AND post_status = %s', $_REQUEST['post_status'] );
 		}
 
 		$months = $wpdb->get_results( $wpdb->prepare( "
@@ -582,7 +582,7 @@ class WP_Ajax_List_Table {
 		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
 			return;
 
-		$m = isset( $_GET['m'] ) ? (int) $_GET['m'] : 0;
+		$m = isset( $_REQUEST['m'] ) ? (int) $_REQUEST['m'] : 0;
 ?>
 		<label for="filter-by-date" class="screen-reader-text"><?php _e( 'Filter by date' ); ?></label>
 		<select name="m" id="filter-by-date">
@@ -1049,13 +1049,13 @@ class WP_Ajax_List_Table {
 		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 		$current_url = remove_query_arg( 'paged', $current_url );
 
-		if ( isset( $_GET['orderby'] ) ) {
-			$current_orderby = $_GET['orderby'];
+		if ( isset( $_REQUEST['orderby'] ) ) {
+			$current_orderby = $_REQUEST['orderby'];
 		} else {
 			$current_orderby = '';
 		}
 
-		if ( isset( $_GET['order'] ) && 'desc' === $_GET['order'] ) {
+		if ( isset( $_REQUEST['order'] ) && 'desc' === $_REQUEST['order'] ) {
 			$current_order = 'desc';
 		} else {
 			$current_order = 'asc';

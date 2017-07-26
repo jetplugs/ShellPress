@@ -395,8 +395,6 @@ class AjaxListTable extends WP_Ajax_List_Table {
 
         ob_start();
 
-        print_r( $_REQUEST );
-
         $this->display();
 
         $response = ob_get_clean();
