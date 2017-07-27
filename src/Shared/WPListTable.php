@@ -5,7 +5,14 @@ namespace shellpress\v1_0_4\src\Shared;
 use shellpress\v1_0_4\lib\_Includes\WP_List_Table;
 use shellpress\v1_0_4\ShellPress;
 
-class WPListTable extends WP_Ajax_List_Table {
+/**
+ * Class WPListTable
+ *
+ * @deprecated
+ *
+ * @package shellpress\v1_0_4\src\Shared
+ */
+class WPListTable extends WP_List_Table {
 
     /**
      * WPListTable constructor.

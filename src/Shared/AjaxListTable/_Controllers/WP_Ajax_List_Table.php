@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_4\lib\_Includes;
+namespace shellpress\v1_0_4\src\Shared\AjaxListTable\_Controllers;
 /**
  * Administration API: WP_List_Table class
  *
@@ -16,7 +16,7 @@ use wpdb;
  * @since 3.1.0
  * @access private
  */
-class WP_Ajax_List_Table {
+abstract class WP_Ajax_List_Table {
 
 	/**
 	 * The current list of items.
