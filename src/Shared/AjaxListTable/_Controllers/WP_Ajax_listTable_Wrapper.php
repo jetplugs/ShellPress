@@ -87,7 +87,24 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  Items
         //  ----------------------------------------
 
-        $this->items = apply_filters( 'items_' . $this->slug, array() );
+        /**
+         * Apply filter on empty array.
+         * Filter tag: `items_{tableSlug}`
+         *
+         * @param array $items
+         * @param int $paged
+         * @param string $search
+         * @param string $order
+         * @param string $orderBy
+         */
+        $this->items = apply_filters(
+            'items_' . $this->slug,     //  Filter tag
+            array(),                    //  $items
+            $this->getPaged(),          //  $paged
+            $this->getSearch(),         //  $search
+            $this->getOrder(),          //  $order
+            $this->getOrderBy()         //  $orderBy
+        );
 
         //  ----------------------------------------
         //  Pagination arguments
@@ -142,7 +159,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     public function column_default( $item, $column_name ) {
 
-        return __( 'No cell declaration', 'mailboo' );
+        return "No cell declaration";
 
     }
 
@@ -151,8 +168,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         return sprintf( '<input type="checkbox">' );
 
     }
-
-
 
     //  ================================================================================
     //  SIMPLE GETTERS
@@ -165,13 +180,13 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getOrder() {
 
-        if( isset( $_REQUEST['order'] ) && empty( $_REQUEST['order'] ) ){
+        if( isset( $_REQUEST['order'] ) && ! empty( $_REQUEST['order'] ) ){
 
-            return $_REQUEST['order'];
+            return esc_sql( $_REQUEST['order'] );
 
         } else {
 
-            return $this->order;
+            return esc_sql( $this->order );
 
         }
 
@@ -184,13 +199,13 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getOrderBy() {
 
-        if( isset( $_REQUEST['orderby'] ) && empty( $_REQUEST['orderby'] ) ){
+        if( isset( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['orderby'] ) ){
 
-            return $_REQUEST['orderby'];
+            return esc_sql( $_REQUEST['orderby'] );
 
         } else {
 
-            return $this->orderBy;
+            return esc_sql( $this->orderBy );
 
         }
 
@@ -203,13 +218,13 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getPaged() {
 
-        if( isset( $_REQUEST['paged'] ) && empty( $_REQUEST['paged'] ) ){
+        if( isset( $_REQUEST['paged'] ) && ! empty( $_REQUEST['paged'] ) ){
 
             return (int) $_REQUEST['paged'];
 
         } else {
 
-            return $this->paged;
+            return (int) $this->paged;
 
         }
 
@@ -222,13 +237,13 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getTotalItems() {
 
-        if( isset( $_REQUEST['totalitems'] ) && empty( $_REQUEST['totalitems'] ) ){
+        if( isset( $_REQUEST['totalitems'] ) && ! empty( $_REQUEST['totalitems'] ) ){
 
             return (int) $_REQUEST['totalitems'];
 
         } else {
 
-            return $this->totalItems;
+            return (int) $this->totalItems;
 
         }
 
@@ -241,13 +256,13 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getItemsPerPage() {
 
-        if( isset( $_REQUEST['itemsperpage'] ) && empty( $_REQUEST['itemsperpage'] ) ){
+        if( isset( $_REQUEST['itemsperpage'] ) && ! empty( $_REQUEST['itemsperpage'] ) ){
 
             return (int) $_REQUEST['itemsperpage'];
 
         } else {
 
-            return $this->itemsPerPage;
+            return (int) $this->itemsPerPage;
 
         }
 
@@ -260,13 +275,13 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getSearch() {
 
-        if( isset( $_REQUEST['search'] ) && empty( $_REQUEST['search'] ) ){
+        if( isset( $_REQUEST['search'] ) && ! empty( $_REQUEST['search'] ) ){
 
-            return (int) $_REQUEST['search'];
+            return esc_sql( $_REQUEST['search'] );
 
         } else {
 
-            return $this->search;
+            return esc_sql( $this->search );
 
         }
 

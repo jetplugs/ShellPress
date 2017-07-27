@@ -44,7 +44,7 @@ abstract class AjaxListTable {
 
     /**
      * Extend this method.
-     * It's called automatically
+     * It's called automatically.
      */
     protected abstract function setUp();
 
@@ -69,7 +69,7 @@ abstract class AjaxListTable {
         $html = sprintf(
             '<div id="%1$s" class="%2$s" %3$s>',
             /** %1$s */ $this->getSlug(),
-            /** %2$s */ '',
+            /** %2$s */ 'sp-a-list-table',
             /** %3$s */ implode( ' ', $attributes )
         );
         $html .= sprintf( '<div class="spinner is-active" style="float:none"></div>' );
@@ -146,6 +146,64 @@ abstract class AjaxListTable {
         }
 
         return $this->isSearchboxVisible;
+
+    }
+
+    //  ================================================================================
+    //  SETTERS
+    //  ================================================================================
+
+    /**
+     * @param int $totalItems
+     */
+    public function setTotalItems( $totalItems ) {
+
+        $this->listTable->totalItems = $totalItems;
+
+    }
+
+    /**
+     * @param string $order
+     */
+    public function setOrder( $order ) {
+
+        $this->listTable->order = $order;
+
+    }
+
+    /**
+     * @param string $orderBy
+     */
+    public function setOrderBy( $orderBy ) {
+
+        $this->listTable->orderBy = $orderBy;
+
+    }
+
+    /**
+     * @param int $paged
+     */
+    public function setPaged( $paged ) {
+
+        $this->listTable->paged = $paged;
+
+    }
+
+    /**
+     * @param int $itemsPerPage
+     */
+    public function setItemsPerPage( $itemsPerPage ) {
+
+        $this->listTable->itemsPerPage = $itemsPerPage;
+
+    }
+
+    /**
+     * @param string $search
+     */
+    public function setSearch( $search ) {
+
+        $this->listTable->search = $search;
 
     }
 
