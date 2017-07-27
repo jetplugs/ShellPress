@@ -10,7 +10,7 @@ jQuery( document ).ready( function( $ ){
 
         list = {
             isLocked:   false,
-            init:   function(){
+            init:       function(){
 
                 // This will have its utility when dealing with the page number input
 
@@ -31,8 +31,6 @@ jQuery( document ).ready( function( $ ){
 
                         // Simple way: use the URL to extract our needed variables
                         var query = this.search.substring( 1 );
-
-                        console.log( query );
 
                         //  Writing attributes
                         ajaxListTable.attr( 'data-paged',       list.__query( query, 'paged' ) || '1' );
@@ -56,13 +54,11 @@ jQuery( document ).ready( function( $ ){
                         list.isLocked = true;   //  Lock callbacks
 
                         // Simple way: use the URL to extract our needed variables
-                        var query = this.search.substring(1);
-
-                        console.log(query);
+                        var query = this.search.substring( 1 );
 
                         //  Writing attributes
-                        ajaxListTable.attr('data-order', list.__query(query, 'order') || 'asc');
-                        ajaxListTable.attr('data-orderby', list.__query(query, 'orderby') || 'id');
+                        ajaxListTable.attr( 'data-order', list.__query( query, 'order' ) || 'asc' );
+                        ajaxListTable.attr( 'data-orderby', list.__query( query, 'orderby' ) || 'id' );
 
                         list.update();
 
@@ -125,7 +121,7 @@ jQuery( document ).ready( function( $ ){
                 } );
 
             },
-            update: function(){
+            update:     function(){
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
 
@@ -162,7 +158,7 @@ jQuery( document ).ready( function( $ ){
                 } );
 
             },
-            __query: function( query, variable ) {
+            __query:    function( query, variable ) {
 
                 var vars = query.split("&");
 
@@ -171,7 +167,9 @@ jQuery( document ).ready( function( $ ){
                     var pair = vars[ i ].split("=");
 
                     if ( pair[0] === variable ){
+
                         return pair[1];
+
                     }
 
                 }
