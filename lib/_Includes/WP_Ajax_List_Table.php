@@ -350,9 +350,11 @@ class WP_Ajax_List_Table {
 
 		if ( $this->has_items() ) {
 
+		    $searchValue = isset($_REQUEST['search']) ? esc_attr( wp_unslash( $_REQUEST['search'] ) ) : '';
+
             printf( '<p class="search-box">' );
 	        printf( '<label class="screen-reader-text" for="%1$s">%2$s</label>', esc_attr( $input_id ), $text );
-            printf( '<input type="search" id="%1$s" name="search" value="%2$s" />', esc_attr( $input_id ), _admin_search_query() );
+            printf( '<input type="search" id="%1$s" name="search" value="%2$s" />', esc_attr( $input_id ), $searchValue );
             printf( get_submit_button( $text, '', '', false, array( 'id' => 'search-submit' ) ) );
             printf( '</p>' );
 

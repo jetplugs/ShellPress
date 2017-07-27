@@ -24,7 +24,7 @@ class AjaxListTable extends WP_Ajax_List_Table {
     private $ajaxActionName;
 
     /** @var bool */
-    private $isSearchboxVisible = false;
+    private $isSearchboxVisible = true;
 
     public $example_data = array(
         array(
@@ -256,8 +256,8 @@ class AjaxListTable extends WP_Ajax_List_Table {
         return $columns = array(
             'cb'		=> '<input type="checkbox" />',
             'title'		=> 'Title',
-            'rating'	=> 'Rating',
-            'director'	=> 'Director'
+            'lololol'	=> 'Test1',
+            'director'	=> 'Test2'
         );
 
     }
@@ -266,7 +266,7 @@ class AjaxListTable extends WP_Ajax_List_Table {
 
         return $sortable_columns = array(
             'title'	 	=> array( 'title', false ),	//true means it's already sorted
-            'rating'	=> array( 'rating', false ),
+            'lololol'	=> array( 'lololol', false ),
             'director'	=> array( 'director', false )
         );
 
@@ -304,7 +304,8 @@ class AjaxListTable extends WP_Ajax_List_Table {
             sprintf( 'data-ajax-action="%1$s"',     $this->getAjaxActionName() ),
             sprintf( 'data-paged="%1$s"',           1 ),
             sprintf( 'data-order="%1$s"',           'asc' ),
-            sprintf( 'data-orderby="%1$s"',         'id' )
+            sprintf( 'data-orderby="%1$s"',         'id' ),
+            sprintf( 'data-search="%1$s"',          '' )
         );
 
         $html = sprintf(

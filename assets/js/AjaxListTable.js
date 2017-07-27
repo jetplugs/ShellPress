@@ -14,7 +14,7 @@ jQuery( document ).ready( function( $ ){
                 // This will have its utility when dealing with the page number input
 
                 var timer;
-                var delay = 1000;
+                var delay = 500;
 
                 //  ----------------------------------------
                 //  CLICK - Pagination links
@@ -35,7 +35,7 @@ jQuery( document ).ready( function( $ ){
 
                     list.update();
 
-                });
+                } );
 
                 //  ----------------------------------------
                 //  CLICK - Sortable link
@@ -57,28 +57,50 @@ jQuery( document ).ready( function( $ ){
 
                     list.update();
 
-                });
+                } );
 
                 //  ----------------------------------------
-                //  KEYUP - Page number input
+                //  KEYUP - Page number and search input
                 //  ----------------------------------------
 
-                ajaxListTable.find( 'input[name=paged]' ).on( 'keyup', function(e) {
+                ajaxListTable.find( 'input[name=paged], input[name="search"]' ).on( 'keyup', function(e) {
+
+                    if( e.keyCode === 13 ){
+
+                        e.preventDefault();
+
+                        //  Wait `delay` before sending request.
+                        window.clearTimeout( timer );
+
+                        timer = window.setTimeout( function() {
+
+                            //  Writing attributes
+                            ajaxListTable.attr('data-paged', parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1' );
+                            ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '' );
+
+                            list.update();
+
+                        }, delay );
+
+                    }
+
+                } );
+
+                //  ----------------------------------------
+                //  CLICK - Search
+                //  ----------------------------------------
+
+                ajaxListTable.find( '.search-box input[type="submit"]' ).on( 'click', function(e) {
 
                     e.preventDefault();
 
-                    window.clearTimeout( timer );
+                    var searchValue = ajaxListTable.find( 'input[name="search"]' ).val() || '';    //  Value of input search
 
-                    timer = window.setTimeout( function() {
+                    ajaxListTable.attr( 'data-search', searchValue );
 
-                        //  Writing attributes
-                        ajaxListTable.attr( 'data-paged', parseInt( ajaxListTable.find('input[name=paged]').val() ) || '1' );
+                    list.update();
 
-                        list.update();
-
-                    }, delay );
-
-                });
+                } );
 
             },
             update: function(){
@@ -93,7 +115,8 @@ jQuery( document ).ready( function( $ ){
                         action:     ajaxListTable.attr( 'data-ajax-action' ),
                         paged:      ajaxListTable.attr( 'data-paged' ),
                         order:      ajaxListTable.attr( 'data-order' ),
-                        orderby:    ajaxListTable.attr( 'data-orderby' )
+                        orderby:    ajaxListTable.attr( 'data-orderby' ),
+                        search:     ajaxListTable.attr( 'data-search' )
                     },
                     success: function( response ) {
 
