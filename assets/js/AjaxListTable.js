@@ -67,10 +67,10 @@ jQuery( document ).ready( function( $ ){
                 } );
 
                 //  ----------------------------------------
-                //  KEYUP - Page number and search input
+                //  KEYUP - Page number input
                 //  ----------------------------------------
 
-                ajaxListTable.find( 'input[name=paged], input[name="search"]' ).on( 'keyup', function(e) {
+                ajaxListTable.find( 'input[name=paged]' ).on( 'keyup', function(e) {
 
                     if( e.keyCode === 13 ){
 
@@ -86,8 +86,40 @@ jQuery( document ).ready( function( $ ){
                             timer = window.setTimeout(function () {
 
                                 //  Writing attributes
-                                ajaxListTable.attr('data-paged', parseInt(ajaxListTable.find('input[name="paged"]').val()) || '1');
+                                ajaxListTable.attr('data-paged', parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1');
+
+                                list.update();
+
+                            }, delay);
+
+                        }
+
+                    }
+
+                } );
+
+                //  ----------------------------------------
+                //  KEYUP - Search input
+                //  ----------------------------------------
+
+                ajaxListTable.find( 'input[name="search"]' ).on( 'keyup', function(e) {
+
+                    if( e.keyCode === 13 ){
+
+                        e.preventDefault();
+
+                        if( ! list.isLocked ) {
+
+                            list.isLocked = true;   //  Lock callbacks
+
+                            //  Wait `delay` before sending request.
+                            window.clearTimeout(timer);
+
+                            timer = window.setTimeout(function () {
+
+                                //  Writing attributes
                                 ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '');
+                                ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
 
                                 list.update();
 
@@ -111,9 +143,8 @@ jQuery( document ).ready( function( $ ){
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        var searchValue = ajaxListTable.find('input[name="search"]').val() || '';    //  Value of input search
-
-                        ajaxListTable.attr('data-search', searchValue);
+                        ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '' );
+                        ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
 
                         list.update();
                     }
