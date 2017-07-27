@@ -207,6 +207,19 @@ abstract class AjaxListTable {
 
     }
 
+    /**
+     * Creates checkbox for bulk actions column.
+     *
+     * @param int $itemId
+     *
+     * @return string - Checkbox HTML
+     */
+    public function generateRowCheckbox( $itemId ) {
+
+        return sprintf( '<input type="checkbox" name="bulk-ids[]" value="%1$s">', $itemId );
+
+    }
+
     //  ================================================================================
     //  ACTIONS
     //  ================================================================================
