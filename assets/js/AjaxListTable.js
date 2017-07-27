@@ -9,6 +9,7 @@ jQuery( document ).ready( function( $ ){
         var ajaxListTable = $( this );
 
         list = {
+            isLocked:   false,
             init:   function(){
 
                 // This will have its utility when dealing with the page number input
@@ -22,18 +23,23 @@ jQuery( document ).ready( function( $ ){
 
                 ajaxListTable.find( '.tablenav-pages a' ).on( 'click', function(e) {
 
-                    // We don't want to actually follow these links
                     e.preventDefault();
 
-                    // Simple way: use the URL to extract our needed variables
-                    var query = this.search.substring( 1 );
+                    if( ! list.isLocked ){
 
-                    console.log( query );
+                        list.isLocked = true;   //  Lock callbacks
 
-                    //  Writing attributes
-                    ajaxListTable.attr( 'data-paged',       list.__query( query, 'paged' ) || '1' );
+                        // Simple way: use the URL to extract our needed variables
+                        var query = this.search.substring( 1 );
 
-                    list.update();
+                        console.log( query );
+
+                        //  Writing attributes
+                        ajaxListTable.attr( 'data-paged',       list.__query( query, 'paged' ) || '1' );
+
+                        list.update();
+
+                    }
 
                 } );
 
@@ -43,19 +49,24 @@ jQuery( document ).ready( function( $ ){
 
                 ajaxListTable.find( '.manage-column.sortable a, .manage-column.sorted a' ).on( 'click', function(e) {
 
-                    // We don't want to actually follow these links
                     e.preventDefault();
 
-                    // Simple way: use the URL to extract our needed variables
-                    var query = this.search.substring( 1 );
+                    if( ! list.isLocked ) {
 
-                    console.log( query );
+                        list.isLocked = true;   //  Lock callbacks
 
-                    //  Writing attributes
-                    ajaxListTable.attr( 'data-order',       list.__query( query, 'order' ) || 'asc' );
-                    ajaxListTable.attr( 'data-orderby',     list.__query( query, 'orderby' ) || 'id' );
+                        // Simple way: use the URL to extract our needed variables
+                        var query = this.search.substring(1);
 
-                    list.update();
+                        console.log(query);
+
+                        //  Writing attributes
+                        ajaxListTable.attr('data-order', list.__query(query, 'order') || 'asc');
+                        ajaxListTable.attr('data-orderby', list.__query(query, 'orderby') || 'id');
+
+                        list.update();
+
+                    }
 
                 } );
 
@@ -69,18 +80,24 @@ jQuery( document ).ready( function( $ ){
 
                         e.preventDefault();
 
-                        //  Wait `delay` before sending request.
-                        window.clearTimeout( timer );
+                        if( ! list.isLocked ) {
 
-                        timer = window.setTimeout( function() {
+                            list.isLocked = true;   //  Lock callbacks
 
-                            //  Writing attributes
-                            ajaxListTable.attr('data-paged', parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1' );
-                            ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '' );
+                            //  Wait `delay` before sending request.
+                            window.clearTimeout(timer);
 
-                            list.update();
+                            timer = window.setTimeout(function () {
 
-                        }, delay );
+                                //  Writing attributes
+                                ajaxListTable.attr('data-paged', parseInt(ajaxListTable.find('input[name="paged"]').val()) || '1');
+                                ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '');
+
+                                list.update();
+
+                            }, delay);
+
+                        }
 
                     }
 
@@ -94,11 +111,16 @@ jQuery( document ).ready( function( $ ){
 
                     e.preventDefault();
 
-                    var searchValue = ajaxListTable.find( 'input[name="search"]' ).val() || '';    //  Value of input search
+                    if( ! list.isLocked ) {
 
-                    ajaxListTable.attr( 'data-search', searchValue );
+                        list.isLocked = true;   //  Lock callbacks
 
-                    list.update();
+                        var searchValue = ajaxListTable.find('input[name="search"]').val() || '';    //  Value of input search
+
+                        ajaxListTable.attr('data-search', searchValue);
+
+                        list.update();
+                    }
 
                 } );
 
@@ -127,9 +149,14 @@ jQuery( document ).ready( function( $ ){
                         list.init();
 
                     },
-                    fail:   function( ) {
+                    fail:   function() {
 
                         console.log( "Got an error while calling ListTable AJAX." );
+
+                    },
+                    complete:   function() {
+
+                        list.isLocked = false;  //  Unlock callbacks
 
                     }
                 } );
