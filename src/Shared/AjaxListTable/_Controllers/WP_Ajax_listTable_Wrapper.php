@@ -50,7 +50,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *          'isSortable'        =>  true,                   (optional)
      *          'isAlreadySorted'   =>  false,                  (optional)
      *          'realColumnName'    =>  '{sql column name}'     (optional)
-     *          'title'             =>  'Title'
+     *          'title'             =>  'Your column title'     (optional)
      *      )
      * )
      *
@@ -95,6 +95,24 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  Columns headers hook
         //  ----------------------------------------
 
+        $headers = $this->headers;  //  Get default value ( empty array )
+
+        //  Add bulk actions checkbox column
+
+        if( ! empty( $this->get_bulk_actions() ) ){
+
+            $headers['cb'] = array(
+                'title'     =>  '<input type="checkbox">'
+            );
+
+        }
+
+        //  Add id column
+
+        $headers['id'] = array(
+            'title'         =>  'ID'
+        );
+
         /**
          * Apply filter on empty array.
          * Filter tag: `headers_{tableSlug}`
@@ -103,7 +121,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          */
         $headers = apply_filters(
             'headers_' . $this->slug,               //  Filter tag
-            $this->headers                          //  $headers
+            $headers                                //  $headers
         );
 
         //  Apply default properties
