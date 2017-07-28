@@ -269,19 +269,35 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     public function column_default( $item, $column_name ) {
 
+        $html = sprintf( '<div style="color:silver"><b>Filter:</b><br/>cell_%1$s_%2$s</div>', $this->slug, $column_name );
+
+        /**
+         * Apply filter on string.
+         * Filter tag: `cell_{tableSlug}_(columnName)`
+         *
+         * @param string $html
+         * @param mixed $item
+         */
+        $html = apply_filters( 'cell_' . $this->slug . '_' . $column_name, $html, $item );
+
+        return $html;
+
+    }
+
+    public function column_cb( $item ) {
+
         $html = '';
 
         /**
-         * Apply filter on empty array.
-         * Filter tag: `cell_{tableSlug}`
+         * Apply filter on string.
+         * Filter tag: `cell_{tableSlug}_cb`
          *
-         * @param array $items
-         * @param int $paged
-         * @param string $search
-         * @param string $order
-         * @param string $orderBy
+         * @param string $html
+         * @param mixed $item
          */
-        return apply_filters( 'cell_' . $this->slug . '_' . $column_name, $html, $item );
+        $html = apply_filters( 'cell_' . $this->slug . '_cb', $html, $item );
+
+        return $html;
 
     }
 
