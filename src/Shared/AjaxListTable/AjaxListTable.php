@@ -237,6 +237,8 @@ abstract class AjaxListTable {
 
         ob_start();
 
+        $this->listTable->views();
+
         if( $this->isSearchboxVisible() ){
 
             $this->listTable->search_box( __( "Search" ), $this->getSlug() );

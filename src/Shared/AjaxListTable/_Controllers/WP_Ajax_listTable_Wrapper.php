@@ -40,6 +40,24 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /** @var string */
     public $search = '';
 
+    /**
+     * Table columns headers array.
+     *
+     * Format:
+     * array(
+     *      '{slug}'    =>  array(
+     *          'isHidden'          =>  false,                  (optional)
+     *          'isSortable'        =>  true,                   (optional)
+     *          'isAlreadySorted'   =>  false,                  (optional)
+     *          'realColumnName'    =>  '{sql column name}'     (optional)
+     *          'title'             =>  'Title'
+     *      )
+     * )
+     *
+     * @var array
+     */
+    public $headers = array();
+
 
     /**
      * AjaxListTable constructor.
@@ -74,7 +92,42 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     public function prepare_items() {
 
         //  ----------------------------------------
-        //  Column headers
+        //  Columns headers hook
+        //  ----------------------------------------
+
+        /**
+         * Apply filter on empty array.
+         * Filter tag: `headers_{tableSlug}`
+         *
+         * @param array $headers
+         */
+        $headers = apply_filters(
+            'headers_' . $this->slug,               //  Filter tag
+            $this->headers                          //  $headers
+        );
+
+        //  Apply default properties
+
+        foreach( $headers as $slug => $columnArgs ){
+
+            $defaultColumnArgs = array(
+                'isHidden'          =>  false,
+                'isSortable'        =>  false,
+                'isAlreadySorted'   =>  false,
+                'realColumnName'    =>  $slug,
+                'title'             =>  $slug
+            );
+
+            $headers[ $slug ] = array_merge( $defaultColumnArgs, (array) $columnArgs );
+
+        }
+
+        //  Set headers
+
+        $this->headers = $headers;
+
+        //  ----------------------------------------
+        //  Applying columns headers
         //  ----------------------------------------
 
         $columns    = $this->get_columns();
@@ -132,28 +185,65 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     public function get_columns() {
 
-        return $columns = array(
-            'cb'		=> '<input type="checkbox" />',
-            'title'		=> 'Title',
-            'lololol'	=> 'Test1',
-            'director'	=> 'Test2'
-        );
+        $columns = array();
+
+        foreach( $this->headers as $slug => $columnArgs ){
+
+            $columns[ $slug ] = $columnArgs['title'];
+
+        }
+
+        return $columns;
 
     }
 
     public function get_sortable_columns() {
 
-        return $sortable_columns = array(
-            'title'	 	=> array( 'title', false ),	//true means it's already sorted
-            'lololol'	=> array( 'lololol', false ),
-            'director'	=> array( 'director', false )
-        );
+        $sortableColumns = array();
+
+        foreach( $this->headers as $slug => $columnArgs ){
+
+            if( $columnArgs['isSortable'] === true ){
+
+                $sortableColumns[ $slug ] = array( $columnArgs['realColumnName'], $columnArgs['isAlreadySorted'] );
+
+            }
+
+        }
+
+        return $sortableColumns;
 
     }
 
     public function get_hidden_columns() {
 
-        return array();
+        $hiddenColumns = array();
+
+        foreach( $this->headers as $slug => $columnArgs ){
+
+            if( $columnArgs['isHidden'] === true ){
+
+                $hiddenColumns[] = $slug;
+
+            }
+
+        }
+
+        return $hiddenColumns;
+
+    }
+
+    protected function get_views() {
+
+        return array(
+            'all'   =>  sprintf( '<a href="#">All( 20 )</a>' )
+        );
+
+    }
+
+    public function no_items() {
+
+        _e( 'No items found.' );
 
     }
 
