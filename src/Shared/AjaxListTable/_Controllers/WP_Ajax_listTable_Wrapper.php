@@ -295,7 +295,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * @param string $html
          * @param mixed $item
          */
-        $html = apply_filters( 'cell_' . $this->slug . '_cb', $html, $item );
+        $html = apply_filters( 'cell_' . $this->slug . '_cb', $html, $item );   //  TODO Loop problem
 
         return $html;
 
