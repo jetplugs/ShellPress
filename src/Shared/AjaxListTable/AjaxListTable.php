@@ -18,6 +18,19 @@ abstract class AjaxListTable {
     private $isSearchboxVisible = true;
 
     /**
+     * Format:
+     * array(
+     *      array(
+     *          'text'      =>  "Hello",
+     *          'class'     =>  'notice-info'
+     *      )
+     * )
+     *
+     * @var array
+     */
+    private $notices = array();
+
+    /**
      * AjaxListTable constructor.
      *
      * @param string $tableSlug - Unique key
@@ -149,6 +162,42 @@ abstract class AjaxListTable {
 
     }
 
+    /**
+     * Creates checkbox for bulk actions column.
+     *
+     * @param int $itemId
+     *
+     * @return string - Checkbox HTML
+     */
+    public function generateRowCheckbox( $itemId ) {
+
+        return sprintf( '<input type="checkbox" name="bulk-ids[]" value="%1$s">', $itemId );
+
+    }
+
+    /**
+     * Returns HTML of all notices.
+     *
+     * @uses $this->notices
+     *
+     * @return string - HTML
+     */
+    public function getDisplayOfNotices() {
+
+        $html = '';
+
+        foreach( $this->notices as $notice ){
+
+            $classes = array( 'notice', 'is-dismissible', $notice['class'] );
+
+            $html .= sprintf( '<div class="%1$s"><p>%2$s</p></div>', implode( ' ', $classes ), $notice['text'] );
+
+        }
+
+        return $html;
+
+    }
+
     //  ================================================================================
     //  SETTERS
     //  ================================================================================
@@ -217,15 +266,19 @@ abstract class AjaxListTable {
     }
 
     /**
-     * Creates checkbox for bulk actions column.
+     * Add notice above table.
      *
-     * @param int $itemId
-     *
-     * @return string - Checkbox HTML
+     * @param string $text
+     * @param string $class - notice-error, notice-warning, notice-success, notice-info
      */
-    public function generateRowCheckbox( $itemId ) {
+    public function addNotice( $text, $class = 'notice-info' ) {
 
-        return sprintf( '<input type="checkbox" name="bulk-ids[]" value="%1$s">', $itemId );
+        $newNotice = array(
+            'text'      =>  $text,
+            'class'     =>  $class
+        );
+
+        $this->notices[] = $newNotice;
 
     }
 
@@ -245,6 +298,8 @@ abstract class AjaxListTable {
         $this->listTable->prepare_items();
 
         ob_start();
+
+        echo $this->getDisplayOfNotices();
 
         $this->listTable->views();
 
