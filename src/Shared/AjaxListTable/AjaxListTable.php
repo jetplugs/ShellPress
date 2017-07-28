@@ -208,6 +208,15 @@ abstract class AjaxListTable {
     }
 
     /**
+     * @param string $noItemsText - It's visible when there are no rows in table.
+     */
+    public function setNoItemsText( $noItemsText ) {
+
+        $this->listTable->noItemsText = $noItemsText;
+
+    }
+
+    /**
      * Creates checkbox for bulk actions column.
      *
      * @param int $itemId

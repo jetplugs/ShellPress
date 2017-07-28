@@ -40,6 +40,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /** @var string */
     public $search = '';
 
+    public $noItemsText = "No items found.";
+
     /**
      * Table columns headers array.
      *
@@ -261,19 +263,25 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     public function no_items() {
 
-        _e( 'No items found.' );
+        echo $this->noItemsText;
 
     }
 
     public function column_default( $item, $column_name ) {
 
-        return "No cell declaration";
+        $html = '';
 
-    }
-
-    public function column_cb( $item ){
-
-        return sprintf( '<input type="checkbox">' );
+        /**
+         * Apply filter on empty array.
+         * Filter tag: `cell_{tableSlug}`
+         *
+         * @param array $items
+         * @param int $paged
+         * @param string $search
+         * @param string $order
+         * @param string $orderBy
+         */
+        return apply_filters( 'cell_' . $this->slug . '_' . $column_name, $html, $item );
 
     }
 
