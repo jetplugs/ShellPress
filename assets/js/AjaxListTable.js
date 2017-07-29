@@ -176,6 +176,14 @@ jQuery( document ).ready( function( $ ){
                         list.init();
 
                     },
+                    statusCode: {
+                        403: function () {
+
+                            ajaxListTable.html( '<div class="spinner is-active" style="float:none"></div>' );
+                            console.log( "You need to refresh your session." );
+
+                        }
+                    },
                     fail:   function() {
 
                         console.log( "Got an error while calling ListTable AJAX." );
