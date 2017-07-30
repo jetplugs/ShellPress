@@ -151,6 +151,29 @@ jQuery( document ).ready( function( $ ){
 
                 } );
 
+                //  ----------------------------------------
+                //  Dismissible notices
+                //  ----------------------------------------
+
+                ajaxListTable.find( '.notice.is-dismissible' ).each( function() {
+                    var $el = $( this ),
+                        $button = $( '<button type="button" class="notice-dismiss"><span class="screen-reader-text"></span></button>' ),
+                        btnText = commonL10n.dismiss || '';
+
+                    // Ensure plain text
+                    $button.find( '.screen-reader-text' ).text( btnText );
+                    $button.on( 'click.wp-dismiss-notice', function( event ) {
+                        event.preventDefault();
+                        $el.fadeTo( 100, 0, function() {
+                            $el.slideUp( 100, function() {
+                                $el.remove();
+                            });
+                        });
+                    });
+
+                    $el.append( $button );
+                });
+
             },
             update:     function(){
 
