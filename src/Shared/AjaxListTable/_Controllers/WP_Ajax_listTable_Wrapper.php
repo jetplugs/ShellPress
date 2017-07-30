@@ -269,7 +269,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     public function column_default( $item, $column_name ) {
 
-        $html = sprintf( '<div style="color:silver"><b>Filter:</b><br/>cell_%1$s_%2$s</div>', $this->slug, $column_name );
+        $html = '';
 
         /**
          * Apply filter on string.
@@ -295,7 +295,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * @param string $html
          * @param mixed $item
          */
-        $html = apply_filters( 'cell_' . $this->slug . '_cb', $html, $item );   //  TODO Loop problem
+        $html = apply_filters( 'cell_' . $this->slug . '_cb', $html, $item );
 
         return $html;
 
