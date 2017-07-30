@@ -49,8 +49,6 @@ abstract class AjaxListTable {
         //  Actions
         //  ----------------------------------------
 
-        $this->setUp();
-
         add_action( 'wp_ajax_' . $this->getAjaxActionName(),        array( $this, '_a_ajaxResponse') );
 
     }
@@ -294,6 +292,8 @@ abstract class AjaxListTable {
     public function _a_ajaxResponse() {
 
         check_ajax_referer( $this->getAjaxActionName(), 'nonce' );
+
+        $this->setUp();
 
         $this->listTable->prepare_items();
 
