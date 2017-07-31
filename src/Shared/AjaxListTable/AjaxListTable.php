@@ -86,12 +86,12 @@ abstract class AjaxListTable {
     public function getDisplayRoot() {
 
         $attributes = array(
-            sprintf( 'dataTemp-nonce="%1$s"',           wp_create_nonce( $this->getAjaxActionName() ) ),
-            sprintf( 'dataTemp-ajax-action="%1$s"',     $this->getAjaxActionName() ),
-            sprintf( 'dataTemp-paged="%1$s"',           $this->listTable->getPaged() ),
-            sprintf( 'dataTemp-order="%1$s"',           $this->listTable->getOrder() ),
-            sprintf( 'dataTemp-orderby="%1$s"',         $this->listTable->getOrderBy() ),
-            sprintf( 'dataTemp-search="%1$s"',          $this->listTable->getSearch() )
+            sprintf( 'data-nonce="%1$s"',           wp_create_nonce( $this->getAjaxActionName() ) ),
+            sprintf( 'data-ajax-action="%1$s"',     $this->getAjaxActionName() ),
+            sprintf( 'data-paged="%1$s"',           $this->listTable->getPaged() ),
+            sprintf( 'data-order="%1$s"',           $this->listTable->getOrder() ),
+            sprintf( 'data-orderby="%1$s"',         $this->listTable->getOrderBy() ),
+            sprintf( 'data-search="%1$s"',          $this->listTable->getSearch() )
         );
 
         $html = sprintf(
