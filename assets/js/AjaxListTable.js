@@ -178,8 +178,6 @@ jQuery( document ).ready( function( $ ){
                         list.dataTemp.bulkAction    = inputSelect.val();
                         list.dataTemp.bulkItems     = ajaxListTable.find( '.check-column [name="item-id"]:checked' ).map( function(){ return $( this ).val(); } ).get();
 
-                        ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
-
                         list.update();
                     }
 

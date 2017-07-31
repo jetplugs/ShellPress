@@ -40,12 +40,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /** @var string */
     public $search = '';
 
-    /** @var array */
-    public $currentBulkItems = array();
-
-    /** @var string */
-    public $currentBulkAction = false;
-
     /** @var string */
     public $noItemsText = "No items found.";
 
@@ -80,6 +74,12 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      * @var array
      */
     public $bulkActions = array();
+
+    /** @var array */
+    public $currentBulkItems = array();
+
+    /** @var string */
+    public $currentBulkAction = false;
 
 
     /**
