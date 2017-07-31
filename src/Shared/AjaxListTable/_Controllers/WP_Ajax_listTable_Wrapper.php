@@ -40,6 +40,12 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /** @var string */
     public $search = '';
 
+    /** @var array */
+    public $currentBulkItems = array();
+
+    /** @var string */
+    public $currentBulkAction = '';
+
     /** @var string */
     public $noItemsText = "No items found.";
 
@@ -457,6 +463,44 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         } else {
 
             return esc_sql( $this->search );
+
+        }
+
+    }
+
+    /**
+     * Just returns $_REQUEST['bulkaction'] or default value.
+     *
+     * @return string
+     */
+    public function getCurrentBulkAction() {
+
+        if( isset( $_REQUEST['bulkaction'] ) && ! empty( $_REQUEST['bulkaction'] ) ){
+
+            return esc_sql( $_REQUEST['bulkaction'] );
+
+        } else {
+
+            return esc_sql( $this->currentBulkAction );
+
+        }
+
+    }
+
+    /**
+     * Just returns $_REQUEST['bulkitems'] or default value.
+     *
+     * @return array
+     */
+    public function getCurrentBulkItems() {
+
+        if( isset( $_REQUEST['bulkitems'] ) && ! empty( $_REQUEST['bulkitems'] ) ){
+
+            return (array) esc_sql( $_REQUEST['bulkaction'] );
+
+        } else {
+
+            return (array) esc_sql( $this->currentBulkItems );
 
         }
 

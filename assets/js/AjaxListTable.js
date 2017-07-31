@@ -9,13 +9,23 @@ jQuery( document ).ready( function( $ ){
         var ajaxListTable = $( this );
 
         list = {
-            isLocked:   false,
-            init:       function(){
+            isLocked:           false,
+            dataTemp:           {
+                bulkAction:         null,
+                bulkItems:          null
+            },
+            init:               function(){
 
                 // This will have its utility when dealing with the page number input
 
                 var timer;
                 var delay = 500;
+
+                //  ----------------------------------------
+                //  Reset dataTemp
+                //  ----------------------------------------
+
+                list.dataTemp = [];
 
                 //  ----------------------------------------
                 //  CLICK - Pagination links
@@ -33,7 +43,7 @@ jQuery( document ).ready( function( $ ){
                         var query = this.search.substring( 1 );
 
                         //  Writing attributes
-                        ajaxListTable.attr( 'data-paged',       list.__query( query, 'paged' ) || '1' );
+                        ajaxListTable.attr( 'data-paged',       list._query( query, 'paged' ) || '1' );
 
                         list.update();
 
@@ -57,8 +67,8 @@ jQuery( document ).ready( function( $ ){
                         var query = this.search.substring( 1 );
 
                         //  Writing attributes
-                        ajaxListTable.attr( 'data-order', list.__query( query, 'order' ) || 'asc' );
-                        ajaxListTable.attr( 'data-orderby', list.__query( query, 'orderby' ) || 'id' );
+                        ajaxListTable.attr( 'data-order', list._query( query, 'order' ) || 'asc' );
+                        ajaxListTable.attr( 'data-orderby', list._query( query, 'orderby' ) || 'id' );
 
                         list.update();
 
@@ -152,6 +162,30 @@ jQuery( document ).ready( function( $ ){
                 } );
 
                 //  ----------------------------------------
+                //  CLICK - Apply bulk action
+                //  ----------------------------------------
+
+                ajaxListTable.find( '.bulkactions input[type="submit"]' ).on( 'click', function(e) {
+
+                    e.preventDefault();
+
+                    var inputSelect = $( this ).closest( '.bulkactions' ).find( 'select' );
+
+                    if( ! list.isLocked && inputSelect.val() !== '-1' ) {
+
+                        list.isLocked = true;   //  Lock callbacks
+
+                        list.dataTemp.bulkAction    = inputSelect.val();
+                        list.dataTemp.bulkItems     = ajaxListTable.find( '.check-column [name="item-id"]:checked' ).map( function(){ return $( this ).val(); } ).get();
+
+                        ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
+
+                        list.update();
+                    }
+
+                } );
+
+                //  ----------------------------------------
                 //  Dismissible notices
                 //  ----------------------------------------
 
@@ -183,7 +217,7 @@ jQuery( document ).ready( function( $ ){
                 });
 
             },
-            update:     function(){
+            update:             function(){
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
 
@@ -196,7 +230,9 @@ jQuery( document ).ready( function( $ ){
                         paged:      ajaxListTable.attr( 'data-paged' ),
                         order:      ajaxListTable.attr( 'data-order' ),
                         orderby:    ajaxListTable.attr( 'data-orderby' ),
-                        search:     ajaxListTable.attr( 'data-search' )
+                        search:     ajaxListTable.attr( 'data-search' ),
+                        bulkaction: list.dataTemp.bulkAction || '',
+                        bulkitems:  list.dataTemp.bulkItems || ''
                     },
                     success: function( response ) {
 
@@ -228,7 +264,7 @@ jQuery( document ).ready( function( $ ){
                 } );
 
             },
-            __query:    function( query, variable ) {
+            _query:         function( query, variable ) {
 
                 var vars = query.split("&");
 
