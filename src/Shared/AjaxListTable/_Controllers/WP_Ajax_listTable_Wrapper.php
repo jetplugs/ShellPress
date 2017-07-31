@@ -40,6 +40,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /** @var string */
     public $search = '';
 
+    /** @var string */
     public $noItemsText = "No items found.";
 
     /**
@@ -59,6 +60,20 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      * @var array
      */
     public $headers = array();
+
+    /**
+     * Bulk actions array.
+     *
+     * Format:
+     * array(
+     *      '{slug}'    =>  array(
+     *          'title'     =>  'Title'     (optional)
+     *      )
+     * )
+     *
+     * @var array
+     */
+    public $bulkActions = array();
 
 
     /**
@@ -195,11 +210,39 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    public function prepare_bulk_actions() {
+
+        $bulkActions = array();
+
+        $bulkActions = apply_filters( 'bulk_' . $this->slug, $bulkActions );
+
+        //  Set default arguments ( if not set )
+
+        foreach( $bulkActions as $slug => $actionArgs ){
+
+            $defaultActionArgs = array(
+                'title'             =>  $slug
+            );
+
+            $bulkActions[ $slug ] = array_merge( $defaultActionArgs, (array) $actionArgs );
+
+        }
+
+        $this->bulkActions = $bulkActions;
+
+    }
+
     public function get_bulk_actions() {
 
-        return $actions = array(
-            'delete'	=>  'Delete'
-        );
+        $bulkActions = array();
+
+        foreach( $this->bulkActions as $slug => $actionArgs ){
+
+            $bulkActions[ $slug ] = $actionArgs['title'];
+
+        }
+
+        return $bulkActions;
 
     }
 
