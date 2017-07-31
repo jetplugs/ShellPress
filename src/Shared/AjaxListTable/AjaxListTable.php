@@ -17,6 +17,9 @@ abstract class AjaxListTable {
     /** @var bool */
     private $isSearchboxVisible = true;
 
+    /** @var bool */
+    private $isEndOfSetUp = false;
+
     /**
      * Format:
      * array(
@@ -51,13 +54,27 @@ abstract class AjaxListTable {
 
         add_action( 'wp_ajax_' . $this->getAjaxActionName(),        array( $this, '_a_ajaxResponse') );
 
+        //  ----------------------------------------
+        //  Set up
+        //  ----------------------------------------
+
+        $this->setUp();
+
+        $this->isEndOfSetUp = true; //  For now dynamic setters will set parameters in global $_REQUEST
+
     }
 
     /**
      * Extend this method.
-     * It's called automatically.
+     * It's called automatically on object creation.
      */
     protected abstract function setUp();
+
+    /**
+     * Extend this method.
+     * It's called automatically in ajax response.
+     */
+    protected abstract function loadTable();
 
     //  ================================================================================
     //  ADVANCED GETTERS
@@ -69,12 +86,12 @@ abstract class AjaxListTable {
     public function getDisplayRoot() {
 
         $attributes = array(
-            sprintf( 'data-nonce="%1$s"',           wp_create_nonce( $this->getAjaxActionName() ) ),
-            sprintf( 'data-ajax-action="%1$s"',     $this->getAjaxActionName() ),
-            sprintf( 'data-paged="%1$s"',           $this->listTable->getPaged() ),
-            sprintf( 'data-order="%1$s"',           $this->listTable->getOrder() ),
-            sprintf( 'data-orderby="%1$s"',         $this->listTable->getOrderBy() ),
-            sprintf( 'data-search="%1$s"',          $this->listTable->getSearch() )
+            sprintf( 'dataTemp-nonce="%1$s"',           wp_create_nonce( $this->getAjaxActionName() ) ),
+            sprintf( 'dataTemp-ajax-action="%1$s"',     $this->getAjaxActionName() ),
+            sprintf( 'dataTemp-paged="%1$s"',           $this->listTable->getPaged() ),
+            sprintf( 'dataTemp-order="%1$s"',           $this->listTable->getOrder() ),
+            sprintf( 'dataTemp-orderby="%1$s"',         $this->listTable->getOrderBy() ),
+            sprintf( 'dataTemp-search="%1$s"',          $this->listTable->getSearch() )
         );
 
         $html = sprintf(
@@ -169,7 +186,7 @@ abstract class AjaxListTable {
      */
     public function generateRowCheckbox( $itemId ) {
 
-        return sprintf( '<input type="checkbox" name="bulk-ids[]" value="%1$s">', $itemId );
+        return sprintf( '<input type="checkbox" name="item-id" value="%1$s">', $itemId );
 
     }
 
@@ -207,6 +224,12 @@ abstract class AjaxListTable {
 
         $this->listTable->totalItems = $totalItems;
 
+        if( $this->isEndOfSetUp ){
+
+            $_REQUEST['totalitems'] = $totalItems;
+
+        }
+
     }
 
     /**
@@ -215,6 +238,12 @@ abstract class AjaxListTable {
     public function setOrder( $order ) {
 
         $this->listTable->order = $order;
+
+        if( $this->isEndOfSetUp ){
+
+            $_REQUEST['order'] = $order;
+
+        }
 
     }
 
@@ -225,6 +254,12 @@ abstract class AjaxListTable {
 
         $this->listTable->orderBy = $orderBy;
 
+        if( $this->isEndOfSetUp ){
+
+            $_REQUEST['orderby'] = $orderBy;
+
+        }
+
     }
 
     /**
@@ -233,6 +268,12 @@ abstract class AjaxListTable {
     public function setPaged( $paged ) {
 
         $this->listTable->paged = $paged;
+
+        if( $this->isEndOfSetUp ){
+
+            $_REQUEST['paged'] = $paged;
+
+        }
 
     }
 
@@ -243,6 +284,12 @@ abstract class AjaxListTable {
 
         $this->listTable->itemsPerPage = $itemsPerPage;
 
+        if( $this->isEndOfSetUp ){
+
+            $_REQUEST['itemsperpage'] = $$itemsPerPage;
+
+        }
+
     }
 
     /**
@@ -251,6 +298,12 @@ abstract class AjaxListTable {
     public function setSearch( $search ) {
 
         $this->listTable->search = $search;
+
+        if( $this->isEndOfSetUp ){
+
+            $_REQUEST['search'] = $search;
+
+        }
 
     }
 
@@ -293,11 +346,15 @@ abstract class AjaxListTable {
 
         check_ajax_referer( $this->getAjaxActionName(), 'nonce' );
 
-        $this->setUp();
+        $this->loadTable();
+
+        $this->listTable->prepare_bulk_actions();
 
         $this->listTable->prepare_items();
 
         ob_start();
+
+        printf( '<pre>%1$s</pre>', print_r( $_REQUEST, true ) );
 
         echo $this->getDisplayOfNotices();
 
