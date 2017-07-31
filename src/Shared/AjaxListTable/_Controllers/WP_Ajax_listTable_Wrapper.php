@@ -44,7 +44,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     public $currentBulkItems = array();
 
     /** @var string */
-    public $currentBulkAction = '';
+    public $currentBulkAction = false;
 
     /** @var string */
     public $noItemsText = "No items found.";
@@ -235,6 +235,24 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         }
 
         $this->bulkActions = $bulkActions;
+
+    }
+
+    public function process_bulk_action() {
+
+        if( $this->getCurrentBulkAction() ){
+
+            $itemsIds = (array) $this->getCurrentBulkItems();
+
+            /**
+             * Do bulk action.
+             * Action tag: `bulk_{tableSlug}_(currentBulkActionSlug)`
+             *
+             * @param array $itemsIds
+             */
+            do_action( 'bulk_' . $this->slug . '_' . $this->getCurrentBulkAction(), $itemsIds );
+
+        }
 
     }
 
@@ -496,11 +514,11 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         if( isset( $_REQUEST['bulkitems'] ) && ! empty( $_REQUEST['bulkitems'] ) ){
 
-            return (array) esc_sql( $_REQUEST['bulkaction'] );
+            return (array) $_REQUEST['bulkitems'];
 
         } else {
 
-            return (array) esc_sql( $this->currentBulkItems );
+            return (array) $this->currentBulkItems;
 
         }
 

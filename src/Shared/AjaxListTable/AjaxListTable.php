@@ -349,6 +349,7 @@ abstract class AjaxListTable {
         $this->loadTable();
 
         $this->listTable->prepare_bulk_actions();
+        $this->listTable->process_bulk_action();
 
         $this->listTable->prepare_items();
 
