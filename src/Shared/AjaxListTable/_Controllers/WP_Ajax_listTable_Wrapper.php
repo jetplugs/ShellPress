@@ -12,6 +12,9 @@ namespace shellpress\v1_0_4\src\Shared\AjaxListTable\_Controllers;
  * This class just extends the modified version of WP_List_Table.
  * It sets up some basic hooks for you.
  *
+ * The code style is different in some parts of class, because it extends
+ * the core class WP_List_Table - made by WordPress team.
+ *
  * @package shellpress\v1_0_4\src\Shared
  */
 class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
@@ -61,25 +64,17 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public $headers = array();
 
-    /**
-     * Bulk actions array.
-     *
-     * Format:
-     * array(
-     *      '{slug}'    =>  array(
-     *          'title'     =>  'Title'     (optional)
-     *      )
-     * )
-     *
-     * @var array
-     */
-    public $bulkActions = array();
-
     /** @var array */
     public $currentBulkItems = array();
 
-    /** @var string */
-    public $currentBulkAction = false;
+    /** @var string|null */
+    public $currentBulkAction = null;
+
+    /** @var string|null */
+    public $currentRowAction = null;
+
+    /** @var string|null */
+    public $currentRowItem = null;
 
 
     /**
@@ -112,6 +107,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     //  LIST TABLE SPECIFIC METHODS
     //  ================================================================================
 
+    /**
+     * **** WP_List_Table specific
+     */
     public function prepare_items() {
 
         //  ----------------------------------------
@@ -216,28 +214,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
-    public function prepare_bulk_actions() {
-
-        $bulkActions = array();
-
-        $bulkActions = apply_filters( 'bulk_' . $this->slug, $bulkActions );
-
-        //  Set default arguments ( if not set )
-
-        foreach( $bulkActions as $slug => $actionArgs ){
-
-            $defaultActionArgs = array(
-                'title'             =>  $slug
-            );
-
-            $bulkActions[ $slug ] = array_merge( $defaultActionArgs, (array) $actionArgs );
-
-        }
-
-        $this->bulkActions = $bulkActions;
-
-    }
-
+    /**
+     * Should be called before $this->prepare_items()
+     */
     public function process_bulk_action() {
 
         if( $this->getCurrentBulkAction() ){
@@ -256,20 +235,47 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return array
+     */
     public function get_bulk_actions() {
 
         $bulkActions = array();
 
-        foreach( $this->bulkActions as $slug => $actionArgs ){
-
-            $bulkActions[ $slug ] = $actionArgs['title'];
-
-        }
+        $bulkActions = apply_filters( 'bulk_' . $this->slug, $bulkActions );
 
         return $bulkActions;
 
     }
 
+    /**
+     * Should be called before $this->prepare_items()
+     */
+    public function process_row_action() {
+
+        if( $this->getCurrentRowAction() ){
+
+            $itemId = $this->getCurrentRowItem();
+
+            /**
+             * Do row action.
+             * Action tag: `action_{tableSlug}_(currentRowActionSlug)`
+             *
+             * @param string $itemId
+             */
+            do_action( 'action_' . $this->slug . '_' . $this->getCurrentRowAction(), $this->getCurrentRowItem() );
+
+        }
+
+    }
+
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return array
+     */
     public function get_columns() {
 
         $columns = array();
@@ -284,6 +290,11 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return array
+     */
     public function get_sortable_columns() {
 
         $sortableColumns = array();
@@ -302,6 +313,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * @return array
+     */
     public function get_hidden_columns() {
 
         $hiddenColumns = array();
@@ -320,6 +334,11 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return array
+     */
     protected function get_views() {
 
         return array(
@@ -328,12 +347,22 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return void
+     */
     public function no_items() {
 
         echo $this->noItemsText;
 
     }
 
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return string
+     */
     public function column_default( $item, $column_name ) {
 
         $html = '';
@@ -351,6 +380,11 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return string
+     */
     public function column_cb( $item ) {
 
         $html = '';
@@ -514,11 +548,49 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         if( isset( $_REQUEST['bulkitems'] ) && ! empty( $_REQUEST['bulkitems'] ) ){
 
-            return (array) $_REQUEST['bulkitems'];
+            return (array) esc_sql( $_REQUEST['bulkitems'] );
 
         } else {
 
-            return (array) $this->currentBulkItems;
+            return (array) esc_sql( $this->currentBulkItems );
+
+        }
+
+    }
+
+    /**
+     * Just returns $_REQUEST['rowaction'] or default value.
+     *
+     * @return string
+     */
+    public function getCurrentRowAction() {
+
+        if( isset( $_REQUEST['rowaction'] ) && ! empty( $_REQUEST['rowaction'] ) ){
+
+            return esc_sql( $_REQUEST['rowaction'] );
+
+        } else {
+
+            return esc_sql( $this->currentRowAction );
+
+        }
+
+    }
+
+    /**
+     * Just returns $_REQUEST['rowitem'] or default value.
+     *
+     * @return string
+     */
+    public function getCurrentRowItem() {
+
+        if( isset( $_REQUEST['rowitem'] ) && ! empty( $_REQUEST['rowitem'] ) ){
+
+            return esc_sql( $_REQUEST['rowitem'] );
+
+        } else {
+
+            return esc_sql( $this->currentRowItem );
 
         }
 
