@@ -221,81 +221,64 @@ abstract class AjaxListTable {
     /**
      * Creates row actions.
      *
-     * @param array $allActionsArgs = array(
+     * $actions = array(
      *      {actionSlug}    =>  array(
      *          'title'         =>  "Title",        //  (optional)
-     *          'id'            =>  13,             //  (optional)
-     *          'url'           =>  "#",            //  (optional)
-     *          'class'         =>  array( 'link' ) //  (optional)
+     *          'url'           =>  '#',            //  (optional)
+     *          'ajax'          =>  false           //  (optional)
      *      )
      * )
-     * @param bool $alwaysVisible
+     *
+     * @param array $actions
+     * @param string $itemId - ID of your item
+     * @param bool  $alwaysVisible
      *
      * @return string - Whole row actions HTML
      */
-    public function generateRowActions( $allActionsArgs, $alwaysVisible = false ) {
+    public function generateRowActions( $actions, $itemId = null, $alwaysVisible = false ) {
 
-        //  ----------------------------------------
-        //  Prepare action links
-        //  ----------------------------------------
+        $rowActions = array();
 
-        $actionLinksArray = array();
+        foreach( $actions as $actionSlug => $actionArgs ){
 
-        $allActionsArgs = array(
-            'delete'    =>  array(
-                'title'     =>  __( "Delete", 'mailboo' ),
-                'id'        =>  12,
-                'url'       =>  '',
-                'class'     =>  'lol'
-            )
-        );
-
-        foreach( $allActionsArgs as $actionSlug => $actionArgs ){
-
-            //  Apply default arguments
+            //  ----------------------------------------
+            //  Default arguments
+            //  ----------------------------------------
 
             $defaultActionArgs = array(
-                'title'         =>  $actionArgs['id'],
-                'id'            =>  null,
-                'url'           =>  '#',
-                'class'         =>  array()
+                'title'     =>  $actionSlug,
+                'url'       =>  '',
+                'ajax'      =>  false
             );
 
             $actionArgs = array_merge( $defaultActionArgs, $actionArgs );
 
-            //  Create whole link string
+            //  ----------------------------------------
+            //  Link tag attributes
+            //  ----------------------------------------
 
-            $actionLinksArray = sprintf(
-                '<span class="%1$s"><a href="%2$s" %3$s>%4$s</a></span>',
-                implode( ' ', (array) $actionArgs['class'] + array( $actionSlug ) ),
-                $actionArgs['url'],
-                ( $actionArgs['id'] ) ? '' : '',
-                $actionArgs['title']
-            );
+            $tagAttributes = array();
+
+            $tagAttributes[]        = sprintf( 'href="%1$s"', esc_attr( $actionArgs['url'] ) );
+
+            if( $actionArgs['ajax'] === true ){
+
+                $tagAttributes[]    = sprintf( 'data-row-action="%1$s"', $actionSlug );
+                $tagAttributes[]    = sprintf( 'data-row-item="%1$s"', $itemId );
+
+            }
+
+            $tagAttributesString = implode( '', $tagAttributes );
+
+            //  ----------------------------------------
+            //  Row action declaration
+            //  ----------------------------------------
+
+            $rowActions[ $actionSlug ] = sprintf( '<a %1$s>%2$s</a>', $tagAttributesString, $actionArgs['title'] );
 
         }
 
-        $actionLinksString = implode( ' | ', $actionLinksArray );
-
-        //  ----------------------------------------
-        //  Prepare wrapper div
-        //  ----------------------------------------
-
-        $rowClassesArray = array( 'row-actions' );
-
-        if( $alwaysVisible ){
-
-            $rowClassesArray[] = 'visible';
-
-        }
-
-        $rowClassesString = implode( ' ', $rowClassesArray );
-
-        //  ----------------------------------------
-        //  Combine all and return HTML
-        //  ----------------------------------------
-
-        return sprintf( '<div class="%1$s">%2$s</div>', $rowClassesString, $actionLinksString );
+        return $this->listTable->row_actions( $rowActions, $alwaysVisible );
 
     }
 

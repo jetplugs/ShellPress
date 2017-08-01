@@ -341,9 +341,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     protected function get_views() {
 
-        return array(
-            'all'   =>  sprintf( '<a href="#">All( 20 )</a>' )
-        );
+        return array();
 
     }
 

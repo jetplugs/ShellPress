@@ -499,7 +499,7 @@ abstract class WP_Ajax_List_Table {
 	 * @param bool $always_visible Whether the actions should be always visible
 	 * @return string
 	 */
-	protected function row_actions( $actions, $always_visible = false ) {
+	public function row_actions( $actions, $always_visible = false ) {
 		$action_count = count( $actions );
 		$i = 0;
 

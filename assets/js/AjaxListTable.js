@@ -12,7 +12,9 @@ jQuery( document ).ready( function( $ ){
             isLocked:           false,
             dataTemp:           {
                 bulkAction:         null,
-                bulkItems:          null
+                bulkItems:          null,
+                rowAction:          null,
+                rowItem:            null
             },
             init:               function(){
 
@@ -184,6 +186,26 @@ jQuery( document ).ready( function( $ ){
                 } );
 
                 //  ----------------------------------------
+                //  CLICK - Row action
+                //  ----------------------------------------
+
+                ajaxListTable.find( '.row-actions [data-row-action]' ).on( 'click', function(e) {
+
+                    e.preventDefault();
+
+                    if( ! list.isLocked ) {
+
+                        list.isLocked = true;   //  Lock callbacks
+
+                        list.dataTemp.rowAction     = $( this ).attr( 'data-row-action' );
+                        list.dataTemp.rowItem       = $( this ).attr( 'data-row-item' );
+
+                        list.update();
+                    }
+
+                } );
+
+                //  ----------------------------------------
                 //  Dismissible notices
                 //  ----------------------------------------
 
@@ -230,7 +252,9 @@ jQuery( document ).ready( function( $ ){
                         orderby:    ajaxListTable.attr( 'data-orderby' ),
                         search:     ajaxListTable.attr( 'data-search' ),
                         bulkaction: list.dataTemp.bulkAction || '',
-                        bulkitems:  list.dataTemp.bulkItems || ''
+                        bulkitems:  list.dataTemp.bulkItems || '',
+                        rowaction:  list.dataTemp.rowAction || '',
+                        rowitem:    list.dataTemp.rowItem || ''
                     },
                     success: function( response ) {
 
