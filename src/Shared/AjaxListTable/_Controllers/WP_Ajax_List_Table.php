@@ -1160,9 +1160,6 @@ abstract class WP_Ajax_List_Table {
 	 * @param string $which
 	 */
 	protected function display_tablenav( $which ) {
-		if ( 'top' === $which ) {
-			wp_nonce_field( 'bulk-' . $this->_args['plural'] );
-		}
 		?>
 	<div class="tablenav <?php echo esc_attr( $which ); ?>">
 
