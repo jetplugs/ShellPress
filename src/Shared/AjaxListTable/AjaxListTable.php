@@ -18,6 +18,9 @@ abstract class AjaxListTable {
     private $isSearchboxVisible = true;
 
     /** @var bool */
+    private $isListOfViewsVisible = true;
+
+    /** @var bool */
     private $isEndOfSetUp = false;
 
     /**
@@ -91,7 +94,8 @@ abstract class AjaxListTable {
             sprintf( 'data-paged="%1$s"',           $this->listTable->getPaged() ),
             sprintf( 'data-order="%1$s"',           $this->listTable->getOrder() ),
             sprintf( 'data-orderby="%1$s"',         $this->listTable->getOrderBy() ),
-            sprintf( 'data-search="%1$s"',          $this->listTable->getSearch() )
+            sprintf( 'data-search="%1$s"',          $this->listTable->getSearch() ),
+            sprintf( 'data-view="%1$s"',            $this->listTable->getView() )
         );
 
         $html = sprintf(
@@ -174,6 +178,25 @@ abstract class AjaxListTable {
         }
 
         return $this->isSearchboxVisible;
+
+    }
+
+    /**
+     * Gets list of views visibility.
+     *
+     * @param bool $isVisible - if set, this method works as setter
+     *
+     * @return bool
+     */
+    public function isListOfViewsVisible( $isVisible = null ) {
+
+        if( $isVisible !== null ){
+
+            $this->isListOfViewsVisible = $isVisible;
+
+        }
+
+        return $this->isListOfViewsVisible;
 
     }
 
@@ -426,7 +449,11 @@ abstract class AjaxListTable {
 
         echo $this->getDisplayOfNotices();
 
-        $this->listTable->views();
+        if( $this->isListOfViewsVisible() ){
+
+            $this->listTable->views();
+
+        }
 
         if( $this->isSearchboxVisible() ){
 

@@ -44,6 +44,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     public $search = '';
 
     /** @var string */
+    public $view = 'default';
+
+    /** @var string */
     public $noItemsText = "No items found.";
 
     /**
@@ -188,6 +191,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * @param string $search
          * @param string $order
          * @param string $orderBy
+         * @param string $view
          */
         $this->items = apply_filters(
             'items_' . $this->slug,     //  Filter tag
@@ -195,7 +199,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
             $this->getPaged(),          //  $paged
             $this->getSearch(),         //  $search
             $this->getOrder(),          //  $order
-            $this->getOrderBy()         //  $orderBy
+            $this->getOrderBy(),        //  $orderBy
+            $this->getView()            //  $view
         );
 
         //  ----------------------------------------
@@ -341,7 +346,57 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     protected function get_views() {
 
-        return array();
+        $views = array(
+            'default'   =>  __( "All" )
+        );
+
+        /**
+         * Apply filter on array.
+         * Filter tag: `views_{tableSlug}`
+         *
+         * @param array $views
+         */
+        $views = apply_filters( 'views_' . $this->slug, $views );
+
+        return $views;
+
+    }
+
+    /**
+     * **** WP_List_Table specific
+     */
+    public function views() {
+
+        $views = $this->get_views();
+
+        //  ----------------------------------------
+        //  Prepare inside
+        //  ----------------------------------------
+
+        if ( ! empty( $views ) ){
+
+            $viewsLinks = array();
+
+            foreach ( $views as $slug => $view ) {
+
+                $viewsLinks[ $slug ] = sprintf( '<li class="%1$s"><a class="%2$s" href="%3$s" data-value="%1$s">%4$s</a></li>',
+                    $slug,
+                    ( $this->getView() === $slug ) ? 'current' : '',
+                    '',
+                    $view
+                );
+
+            }
+
+            //  ----------------------------------------
+            //  Display whole list
+            //  ----------------------------------------
+
+            printf( '<ul class="subsubsub">%1$s</ul>',
+                implode( " | ", $viewsLinks )
+            );
+
+        }
 
     }
 
@@ -513,6 +568,25 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         } else {
 
             return esc_sql( $this->search );
+
+        }
+
+    }
+
+    /**
+     * Just returns $_REQUEST['view'] or default value.
+     *
+     * @return string
+     */
+    public function getView() {
+
+        if( isset( $_REQUEST['view'] ) && ! empty( $_REQUEST['view'] ) ){
+
+            return esc_sql( $_REQUEST['view'] );
+
+        } else {
+
+            return esc_sql( $this->view );
 
         }
 

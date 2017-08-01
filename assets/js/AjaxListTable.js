@@ -164,6 +164,26 @@ jQuery( document ).ready( function( $ ){
                 } );
 
                 //  ----------------------------------------
+                //  CLICK - Search
+                //  ----------------------------------------
+
+                ajaxListTable.find( '.subsubsub a[data-value]' ).on( 'click', function(e) {
+
+                    e.preventDefault();
+
+                    if( ! list.isLocked ) {
+
+                        list.isLocked = true;   //  Lock callbacks
+
+                        ajaxListTable.attr( 'data-view', $( this ).attr( 'data-value' ) || '' );
+                        ajaxListTable.attr( 'data-paged', 1 );   //  Reset pagination
+
+                        list.update();
+                    }
+
+                } );
+
+                //  ----------------------------------------
                 //  CLICK - Apply bulk action
                 //  ----------------------------------------
 
@@ -251,6 +271,7 @@ jQuery( document ).ready( function( $ ){
                         order:      ajaxListTable.attr( 'data-order' ),
                         orderby:    ajaxListTable.attr( 'data-orderby' ),
                         search:     ajaxListTable.attr( 'data-search' ),
+                        view:       ajaxListTable.attr( 'data-view' ),
                         bulkaction: list.dataTemp.bulkAction || '',
                         bulkitems:  list.dataTemp.bulkItems || '',
                         rowaction:  list.dataTemp.rowAction || '',
