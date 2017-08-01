@@ -178,19 +178,6 @@ abstract class AjaxListTable {
     }
 
     /**
-     * Creates checkbox for bulk actions column.
-     *
-     * @param int $itemId
-     *
-     * @return string - Checkbox HTML
-     */
-    public function generateRowCheckbox( $itemId ) {
-
-        return sprintf( '<input type="checkbox" name="item-id" value="%1$s">', $itemId );
-
-    }
-
-    /**
      * Returns HTML of all notices.
      *
      * @uses $this->notices
@@ -210,6 +197,105 @@ abstract class AjaxListTable {
         }
 
         return $html;
+
+    }
+
+    //  ================================================================================
+    //  GENERATORS
+    //  ================================================================================
+
+    /**
+     * Creates checkbox for bulk actions column.
+     *
+     * @param int $itemId
+     *
+     * @return string - Checkbox HTML
+     */
+    public function generateRowCheckbox( $itemId ) {
+
+        return sprintf( '<input type="checkbox" name="item-id" value="%1$s">', $itemId );
+
+    }
+
+
+    /**
+     * Creates row actions.
+     *
+     * @param array $allActionsArgs = array(
+     *      {actionSlug}    =>  array(
+     *          'title'         =>  "Title",        //  (optional)
+     *          'id'            =>  13,             //  (optional)
+     *          'url'           =>  "#",            //  (optional)
+     *          'class'         =>  array( 'link' ) //  (optional)
+     *      )
+     * )
+     * @param bool $alwaysVisible
+     *
+     * @return string - Whole row actions HTML
+     */
+    public function generateRowActions( $allActionsArgs, $alwaysVisible = false ) {
+
+        //  ----------------------------------------
+        //  Prepare action links
+        //  ----------------------------------------
+
+        $actionLinksArray = array();
+
+        $allActionsArgs = array(
+            'delete'    =>  array(
+                'title'     =>  __( "Delete", 'mailboo' ),
+                'id'        =>  12,
+                'url'       =>  '',
+                'class'     =>  'lol'
+            )
+        );
+
+        foreach( $allActionsArgs as $actionSlug => $actionArgs ){
+
+            //  Apply default arguments
+
+            $defaultActionArgs = array(
+                'title'         =>  $actionArgs['id'],
+                'id'            =>  null,
+                'url'           =>  '#',
+                'class'         =>  array()
+            );
+
+            $actionArgs = array_merge( $defaultActionArgs, $actionArgs );
+
+            //  Create whole link string
+
+            $actionLinksArray = sprintf(
+                '<span class="%1$s"><a href="%2$s" %3$s>%4$s</a></span>',
+                implode( ' ', (array) $actionArgs['class'] + array( $actionSlug ) ),
+                $actionArgs['url'],
+                ( $actionArgs['id'] ) ? '' : '',
+                $actionArgs['title']
+            );
+
+        }
+
+        $actionLinksString = implode( ' | ', $actionLinksArray );
+
+        //  ----------------------------------------
+        //  Prepare wrapper div
+        //  ----------------------------------------
+
+        $rowClassesArray = array( 'row-actions' );
+
+        if( $alwaysVisible ){
+
+            $rowClassesArray[] = 'visible';
+
+        }
+
+        $rowClassesString = implode( ' ', $rowClassesArray );
+
+        //  ----------------------------------------
+        //  Combine all and return HTML
+        //  ----------------------------------------
+
+        return sprintf( '<div class="%1$s">%2$s</div>', $rowClassesString, $actionLinksString );
 
     }
 
