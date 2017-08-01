@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_0_4;
+namespace shellpress\v1_0_5;
 
-use shellpress\v1_0_4\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_4\src\Factory\Factory;
-use shellpress\v1_0_4\src\Logger;
+use shellpress\v1_0_5\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_5\src\Factory\Factory;
+use shellpress\v1_0_5\src\Logger;
 
 
 /**
@@ -12,6 +12,9 @@ use shellpress\v1_0_4\src\Logger;
  *
  * Changelog
  * ----------------------------------
+ * v1_0_5:
+ * + Ajax ListTable
+ *
  * v1_0_4:
  * + Every class property has been moved to single array
  *
@@ -203,7 +206,7 @@ class ShellPress {
      */
 	private static function _initAutoloader() {
 
-        if( ! class_exists( 'shellpress\v1_0_4\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_0_5\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
             require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
@@ -213,7 +216,7 @@ class ShellPress {
 
         $autoloaderArgs['object'] = new Psr4AutoloaderClass();
         $autoloaderArgs['object']->register();
-        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_4', __DIR__ );
+        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_5', __DIR__ );
 
     }
 
