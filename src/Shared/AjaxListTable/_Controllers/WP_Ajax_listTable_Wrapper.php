@@ -187,6 +187,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * Filter tag: `items_{tableSlug}`
          *
          * @param array $items
+         * @param int $itemsPerPage
          * @param int $paged
          * @param string $search
          * @param string $order
@@ -196,6 +197,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         $this->items = apply_filters(
             'items_' . $this->slug,     //  Filter tag
             array(),                    //  $items
+            $this->getItemsPerPage(),          //  $itemsPerPage
             $this->getPaged(),          //  $paged
             $this->getSearch(),         //  $search
             $this->getOrder(),          //  $order
