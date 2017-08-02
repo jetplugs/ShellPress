@@ -256,6 +256,16 @@
 
                 });
 
+                //  ----------------------------------------
+                //  Toggle row visibility
+                //  ----------------------------------------
+
+                ajaxListTable.find( 'button.toggle-row' ).on( 'click', function( e ){
+
+                    $( this ).closest( 'tr' ).toggleClass( 'is-expanded' );
+
+                } );
+
             },
             update:             function(){
 
