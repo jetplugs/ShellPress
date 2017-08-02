@@ -2,7 +2,7 @@
  * Created by jakubkuranda@gmail.com on 2017-07-25.
  */
 
-jQuery( document ).ready( function( $ ){
+( function( $ ) {
 
     $.fn.ShellPressAjaxListTable = function( args ){
 
@@ -332,4 +332,4 @@ jQuery( document ).ready( function( $ ){
 
     };
 
-} );
+}( jQuery ) );
