@@ -251,6 +251,12 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         $bulkActions = array();
 
+        /**
+         * Apply filter on empty array.
+         * Filter tag: `bulk_{tableSlug}`
+         *
+         * @param array $bulkActions
+         */
         $bulkActions = apply_filters( 'bulk_' . $this->slug, $bulkActions );
 
         return $bulkActions;
