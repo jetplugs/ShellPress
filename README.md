@@ -22,6 +22,10 @@ _ShellPress_ comes with built in, easy to use class autoloader.
 - PHP 5.3 ( namespacing of course )
 - Knwoledge about PS4 http://www.php-fig.org/psr/psr-4/
 
+# Documentation
+
+[GitHub Wiki](https://github.com/dualjack/ShellPress/wiki) - in progress.
+
 # Qucik start
 
 Create new class which extends ShellPress.
