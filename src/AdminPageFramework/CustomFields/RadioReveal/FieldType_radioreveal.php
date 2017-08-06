@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_5\src\AdminPageFramework\CustomFields\RadioReveal;
+namespace shellpress\v1_0_6\src\AdminPageFramework\CustomFields\RadioReveal;
 
 /**
  * @author jakubkuranda@gmail.com

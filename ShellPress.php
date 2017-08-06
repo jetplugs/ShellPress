@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_0_5;
+namespace shellpress\v1_0_6;
 
-use shellpress\v1_0_5\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_5\src\Factory\Factory;
-use shellpress\v1_0_5\src\Logger;
+use shellpress\v1_0_6\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_6\src\Factory\Factory;
+use shellpress\v1_0_6\src\Logger;
 
 
 /**
@@ -206,7 +206,7 @@ class ShellPress {
      */
 	private static function _initAutoloader() {
 
-        if( ! class_exists( 'shellpress\v1_0_5\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_0_6\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
             require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
@@ -216,7 +216,7 @@ class ShellPress {
 
         $autoloaderArgs['object'] = new Psr4AutoloaderClass();
         $autoloaderArgs['object']->register();
-        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_5', __DIR__ );
+        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_6', __DIR__ );
 
     }
 

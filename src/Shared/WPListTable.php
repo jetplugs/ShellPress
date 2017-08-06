@@ -1,16 +1,16 @@
 <?php
-namespace shellpress\v1_0_5\src\Shared;
+namespace shellpress\v1_0_6\src\Shared;
 
 
-use shellpress\v1_0_5\lib\_Includes\WP_List_Table;
-use shellpress\v1_0_5\ShellPress;
+use shellpress\v1_0_6\lib\_Includes\WP_List_Table;
+use shellpress\v1_0_6\ShellPress;
 
 /**
  * Class WPListTable
  *
  * @deprecated
  *
- * @package shellpress\v1_0_5\src\Shared
+ * @package shellpress\v1_0_6\src\Shared
  */
 class WPListTable extends WP_List_Table {
 
