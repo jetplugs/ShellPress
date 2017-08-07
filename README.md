@@ -20,7 +20,7 @@ _ShellPress_ comes with built in, easy to use class autoloader.
 
 # Requirements
 - PHP 5.3 ( namespacing of course )
-- Knwoledge about PS4 http://www.php-fig.org/psr/psr-4/
+- Knwoledge about PSR-4 http://www.php-fig.org/psr/psr-4/
 
 # Documentation
 
@@ -29,6 +29,10 @@ _ShellPress_ comes with built in, easy to use class autoloader.
 # Qucik start
 
 Create new class which extends ShellPress.
+In this quick snippet I namespaced file App.php with `myname\pluginname` and pointed `\src` folder.
+
+That's how PSR-4 works. Every file have namespace build with `your name` \ `plugin prefix` \ `relative path`
+
 ```
 <?php
 namespace myname\pluginname\src;
