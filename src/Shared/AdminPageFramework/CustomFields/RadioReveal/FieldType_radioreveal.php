@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_6\src\AdminPageFramework\CustomFields\RadioReveal;
+namespace tmc\mailboo\src\Shared\AdminPageFramework\CustomFields\RadioReveal;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,10 +7,9 @@ namespace shellpress\v1_0_6\src\AdminPageFramework\CustomFields\RadioReveal;
  * Time: 01:51
  */
 
-use MailBoo_AdminPageFramework_FieldType_radio;
-use MailBoo_AdminPageFramework_Input_radio;
+use SP_v1_0_6_AdminPageFramework_FieldType_radio;
 
-class FieldType_radioreveal extends MailBoo_AdminPageFramework_FieldType_radio {
+class FieldType_radioreveal extends SP_v1_0_6_AdminPageFramework_FieldType_radio {
 
     /**
      * Defines the field type slugs used for this field type.
@@ -66,7 +65,7 @@ class FieldType_radioreveal extends MailBoo_AdminPageFramework_FieldType_radio {
 
         $scripts = array(
             array(
-                'src'           =>  __DIR__ . '/RadioReveal.js',
+                'src'           => __DIR__ . '/RadioReveal.js',
                 'version'       =>  'ShellPress_v1_0_5',
                 'dependancies'  =>  array( 'jquery' )
             )
