@@ -1,5 +1,5 @@
 <?php
-namespace tmc\mailboo\src\Shared\AdminPageFramework\CustomFields\RadioReveal;
+namespace shellpress\v1_0_6\src\Shared\AdminPageFramework\CustomFields\RadioReveal;
 
 /**
  * @author jakubkuranda@gmail.com

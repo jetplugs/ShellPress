@@ -1,5 +1,5 @@
 <?php
-namespace tmc\mailboo\src\Shared\AdminPageFramework\Pages;
+namespace shellpress\v1_0_6\src\Shared\AdminPageFramework\Pages;
 
 use SP_v1_0_6_AdminPageFramework;
 
