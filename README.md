@@ -51,16 +51,12 @@ if( ! class_exists( 'shellpress\v1_0_5\ShellPress' ) ){
 class App extends ShellPress {
 
     /** @var array */
-    protected static $sp;   <-- YOU NEED TO DEFINE IT HERE!!!
+    protected static $sp;   //  <-- YOU NEED TO DEFINE IT HERE!!!
 
     /**
      * You can define all of your plugin things inside.
      */
     public static function init() {
-
-        //  ----------------------------------------
-        //  Namespaces and importing
-        //  ----------------------------------------
 
         static::autoloader()->addNamespace( 'myname\pluginname', dirname( self::getMainPluginFile() ) );
 
@@ -72,14 +68,18 @@ class App extends ShellPress {
 Then in your main plugin file, require it and initialize.
 
 ```php
+//  ( . . . )
+
 //  We don't have autoloading yet!
 
 if( ! class_exists( 'myname\pluginname\src\App' ) ){
 
     require_once( __DIR__ . '/src/App.php' );
 
-    myname\pluginname\src\App::initShellPress( __FILE__, 'pluginname', '1.0.0' );   <-- This will help you later
-    myname\pluginname\src\App::init();                                              <-- Here you can do your own stuff
+    myname\pluginname\src\App::initShellPress( __FILE__, 'pluginname', '1.0.0' );   //  <-- This will help you later
+    myname\pluginname\src\App::init();                                              //  <-- Here you can do your own stuff
 
 }
+
+//  ( . . . )
 ```
