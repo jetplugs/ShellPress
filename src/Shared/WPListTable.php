@@ -9,8 +9,6 @@ use shellpress\v1_0_6\ShellPress;
  * Class WPListTable
  *
  * @deprecated
- *
- * @package shellpress\v1_0_6\src\Shared
  */
 class WPListTable extends WP_List_Table {
 
