@@ -6,7 +6,7 @@ It's still in alpha. Don't use it in production.
 Holy shit. I saw so many people doing obvious mistakes in WordPress plugins, it hurts.
 
 - Programmers use Composer to handle packages. Wow, ok, that's cool, but **not in WordPress**.
-Did you think about what will happen, if somebody used it too in his plugin?
+Did you think about what will happen, if somebody also used it in his plugin?
 In the best scenario, your plugin will be broken, because you use other version of library.
 
 - Use namespaces! Don't prefix every function you have. It's disgusting.
@@ -29,7 +29,7 @@ _ShellPress_ comes with built in, easy to use class autoloader.
 # Qucik start
 
 Create new class which extends ShellPress.
-```
+```php
 <?php
 namespace myname\pluginname\src;
 
@@ -71,7 +71,7 @@ class App extends ShellPress {
 
 Then in your main plugin file, require it and initialize.
 
-```
+```php
 //  We don't have autoloading yet!
 
 if( ! class_exists( 'myname\pluginname\src\App' ) ){
