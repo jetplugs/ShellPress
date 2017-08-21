@@ -90,7 +90,41 @@ abstract class ShellPress {
         static::_initOptions();
         static::_initLogger();
 
+        //  ----------------------------------------
+        //  Calling hooks
+        //  ----------------------------------------
+
+        register_activation_hook( static::getMainPluginFile(),      array( get_called_class(), 'onActivation' ) );
+        register_deactivation_hook( static::getMainPluginFile(),    array( get_called_class(), 'onDeactivation' ) );
+
+        add_action( 'init',                                         array( get_called_class(), 'onInit' ) );
+
 	}
+
+	//  ================================================================================
+	//  METHOD STUBS
+	//  ================================================================================
+
+    /**
+     * Called after core is ready.
+     *
+     * @return void
+     */
+	protected abstract function onInit();
+
+    /**
+     * Called on plugin activation.
+     *
+     * @return void
+     */
+	protected abstract function onActivation();
+
+    /**
+     * Called on plugin deactivation.
+     *
+     * @return void
+     */
+	protected abstract function onDeactivation();
 
 	//  ================================================================================
 	//  GETTERS
