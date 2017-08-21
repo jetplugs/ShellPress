@@ -4,11 +4,12 @@ namespace shellpress\v1_0_6;
 use shellpress\v1_0_6\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_0_6\src\Factory\Factory;
 use shellpress\v1_0_6\src\Logger;
+use shellpress\v1_0_6\src\Options;
 
 
 /**
- * Core class of plugin.
- * To use it, simple extend it.
+ * Core class of plugin. To use it, simple extend it.
+ * **Please remember to define `protected static $sp;` property in new class.**
  *
  * Changelog
  * ----------------------------------
@@ -28,7 +29,7 @@ use shellpress\v1_0_6\src\Logger;
  * v1_0_1:
  *
  */
-class ShellPress {
+abstract class ShellPress {
 
     /**
      * You need to redefine it in your static class!!
@@ -59,9 +60,7 @@ class ShellPress {
             ),
 			'options'	    =>	array(
 			    'object'        =>  null,
-			    'args'          =>  array(
-                    'namespace'		=>	$pluginPrefix
-                )
+			    'optionsKey'    =>  $pluginPrefix
             ),
             'factory'       =>  array(
                 'object'        =>  null
@@ -73,23 +72,22 @@ class ShellPress {
                 'object'            =>  null,
                 'directory'         =>  dirname( $mainPluginFile ) . '/log',
                 'logLevel'          =>  'debug',
-                'args'              =>  array(
-                    'dateFormat'        =>  'Y-m-d G:i:s.u',
-                    'filename'          =>  'log_' . date( 'd-m-Y' ) . '.log',
-                    'flushFrequency'    =>  false,
-                    'logFormat'         =>  false,
-                    'appendContext'     =>  true
-                )
+                'dateFormat'        =>  'Y-m-d G:i:s.u',
+                'filename'          =>  'log_' . date( 'd-m-Y' ) . '.log',
+                'flushFrequency'    =>  false,
+                'logFormat'         =>  false,
+                'appendContext'     =>  true
             )
 		);
 
-		static::$sp = array_merge_recursive( $defaultInitArgs, $initArgs );   // merge default init arguments with specified by developer
+		static::$sp = array_replace_recursive( $defaultInitArgs, $initArgs );   // replace default init arguments with specified by developer
 
         //  -----------------------------------
         //  Initialize components
         //  -----------------------------------
 
         static::_initAutoloader();
+        static::_initOptions();
         static::_initLogger();
 
 	}
@@ -152,8 +150,9 @@ class ShellPress {
     }
 
     /**
-     * Prefixes given string with plugin directory path.
-     * Example usage: static::path( '/dir/another/file.php' );
+     * Prefixes given string with directory path.
+     * Your path must have slash on start.
+     * Example usage: getPath( '/dir/another/file.php' );
      *
      * @param string $relativePath
      * @return string - absolute path
@@ -176,6 +175,7 @@ class ShellPress {
 
     /**
      * It gets main plugin file path.
+     *
      * @see initShellPress()
      *
      * @return string - full path to main plugin file (__FILE__)
@@ -225,24 +225,42 @@ class ShellPress {
      */
     private static function _initLogger() {
 
-        $loggerArgs = & static::$sp['logger'];  //  reference
+        $loggerArgs = & static::$sp['logger'];      //  reference
         
         $loggerArgs['object'] = new Logger(
             $loggerArgs['directory'],
             $loggerArgs['logLevel'],
-            $loggerArgs['args']
+            array(
+                $loggerArgs['dateFormat'],
+                $loggerArgs['filename'],
+                $loggerArgs['flushFrequency'],
+                $loggerArgs['logFormat'],
+                $loggerArgs['appendContext']
+            )
         );
 
     }
 
     /**
+     * Initialize options handler.
+     */
+    private static function _initOptions() {
+
+        $optionsArgs = & static::$sp['options'];    //  reference
+
+        $optionsArgs['object'] = new Options( $optionsArgs['optionsKey'] );
+
+    }
+
+
+    /**
      * Initialize Factory.
      */
-    public static function _initFactory() {
+    private static function _initFactory() {
 
         $factoryArgs = & static::$sp['factory'];    //  reference
 
-        $factoryArgs['object']  =   new Factory();
+        $factoryArgs['object'] = new Factory();
 
     }
 
@@ -280,6 +298,17 @@ class ShellPress {
     public static function factory() {
 
         return static::$sp['factory']['object'];
+
+    }
+
+    /**
+     * Gets options object.
+     *
+     * @return Options
+     */
+    public static function options() {
+
+        return static::$sp['options']['object'];
 
     }
 
