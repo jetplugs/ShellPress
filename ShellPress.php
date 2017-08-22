@@ -99,6 +99,12 @@ abstract class ShellPress {
 
         add_action( 'init',                                         array( get_called_class(), 'onInit' ) );
 
+        //  ----------------------------------------
+        //  Everything is ready. Call onSetUp()
+        //  ----------------------------------------
+
+        static::onSetUp();
+
 	}
 
 	//  ================================================================================
@@ -106,25 +112,32 @@ abstract class ShellPress {
 	//  ================================================================================
 
     /**
-     * Called after core is ready.
+     * Called automaticly after core is ready.
      *
      * @return void
      */
-	protected abstract function onInit();
+    public static function onSetUp() {}
 
     /**
-     * Called on plugin activation.
+     * Called automaticly on init hook.
      *
      * @return void
      */
-	protected abstract function onActivation();
+	public static function onInit() {}
 
     /**
-     * Called on plugin deactivation.
+     * Called automaticly on plugin activation.
      *
      * @return void
      */
-	protected abstract function onDeactivation();
+	public static function onActivation() {}
+
+    /**
+     * Called automaticly on plugin deactivation.
+     *
+     * @return void
+     */
+	public static function onDeactivation() {}
 
 	//  ================================================================================
 	//  GETTERS
