@@ -1,0 +1,4 @@
+
+[submodule "docs/ShellPress.wiki"]
+	path = docs/ShellPress.wiki
+	url = ../ShellPress.wiki.git
