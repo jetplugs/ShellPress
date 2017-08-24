@@ -1038,8 +1038,8 @@ abstract class WP_Ajax_List_Table {
 		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 		$current_url = remove_query_arg( 'paged', $current_url );
 
-		if ( isset( $_REQUEST['orderby'] ) ) {
-			$current_orderby = $_REQUEST['orderby'];
+		if ( isset( $_REQUEST['orderBy'] ) ) {
+			$current_orderby = $_REQUEST['orderBy'];
 		} else {
 			$current_orderby = '';
 		}
@@ -1077,7 +1077,7 @@ abstract class WP_Ajax_List_Table {
 				list( $orderby, $desc_first ) = $sortable[$column_key];
 
 				if ( $current_orderby === $orderby ) {
-					$order = 'asc' === $current_order ? 'desc' : 'asc';
+					$order = 'desc';
 					$class[] = 'sorted';
 					$class[] = $current_order;
 				} else {

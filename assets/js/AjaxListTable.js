@@ -4,21 +4,23 @@
 
 ( function( $ ) {
 
-    $.fn.ShellPressAjaxListTable = function( dataArgs ){
+    $.fn.ShellPressAjaxListTable = function( nonce, ajaxDisplayAction ){
 
         var ajaxListTable = $( this );
 
         list = {
             isLocked:           false,
-            data:               {},
-            nonce:              dataArgs.nonce,
-            ajaxDisplayAction:  dataArgs.ajaxDisplayAction,
+            data:               {
+                'nonce':                nonce,
+                'ajaxDisplayAction':    ajaxDisplayAction
+            },
+            temp:               {},
             init:               function(){
 
                 // This will have its utility when dealing with the page number input
 
                 var timer;
-                var delay = 500;
+                var delay = 300;
 
                 //  ----------------------------------------
                 //  Reset dataTemp
@@ -66,8 +68,8 @@
                         var query = this.search.substring( 1 );
 
                         //  Writing attributes
-                        ajaxListTable.attr( 'data-order', list._query( query, 'order' ) || 'asc' );
-                        ajaxListTable.attr( 'data-orderby', list._query( query, 'orderby' ) || 'id' );
+                        list.data.order     = list._query( query, 'order' ) || 'asc';
+                        list.data.orderBy   = list._query( query, 'orderby' ) || 'id';
 
                         list.update();
 
@@ -95,7 +97,7 @@
                             timer = window.setTimeout(function () {
 
                                 //  Writing attributes
-                                ajaxListTable.attr('data-paged', parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1');
+                                list.data.pagesd = parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1';
 
                                 list.update();
 
@@ -127,8 +129,8 @@
                             timer = window.setTimeout(function () {
 
                                 //  Writing attributes
-                                ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '');
-                                ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
+                                list.data.search    = ajaxListTable.find('input[name="search"]').val() || '';
+                                list.data.paged     = 1;   //  Reset pagination
 
                                 list.update();
 
@@ -152,8 +154,8 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '' );
-                        ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
+                        list.data.search    = ajaxListTable.find('input[name="search"]').val() || '';
+                        list.data.paged     =  1;   //  Reset pagination
 
                         list.update();
                     }
@@ -161,7 +163,7 @@
                 } );
 
                 //  ----------------------------------------
-                //  CLICK - Search
+                //  CLICK - View
                 //  ----------------------------------------
 
                 ajaxListTable.find( '.subsubsub a[data-value]' ).on( 'click', function(e) {
@@ -172,8 +174,8 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        ajaxListTable.attr( 'data-view', $( this ).attr( 'data-value' ) || '' );
-                        ajaxListTable.attr( 'data-paged', 1 );   //  Reset pagination
+                        list.data.view      = $( this ).attr( 'data-value' ) || '';
+                        list.data.paged     = 1;   //  Reset pagination
 
                         list.update();
                     }
@@ -194,8 +196,8 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        list.dataTemp.bulkAction    = inputSelect.val();
-                        list.dataTemp.bulkItems     = ajaxListTable.find( '.check-column [name="item-id"]:checked' ).map( function(){ return $( this ).val(); } ).get();
+                        list.temp.currentBulkAction     = inputSelect.val();
+                        list.temp.currentBulkItems      = ajaxListTable.find( '.check-column [name="item-id"]:checked' ).map( function(){ return $( this ).val(); } ).get();
 
                         list.update();
                     }
@@ -214,8 +216,8 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        list.dataTemp.rowAction     = $( this ).attr( 'data-row-action' );
-                        list.dataTemp.rowItem       = $( this ).attr( 'data-row-item' );
+                        list.temp.currentRowAction     = $( this ).attr( 'data-row-action' );
+                        list.temp.currentRowItem       = $( this ).attr( 'data-row-item' );
 
                         list.update();
                     }
@@ -272,41 +274,53 @@
                     type:   'POST',
                     url:    ajaxurl,
                     data:   {
-                        nonce:      list.nonce,
-                        action:     list.ajaxDisplayAction,
-                        paged:      ajaxListTable.attr( 'data-paged' ),
-                        order:      ajaxListTable.attr( 'data-order' ),
-                        orderby:    ajaxListTable.attr( 'data-orderby' ),
-                        search:     ajaxListTable.attr( 'data-search' ),
-                        view:       ajaxListTable.attr( 'data-view' ),
-                        bulkaction: list.dataTemp.bulkAction || '',
-                        bulkitems:  list.dataTemp.bulkItems || '',
-                        rowaction:  list.dataTemp.rowAction || '',
-                        rowitem:    list.dataTemp.rowItem || ''
+                        nonce:              list.data.nonce                 || '',
+                        action:             list.data.ajaxDisplayAction     || '',
+                        paged:              list.data.paged                 || '',
+                        order:              list.data.order                 || '',
+                        orderBy:            list.data.orderBy               || '',
+                        search:             list.data.search                || '',
+                        view:               list.data.view                  || '',
+                        currentBulkAction:  list.temp.currentBulkAction     || '',
+                        currentBulkItems:   list.temp.currentBulkItems      || '',
+                        currentRowAction:   list.temp.currentRowAction      || '',
+                        currentRowItem:     list.temp.currentRowItem        || ''
                     },
                     success: function( response ) {
 
-                        response = $.parseJSON( response );
+                        if( response ){
 
-                        ajaxListTable.html( response );
+                            response = $.parseJSON( response );
 
-                        list.init();
+                            ajaxListTable.html( response );
+
+                            list.init();
+
+                        } else {
+
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i>' );
+                            console.log( "General problem with access to ajax action?" );
+
+                        }
 
                     },
                     statusCode: {
                         403: function () {
 
-                            ajaxListTable.html( '<div class="spinner is-active" style="float:none"></div>' );
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i>' );
                             console.log( "You need to refresh your session." );
 
                         }
                     },
                     fail:   function() {
 
+                        ajaxListTable.html( '<i class="dashicons dashicons-update"></i>' );
                         console.log( "Got an error while calling ListTable AJAX." );
 
                     },
                     complete:   function() {
+
+                        list.clearTemp();       //  Clear temporary data
 
                         list.isLocked = false;  //  Unlock callbacks
 
@@ -331,6 +345,11 @@
                 }
 
                 return false;
+
+            },
+            clearTemp:      function() {
+
+                list.temp = {};
 
             }
         };

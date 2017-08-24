@@ -6,6 +6,7 @@ namespace shellpress\v1_0_6\src\Shared\AjaxListTable\_Controllers;
  * Date: 2017-07-25
  * Time: 19:46
  */
+use tmc\mailboo\src\App;
 
 /**
  * Class AjaxListTable.
@@ -50,7 +51,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      * @param string $tableSlug     Unique key
      * @param array $args           Table arguments
      */
-    public function __construct( $tableSlug, $args ) {
+    public function __construct( $tableSlug, & $args ) {
 
         //Set parent defaults
         parent::__construct(
@@ -66,24 +67,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         $this->slug = sanitize_key( $tableSlug );
 
-        //  Default arguments
-
-        $defaultArgs = array(
-            'totalItems'        =>  0,
-            'order'             =>  'asc',
-            'orderBy'           =>  'id',
-            'paged'             =>  1,
-            'itemsPerPage'      =>  20,
-            'search'            =>  '',
-            'view'              =>  'default',
-            'noItemsText'       =>  'No items found.',
-            'currentBulkAction' =>  null,
-            'currentBulkItems'  =>  array(),
-            'currentRowAction'  =>  null,
-            'currentRowItem'    =>  null
-        );
-
-        $this->args = array_replace_recursive( $defaultArgs, $args );
+        $this->args = & $args;
 
     }
 
@@ -205,17 +189,17 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function process_bulk_action() {
 
-        if( $this->getCurrentBulkAction() ){
+        if( $this->getCurrentcurrentBulkAction() ){
 
             $itemsIds = (array) $this->getCurrentBulkItems();
 
             /**
              * Do bulk action.
-             * Action tag: `bulk_{tableSlug}_(currentBulkActionSlug)`
+             * Action tag: `bulk_{tableSlug}_(currentcurrentBulkActionSlug)`
              *
              * @param array $itemsIds
              */
-            do_action( 'bulk_' . $this->slug . '_' . $this->getCurrentBulkAction(), $itemsIds );
+            do_action( 'bulk_' . $this->slug . '_' . $this->getCurrentcurrentBulkAction(), $itemsIds );
 
         }
 
@@ -228,17 +212,17 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function get_bulk_actions() {
 
-        $bulkActions = array();
+        $currentBulkActions = array();
 
         /**
          * Apply filter on empty array.
          * Filter tag: `bulk_{tableSlug}`
          *
-         * @param array $bulkActions
+         * @param array $currentBulkActions
          */
-        $bulkActions = apply_filters( 'bulk_' . $this->slug, $bulkActions );
+        $currentBulkActions = apply_filters( 'bulk_' . $this->slug, $currentBulkActions );
 
-        return $bulkActions;
+        return $currentBulkActions;
 
     }
 
@@ -392,7 +376,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function no_items() {
 
-        echo $this->noItemsText;
+        echo $this->args['noItemsText'];
 
     }
 
@@ -470,9 +454,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getOrderBy() {
 
-        if( isset( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['orderby'] ) ){
+        if( isset( $_REQUEST['orderBy'] ) && ! empty( $_REQUEST['orderBy'] ) ){
 
-            return esc_sql( $_REQUEST['orderby'] );
+            return esc_sql( $_REQUEST['orderBy'] );
 
         } else {
 
@@ -507,6 +491,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      * @return int
      */
     public function getTotalItems() {
+
+
+        App::logger()->debug( print_r( $this->args, true ) );
 
         if( isset( $_REQUEST['totalitems'] ) && ! empty( $_REQUEST['totalitems'] ) ){
 
@@ -578,15 +565,15 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     }
 
     /**
-     * Just returns $_REQUEST['bulkaction'] or default value.
+     * Just returns $_REQUEST['currentBulkAction'] or default value.
      *
      * @return string
      */
-    public function getCurrentBulkAction() {
+    public function getCurrentcurrentBulkAction() {
 
-        if( isset( $_REQUEST['bulkaction'] ) && ! empty( $_REQUEST['bulkaction'] ) ){
+        if( isset( $_REQUEST['currentBulkAction'] ) && ! empty( $_REQUEST['currentBulkAction'] ) ){
 
-            return esc_sql( $_REQUEST['bulkaction'] );
+            return esc_sql( $_REQUEST['currentBulkAction'] );
 
         } else {
 
@@ -597,15 +584,15 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     }
 
     /**
-     * Just returns $_REQUEST['bulkitems'] or default value.
+     * Just returns $_REQUEST['bulkItems'] or default value.
      *
      * @return array
      */
     public function getCurrentBulkItems() {
 
-        if( isset( $_REQUEST['bulkitems'] ) && ! empty( $_REQUEST['bulkitems'] ) ){
+        if( isset( $_REQUEST['bulkItems'] ) && ! empty( $_REQUEST['bulkItems'] ) ){
 
-            return (array) esc_sql( $_REQUEST['bulkitems'] );
+            return (array) esc_sql( $_REQUEST['bulkItems'] );
 
         } else {
 
@@ -616,15 +603,15 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     }
 
     /**
-     * Just returns $_REQUEST['rowaction'] or default value.
+     * Just returns $_REQUEST['currentRowAction'] or default value.
      *
      * @return string
      */
     public function getCurrentRowAction() {
 
-        if( isset( $_REQUEST['rowaction'] ) && ! empty( $_REQUEST['rowaction'] ) ){
+        if( isset( $_REQUEST['currentRowAction'] ) && ! empty( $_REQUEST['currentRowAction'] ) ){
 
-            return esc_sql( $_REQUEST['rowaction'] );
+            return esc_sql( $_REQUEST['currentRowAction'] );
 
         } else {
 
@@ -635,15 +622,15 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     }
 
     /**
-     * Just returns $_REQUEST['rowitem'] or default value.
+     * Just returns $_REQUEST['currentRowItem'] or default value.
      *
      * @return string
      */
     public function getCurrentRowItem() {
 
-        if( isset( $_REQUEST['rowitem'] ) && ! empty( $_REQUEST['rowitem'] ) ){
+        if( isset( $_REQUEST['currentRowItem'] ) && ! empty( $_REQUEST['currentRowItem'] ) ){
 
-            return esc_sql( $_REQUEST['rowitem'] );
+            return esc_sql( $_REQUEST['currentRowItem'] );
 
         } else {
 

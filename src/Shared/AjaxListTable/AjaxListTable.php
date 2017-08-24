@@ -8,6 +8,7 @@ namespace shellpress\v1_0_6\src\Shared\AjaxListTable;
  */
 
 use shellpress\v1_0_6\src\Shared\AjaxListTable\_Controllers\WP_Ajax_listTable_Wrapper;
+use tmc\mailboo\src\App;
 
 abstract class AjaxListTable {
 
@@ -48,6 +49,21 @@ abstract class AjaxListTable {
         //  ----------------------------------------
         
         $this->slug = $tableSlug;
+
+        $this->tableArgs = array(
+            'totalItems'        =>  0,
+            'order'             =>  'asc',
+            'orderBy'           =>  'id',
+            'paged'             =>  1,
+            'itemsPerPage'      =>  20,
+            'search'            =>  '',
+            'view'              =>  'default',
+            'noItemsText'       =>  'No items found.',
+            'currentBulkAction' =>  null,
+            'currentBulkItems'  =>  array(),
+            'currentRowAction'  =>  null,
+            'currentRowItem'    =>  null
+        );
 
         //  ----------------------------------------
         //  Actions
@@ -118,11 +134,6 @@ abstract class AjaxListTable {
      */
     protected function _getInitScript() {
 
-        $listTableArgs = array(
-            'nonce'                 =>  wp_create_nonce( $this->getAjaxActionName() ),
-            'ajaxDisplayAction'     =>  $this->getAjaxActionName()
-        );
-
         ob_start();
         ?>
 
@@ -130,7 +141,7 @@ abstract class AjaxListTable {
 
             jQuery( document ).ready( function( $ ){
 
-                <?php printf( '$( "#%1$s" ).ShellPressAjaxListTable( JSON.parse( \'%2$s\' ) );', $this->getSlug(), wp_json_encode( $listTableArgs ) );?>
+                <?php printf( '$( "#%1$s" ).ShellPressAjaxListTable( \'%2$s\', \'%3$s\' );', $this->getSlug(), wp_create_nonce( $this->getAjaxActionName() ), $this->getAjaxActionName() );?>
 
             } );
 
