@@ -22,6 +22,9 @@ abstract class AjaxListTable {
 
     /** @var bool */
     private $isEndOfSetUp = false;
+    
+    /** @var string */
+    private $slug;
 
     /**
      * Format:
@@ -39,17 +42,15 @@ abstract class AjaxListTable {
     /**
      * AjaxListTable constructor.
      *
-     * @param string $tableSlug - Unique key
-     * @param string $singular - Label for singular item
-     * @param string $plural - Label for plural items
+     * @param string $tableSlug         Unique key.
      */
-    public function __construct( $tableSlug, $singular = 'item', $plural = 'items' ){
-
+    public function __construct( $tableSlug ){
+        
         //  ----------------------------------------
-        //  ListTable creation
+        //  Properties
         //  ----------------------------------------
-
-        $this->listTable = new WP_Ajax_listTable_Wrapper( $tableSlug, $singular, $plural );
+        
+        $this->slug = $tableSlug;
 
         //  ----------------------------------------
         //  Actions
@@ -57,27 +58,13 @@ abstract class AjaxListTable {
 
         add_action( 'wp_ajax_' . $this->getAjaxActionName(),        array( $this, '_a_ajaxResponse') );
 
-        //  ----------------------------------------
-        //  Set up
-        //  ----------------------------------------
-
-        $this->setUp();
-
-        $this->isEndOfSetUp = true; //  For now dynamic setters will set parameters in global $_REQUEST
-
     }
 
     /**
-     * Extend this method.
      * It's called automatically on object creation.
+     * Defines all table settings.
      */
     protected abstract function setUp();
-
-    /**
-     * Extend this method.
-     * It's called automatically in ajax response.
-     */
-    protected abstract function loadTable();
 
     //  ================================================================================
     //  ADVANCED GETTERS
@@ -88,23 +75,16 @@ abstract class AjaxListTable {
      */
     public function getDisplayRoot() {
 
-        $attributes = array(
-            sprintf( 'data-nonce="%1$s"',           wp_create_nonce( $this->getAjaxActionName() ) ),
-            sprintf( 'data-ajax-action="%1$s"',     $this->getAjaxActionName() ),
-            sprintf( 'data-paged="%1$s"',           $this->listTable->getPaged() ),
-            sprintf( 'data-order="%1$s"',           $this->listTable->getOrder() ),
-            sprintf( 'data-orderby="%1$s"',         $this->listTable->getOrderBy() ),
-            sprintf( 'data-search="%1$s"',          $this->listTable->getSearch() ),
-            sprintf( 'data-view="%1$s"',            $this->listTable->getView() )
+        $attributes = array();
+
+        $html = sprintf( '<div id="%1$s" class="%2$s" %3$s>',
+            $this->getSlug(),
+            'sp-ajax-list-table',
+            implode( ' ', $attributes )
         );
 
-        $html = sprintf(
-            '<div id="%1$s" class="%2$s" %3$s>',
-            /** %1$s */ $this->getSlug(),
-            /** %2$s */ 'sp-a-list-table',
-            /** %3$s */ implode( ' ', $attributes )
-        );
         $html .= sprintf( '<div class="spinner is-active" style="float:none"></div>' );
+
         $html .= sprintf( '</div>' );
 
         $html .= PHP_EOL;
@@ -120,7 +100,7 @@ abstract class AjaxListTable {
      */
     public function getSlug() {
 
-        return $this->listTable->slug;
+        return $this->slug;
 
     }
 
@@ -129,7 +109,7 @@ abstract class AjaxListTable {
      */
     public function getAjaxActionName() {
 
-        return $this->listTable->ajaxActionName;
+        return 'display_' . $this->getSlug();
 
     }
 
@@ -141,6 +121,11 @@ abstract class AjaxListTable {
      */
     protected function _getInitScript() {
 
+        $listTableArgs = array(
+            'nonce'                 =>  wp_create_nonce( $this->getAjaxActionName() ),
+            'ajaxDisplayAction'     =>  $this->getAjaxActionName()
+        );
+
         ob_start();
         ?>
 
@@ -148,7 +133,7 @@ abstract class AjaxListTable {
 
             jQuery( document ).ready( function( $ ){
 
-                <?php printf( '$( "#%1$s" ).ShellPressAjaxListTable();', $this->getSlug() );?>
+                <?php printf( '$( "#%1$s" ).ShellPressAjaxListTable( JSON.parse( \'%2$s\' ) );', $this->getSlug(), wp_json_encode( $listTableArgs ) );?>
 
             } );
 
@@ -294,14 +279,28 @@ abstract class AjaxListTable {
             $tagAttributesString = implode( '', $tagAttributes );
 
             //  ----------------------------------------
-            //  Row action declaration
+            //  Preparing links
             //  ----------------------------------------
 
-            $rowActions[ $actionSlug ] = sprintf( '<a %1$s>%2$s</a>', $tagAttributesString, $actionArgs['title'] );
+            $rowActions[ $actionSlug ] = sprintf( '<span class="%1$s"><a %2$s>%3$s</a></span>', $actionSlug, $tagAttributesString, $actionArgs['title'] );
 
         }
 
-        return $this->listTable->row_actions( $rowActions, $alwaysVisible );
+        //  ----------------------------------------
+        //  Return HTML
+        //  ----------------------------------------
+
+        $html = '';
+
+        $html .= sprintf( '<div class="%1$s">', $alwaysVisible ? 'row-actions visible' : 'row-actions' );
+
+        $html .= implode( ' | ', $rowActions );     //  Glue links
+
+        $html .= '</div>';
+
+        $html .= '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>';
+
+        return $html;
 
     }
 
@@ -314,13 +313,7 @@ abstract class AjaxListTable {
      */
     public function setTotalItems( $totalItems ) {
 
-        $this->listTable->totalItems = $totalItems;
 
-        if( $this->isEndOfSetUp ){
-
-            $_REQUEST['totalitems'] = $totalItems;
-
-        }
 
     }
 
@@ -329,13 +322,7 @@ abstract class AjaxListTable {
      */
     public function setOrder( $order ) {
 
-        $this->listTable->order = $order;
 
-        if( $this->isEndOfSetUp ){
-
-            $_REQUEST['order'] = $order;
-
-        }
 
     }
 
@@ -344,13 +331,7 @@ abstract class AjaxListTable {
      */
     public function setOrderBy( $orderBy ) {
 
-        $this->listTable->orderBy = $orderBy;
 
-        if( $this->isEndOfSetUp ){
-
-            $_REQUEST['orderby'] = $orderBy;
-
-        }
 
     }
 
@@ -359,13 +340,7 @@ abstract class AjaxListTable {
      */
     public function setPaged( $paged ) {
 
-        $this->listTable->paged = $paged;
 
-        if( $this->isEndOfSetUp ){
-
-            $_REQUEST['paged'] = $paged;
-
-        }
 
     }
 
@@ -374,13 +349,7 @@ abstract class AjaxListTable {
      */
     public function setItemsPerPage( $itemsPerPage ) {
 
-        $this->listTable->itemsPerPage = $itemsPerPage;
 
-        if( $this->isEndOfSetUp ){
-
-            $_REQUEST['itemsperpage'] = $$itemsPerPage;
-
-        }
 
     }
 
@@ -389,13 +358,7 @@ abstract class AjaxListTable {
      */
     public function setSearch( $search ) {
 
-        $this->listTable->search = $search;
 
-        if( $this->isEndOfSetUp ){
-
-            $_REQUEST['search'] = $search;
-
-        }
 
     }
 
@@ -404,7 +367,7 @@ abstract class AjaxListTable {
      */
     public function setNoItemsText( $noItemsText ) {
 
-        $this->listTable->noItemsText = $noItemsText;
+
 
     }
 
@@ -438,12 +401,14 @@ abstract class AjaxListTable {
 
         check_ajax_referer( $this->getAjaxActionName(), 'nonce' );
 
-        $this->loadTable();
+        $this->setUp();
 
-        $this->listTable->process_bulk_action();
-        $this->listTable->process_row_action();
+        $listTable = new WP_Ajax_listTable_Wrapper( $this->getSlug() );
 
-        $this->listTable->prepare_items();
+        $listTable->process_bulk_action();
+        $listTable->process_row_action();
+
+        $listTable->prepare_items();
 
         ob_start();
 
@@ -451,17 +416,17 @@ abstract class AjaxListTable {
 
         if( $this->isListOfViewsVisible() ){
 
-            $this->listTable->views();
+            $listTable->views();
 
         }
 
         if( $this->isSearchboxVisible() ){
 
-            $this->listTable->search_box( __( "Search" ), $this->getSlug() );
+            $listTable->search_box( __( "Search" ), $this->getSlug() );
 
         }
 
-        $this->listTable->display();
+        $listTable->display();
 
         $response = ob_get_clean();
 

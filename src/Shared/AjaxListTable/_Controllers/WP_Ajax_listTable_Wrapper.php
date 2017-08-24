@@ -22,9 +22,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /** @var string */
     public $slug;
 
-    /** @var string */
-    public $ajaxActionName;
-
     /** @var int */
     public $totalItems = 0;
 
@@ -84,16 +81,14 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      * AjaxListTable constructor.
      *
      * @param string $tableSlug - Unique key
-     * @param string $singular - Label for singular item
-     * @param string $plural - Label for plural items
      */
-    public function __construct( $tableSlug, $singular, $plural ) {
+    public function __construct( $tableSlug ) {
 
         //Set parent defaults
         parent::__construct(
             array(
-                'singular'	=> $singular,
-                'plural'	=> $plural,
+                'singular'	=> 'item',
+                'plural'	=> 'items',
             )
         );
 
@@ -102,7 +97,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  ----------------------------------------
 
         $this->slug             = sanitize_key( $tableSlug );
-        $this->ajaxActionName   = 'display_' . $this->slug;
 
     }
 

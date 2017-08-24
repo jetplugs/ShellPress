@@ -16,6 +16,8 @@
                 rowAction:          null,
                 rowItem:            null
             },
+            nonce:              args.nonce,
+            ajaxDisplayAction:  args.ajaxDisplayAction,
             init:               function(){
 
                 // This will have its utility when dealing with the page number input
@@ -275,8 +277,8 @@
                     type:   'POST',
                     url:    ajaxurl,
                     data:   {
-                        nonce:      ajaxListTable.attr( 'data-nonce' ),
-                        action:     ajaxListTable.attr( 'data-ajax-action' ),
+                        nonce:      list.nonce,
+                        action:     list.ajaxDisplayAction,
                         paged:      ajaxListTable.attr( 'data-paged' ),
                         order:      ajaxListTable.attr( 'data-order' ),
                         orderby:    ajaxListTable.attr( 'data-orderby' ),
