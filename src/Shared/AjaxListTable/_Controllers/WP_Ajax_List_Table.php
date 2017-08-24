@@ -1077,7 +1077,7 @@ abstract class WP_Ajax_List_Table {
 				list( $orderby, $desc_first ) = $sortable[$column_key];
 
 				if ( $current_orderby === $orderby ) {
-					$order = 'desc';
+					$order = 'asc' === $current_order ? 'desc' : 'asc';
 					$class[] = 'sorted';
 					$class[] = $current_order;
 				} else {
