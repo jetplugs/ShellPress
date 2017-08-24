@@ -22,29 +22,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /** @var string */
     public $slug;
 
-    /** @var int */
-    public $totalItems = 0;
-
-    /** @var int */
-    public $itemsPerPage = 20;
-
-    /** @var string */
-    public $order = 'asc';
-
-    /** @var string */
-    public $orderBy = 'id';
-
-    /** @var int */
-    public $paged = 1;
-
-    /** @var string */
-    public $search = '';
-
-    /** @var string */
-    public $view = 'default';
-
-    /** @var string */
-    public $noItemsText = "No items found.";
+    /** @var array */
+    public $args;
 
     /**
      * Table columns headers array.
@@ -64,25 +43,14 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public $headers = array();
 
-    /** @var array */
-    public $currentBulkItems = array();
-
-    /** @var string|null */
-    public $currentBulkAction = null;
-
-    /** @var string|null */
-    public $currentRowAction = null;
-
-    /** @var string|null */
-    public $currentRowItem = null;
-
 
     /**
      * AjaxListTable constructor.
      *
-     * @param string $tableSlug - Unique key
+     * @param string $tableSlug     Unique key
+     * @param array $args           Table arguments
      */
-    public function __construct( $tableSlug ) {
+    public function __construct( $tableSlug, $args ) {
 
         //Set parent defaults
         parent::__construct(
@@ -96,7 +64,26 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  Properties
         //  ----------------------------------------
 
-        $this->slug             = sanitize_key( $tableSlug );
+        $this->slug = sanitize_key( $tableSlug );
+
+        //  Default arguments
+
+        $defaultArgs = array(
+            'totalItems'        =>  0,
+            'order'             =>  'asc',
+            'orderBy'           =>  'id',
+            'paged'             =>  1,
+            'itemsPerPage'      =>  20,
+            'search'            =>  '',
+            'view'              =>  'default',
+            'noItemsText'       =>  'No items found.',
+            'currentBulkAction' =>  null,
+            'currentBulkItems'  =>  array(),
+            'currentRowAction'  =>  null,
+            'currentRowItem'    =>  null
+        );
+
+        $this->args = array_replace_recursive( $defaultArgs, $args );
 
     }
 
@@ -188,10 +175,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * @param string $orderBy
          * @param string $view
          */
-        $this->items = apply_filters(
-            'items_' . $this->slug,     //  Filter tag
-            array(),                    //  $items
-            $this->getItemsPerPage(),          //  $itemsPerPage
+        $this->items = apply_filters( 'items_' . $this->slug, array(),
+            $this->getItemsPerPage(),   //  $itemsPerPage
             $this->getPaged(),          //  $paged
             $this->getSearch(),         //  $search
             $this->getOrder(),          //  $order
@@ -263,8 +248,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     public function process_row_action() {
 
         if( $this->getCurrentRowAction() ){
-
-            $itemId = $this->getCurrentRowItem();
 
             /**
              * Do row action.
@@ -474,7 +457,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->order );
+            return esc_sql( $this->args['order'] );
 
         }
 
@@ -493,7 +476,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->orderBy );
+            return esc_sql( $this->args['orderBy'] );
 
         }
 
@@ -512,7 +495,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->paged;
+            return (int) $this->args['paged'];
 
         }
 
@@ -531,7 +514,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->totalItems;
+            return (int) $this->args['totalItems'];
 
         }
 
@@ -550,7 +533,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->itemsPerPage;
+            return (int) $this->args['itemsPerPage'];
 
         }
 
@@ -569,7 +552,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->search );
+            return esc_sql( $this->args['search'] );
 
         }
 
@@ -588,7 +571,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->view );
+            return esc_sql( $this->args['view'] );
 
         }
 
@@ -607,7 +590,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->currentBulkAction );
+            return esc_sql( $this->args['currentBulkAction'] );
 
         }
 
@@ -626,7 +609,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (array) esc_sql( $this->currentBulkItems );
+            return (array) esc_sql( $this->args['currentBulkItems'] );
 
         }
 
@@ -645,7 +628,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->currentRowAction );
+            return esc_sql( $this->args['currentRowAction'] );
 
         }
 
@@ -664,7 +647,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->currentRowItem );
+            return esc_sql( $this->args['currentRowItem'] );
 
         }
 

@@ -11,20 +11,17 @@ use shellpress\v1_0_6\src\Shared\AjaxListTable\_Controllers\WP_Ajax_listTable_Wr
 
 abstract class AjaxListTable {
 
-    /** @var WP_Ajax_listTable_Wrapper */
-    private $listTable;
-
     /** @var bool */
     private $isSearchboxVisible = true;
 
     /** @var bool */
     private $isListOfViewsVisible = true;
-
-    /** @var bool */
-    private $isEndOfSetUp = false;
     
     /** @var string */
     private $slug;
+
+    /** @var array */
+    private $tableArgs = array();
 
     /**
      * Format:
@@ -313,16 +310,16 @@ abstract class AjaxListTable {
      */
     public function setTotalItems( $totalItems ) {
 
-
+        $this->tableArgs['totalItems'] = $totalItems;
 
     }
 
     /**
-     * @param string $order
+     * @param string $order     asc / desc
      */
     public function setOrder( $order ) {
 
-
+        $this->tableArgs['order'] = $order;
 
     }
 
@@ -331,7 +328,7 @@ abstract class AjaxListTable {
      */
     public function setOrderBy( $orderBy ) {
 
-
+        $this->tableArgs['orderBy'] = $orderBy;
 
     }
 
@@ -340,7 +337,7 @@ abstract class AjaxListTable {
      */
     public function setPaged( $paged ) {
 
-
+        $this->tableArgs['paged'] = $paged;
 
     }
 
@@ -349,7 +346,7 @@ abstract class AjaxListTable {
      */
     public function setItemsPerPage( $itemsPerPage ) {
 
-
+        $this->tableArgs['itemsPerPage'] = $itemsPerPage;
 
     }
 
@@ -358,7 +355,16 @@ abstract class AjaxListTable {
      */
     public function setSearch( $search ) {
 
+        $this->tableArgs['search'] = $search;
 
+    }
+
+    /**
+     * @param string $search
+     */
+    public function setView( $view ) {
+
+        $this->tableArgs['view'] = $view;
 
     }
 
@@ -367,7 +373,7 @@ abstract class AjaxListTable {
      */
     public function setNoItemsText( $noItemsText ) {
 
-
+        $this->tableArgs['noItemsText'] = $noItemsText;
 
     }
 
@@ -403,7 +409,7 @@ abstract class AjaxListTable {
 
         $this->setUp();
 
-        $listTable = new WP_Ajax_listTable_Wrapper( $this->getSlug() );
+        $listTable = new WP_Ajax_listTable_Wrapper( $this->getSlug(), $this->tableArgs );
 
         $listTable->process_bulk_action();
         $listTable->process_row_action();

@@ -4,20 +4,15 @@
 
 ( function( $ ) {
 
-    $.fn.ShellPressAjaxListTable = function( args ){
+    $.fn.ShellPressAjaxListTable = function( dataArgs ){
 
         var ajaxListTable = $( this );
 
         list = {
             isLocked:           false,
-            dataTemp:           {
-                bulkAction:         null,
-                bulkItems:          null,
-                rowAction:          null,
-                rowItem:            null
-            },
-            nonce:              args.nonce,
-            ajaxDisplayAction:  args.ajaxDisplayAction,
+            data:               {},
+            nonce:              dataArgs.nonce,
+            ajaxDisplayAction:  dataArgs.ajaxDisplayAction,
             init:               function(){
 
                 // This will have its utility when dealing with the page number input
