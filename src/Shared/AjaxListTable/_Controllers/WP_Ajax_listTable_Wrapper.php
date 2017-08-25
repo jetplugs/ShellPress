@@ -383,6 +383,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * **** WP_List_Table specific
      *
+     * @param mixed $item
+     * @param string $column_name
+     *
      * @return string
      */
     public function column_default( $item, $column_name ) {
@@ -404,6 +407,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     /**
      * **** WP_List_Table specific
+     *
+     * @param mixed $item
      *
      * @return string
      */

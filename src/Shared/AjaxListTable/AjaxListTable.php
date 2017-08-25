@@ -8,7 +8,6 @@ namespace shellpress\v1_0_6\src\Shared\AjaxListTable;
  */
 
 use shellpress\v1_0_6\src\Shared\AjaxListTable\_Controllers\WP_Ajax_listTable_Wrapper;
-use tmc\mailboo\src\App;
 
 abstract class AjaxListTable {
 
@@ -428,6 +427,8 @@ abstract class AjaxListTable {
         $listTable->prepare_items();
 
         ob_start();
+
+        printf( '<pre>%1$s</pre>', print_r( $_REQUEST, true ) );
 
         echo $this->getDisplayOfNotices();
 
