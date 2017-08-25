@@ -20,7 +20,7 @@
                 // This will have its utility when dealing with the page number input
 
                 var timer;
-                var delay = 300;
+                var delay = 500;
 
                 //  ----------------------------------------
                 //  Reset dataTemp
@@ -288,7 +288,7 @@
                     },
                     success: function( response ) {
 
-                        if( response ){
+                        if( parseInt( response ) !== 0 ){
 
                             response = $.parseJSON( response );
 
@@ -298,7 +298,7 @@
 
                         } else {
 
-                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i>' );
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-hidden"></i>' );
                             console.log( "General problem with access to ajax action?" );
 
                         }
@@ -307,14 +307,14 @@
                     statusCode: {
                         403: function () {
 
-                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i>' );
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-hidden"></i>' );
                             console.log( "You need to refresh your session." );
 
                         }
                     },
                     fail:   function() {
 
-                        ajaxListTable.html( '<i class="dashicons dashicons-update"></i>' );
+                        ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-hidden"></i>' );
                         console.log( "Got an error while calling ListTable AJAX." );
 
                     },
