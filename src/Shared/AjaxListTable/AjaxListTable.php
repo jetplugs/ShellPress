@@ -21,7 +21,7 @@ abstract class AjaxListTable {
     private $slug;
 
     /** @var array */
-    private $tableArgs = array();
+    private $ajaxParams = array();
 
     /**
      * Format:
@@ -49,7 +49,7 @@ abstract class AjaxListTable {
         
         $this->slug = $tableSlug;
 
-        $this->tableArgs = array(
+        $this->ajaxParams = array(
             'totalItems'        =>  0,
             'order'             =>  'asc',
             'orderBy'           =>  'id',
@@ -320,7 +320,7 @@ abstract class AjaxListTable {
      */
     public function setTotalItems( $totalItems ) {
 
-        $this->tableArgs['totalItems'] = $totalItems;
+        $this->ajaxParams['totalItems'] = $totalItems;
 
     }
 
@@ -329,7 +329,7 @@ abstract class AjaxListTable {
      */
     public function setOrder( $order ) {
 
-        $this->tableArgs['order'] = $order;
+        $this->ajaxParams['order'] = $order;
 
     }
 
@@ -338,7 +338,7 @@ abstract class AjaxListTable {
      */
     public function setOrderBy( $orderBy ) {
 
-        $this->tableArgs['orderBy'] = $orderBy;
+        $this->ajaxParams['orderBy'] = $orderBy;
 
     }
 
@@ -347,7 +347,7 @@ abstract class AjaxListTable {
      */
     public function setPaged( $paged ) {
 
-        $this->tableArgs['paged'] = $paged;
+        $this->ajaxParams['paged'] = $paged;
 
     }
 
@@ -356,7 +356,7 @@ abstract class AjaxListTable {
      */
     public function setItemsPerPage( $itemsPerPage ) {
 
-        $this->tableArgs['itemsPerPage'] = $itemsPerPage;
+        $this->ajaxParams['itemsPerPage'] = $itemsPerPage;
 
     }
 
@@ -365,7 +365,7 @@ abstract class AjaxListTable {
      */
     public function setSearch( $search ) {
 
-        $this->tableArgs['search'] = $search;
+        $this->ajaxParams['search'] = $search;
 
     }
 
@@ -374,7 +374,7 @@ abstract class AjaxListTable {
      */
     public function setView( $view ) {
 
-        $this->tableArgs['view'] = $view;
+        $this->ajaxParams['view'] = $view;
 
     }
 
@@ -383,7 +383,7 @@ abstract class AjaxListTable {
      */
     public function setNoItemsText( $noItemsText ) {
 
-        $this->tableArgs['noItemsText'] = $noItemsText;
+        $this->ajaxParams['noItemsText'] = $noItemsText;
 
     }
 
@@ -419,7 +419,7 @@ abstract class AjaxListTable {
 
         $this->setUp();
 
-        $listTable = new WP_Ajax_listTable_Wrapper( $this->getSlug(), $this->tableArgs );
+        $listTable = new WP_Ajax_listTable_Wrapper( $this->getSlug(), $this->ajaxParams );
 
         $listTable->process_bulk_action();
         $listTable->process_row_action();

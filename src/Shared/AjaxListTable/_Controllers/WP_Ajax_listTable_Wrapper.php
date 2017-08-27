@@ -24,7 +24,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     public $slug;
 
     /** @var array */
-    public $args;
+    public $params;
 
     /**
      * Table columns headers array.
@@ -49,9 +49,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      * AjaxListTable constructor.
      *
      * @param string $tableSlug     Unique key
-     * @param array $args           Table arguments
+     * @param array $params           Table parameters
      */
-    public function __construct( $tableSlug, & $args ) {
+    public function __construct( $tableSlug, & $params ) {
 
         //Set parent defaults
         parent::__construct(
@@ -67,7 +67,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         $this->slug = sanitize_key( $tableSlug );
 
-        $this->args = & $args;
+        $this->params = & $params;
 
     }
 
@@ -88,7 +88,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         //  Add bulk actions checkbox column
 
-        if( ! empty( $this->get_bulk_actions() ) ){
+        if( ! empty( $this->get_bar_actions() ) ){
 
             $headers['cb'] = array(
                 'title'     =>  '<input type="checkbox">'
@@ -210,19 +210,19 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *
      * @return array
      */
-    public function get_bulk_actions() {
+    public function get_bar_actions() {
 
-        $currentBulkActions = array();
+        $barActions = array();
 
         /**
          * Apply filter on empty array.
          * Filter tag: `bulk_{tableSlug}`
          *
-         * @param array $currentBulkActions
+         * @param array $barActions
          */
-        $currentBulkActions = apply_filters( 'bulk_' . $this->slug, $currentBulkActions );
+        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions );
 
-        return $currentBulkActions;
+        return $barActions;
 
     }
 
@@ -376,7 +376,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function no_items() {
 
-        echo $this->args['noItemsText'];
+        echo $this->params['noItemsText'];
 
     }
 
@@ -429,6 +429,17 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     }
 
+    /**
+     * Display the actions controls on navigation bar.
+     */
+    protected function bar_actions() {
+        
+        $actions = $this->get_bar_actions();
+
+        submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction" ) );
+
+    }
+
     //  ================================================================================
     //  SIMPLE GETTERS
     //  ================================================================================
@@ -446,7 +457,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->args['order'] );
+            return esc_sql( $this->params['order'] );
 
         }
 
@@ -465,7 +476,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->args['orderBy'] );
+            return esc_sql( $this->params['orderBy'] );
 
         }
 
@@ -484,7 +495,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->args['paged'];
+            return (int) $this->params['paged'];
 
         }
 
@@ -498,7 +509,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     public function getTotalItems() {
 
 
-        App::logger()->debug( print_r( $this->args, true ) );
+        App::logger()->debug( print_r( $this->params, true ) );
 
         if( isset( $_REQUEST['totalitems'] ) && ! empty( $_REQUEST['totalitems'] ) ){
 
@@ -506,7 +517,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->args['totalItems'];
+            return (int) $this->params['totalItems'];
 
         }
 
@@ -525,7 +536,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->args['itemsPerPage'];
+            return (int) $this->params['itemsPerPage'];
 
         }
 
@@ -544,7 +555,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->args['search'] );
+            return esc_sql( $this->params['search'] );
 
         }
 
@@ -563,7 +574,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->args['view'] );
+            return esc_sql( $this->params['view'] );
 
         }
 
@@ -582,7 +593,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->args['currentBulkAction'] );
+            return esc_sql( $this->params['currentBulkAction'] );
 
         }
 
@@ -601,7 +612,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (array) esc_sql( $this->args['currentBulkItems'] );
+            return (array) esc_sql( $this->params['currentBulkItems'] );
 
         }
 
@@ -620,7 +631,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->args['currentRowAction'] );
+            return esc_sql( $this->params['currentRowAction'] );
 
         }
 
@@ -639,7 +650,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->args['currentRowItem'] );
+            return esc_sql( $this->params['currentRowItem'] );
 
         }
 
