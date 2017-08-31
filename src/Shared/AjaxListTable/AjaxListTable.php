@@ -433,8 +433,7 @@ abstract class AjaxListTable {
 
         $listTable = new WP_Ajax_listTable_Wrapper( $this->getSlug(), $this->ajaxParams );
 
-        $listTable->process_bulk_action();
-        $listTable->process_row_action();
+        $listTable->process_current_actions();
 
         $listTable->prepare_items();
 

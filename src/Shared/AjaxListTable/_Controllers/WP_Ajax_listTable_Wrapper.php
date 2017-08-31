@@ -187,19 +187,20 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * Should be called before $this->prepare_items()
      */
-    public function process_bulk_action() {
+    public function process_current_actions() {
 
-        if( $this->getCurrentcurrentBulkAction() ){
+        $currentActions     = $this->getCurrentActions();
+        $selectedItems      = $this->getSelectedItems();
 
-            $itemsIds = (array) $this->getCurrentBulkItems();
+        foreach( $currentActions as $actionSlug => $actionData ){
 
             /**
              * Do bulk action.
-             * Action tag: `bulk_{tableSlug}_(currentcurrentBulkActionSlug)`
+             * Action tag: `bulk_{tableSlug}_(currentActionSlug)`
              *
              * @param array $itemsIds
              */
-            do_action( 'bulk_' . $this->slug . '_' . $this->getCurrentcurrentBulkAction(), $itemsIds );
+            do_action( 'action_' . $this->slug . '_' . $actionSlug, $actionData, $selectedItems );
 
         }
 
@@ -223,25 +224,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions );
 
         return $barActions;
-
-    }
-
-    /**
-     * Should be called before $this->prepare_items()
-     */
-    public function process_row_action() {
-
-        if( $this->getCurrentRowAction() ){
-
-            /**
-             * Do row action.
-             * Action tag: `action_{tableSlug}_(currentRowActionSlug)`
-             *
-             * @param string $itemId
-             */
-            do_action( 'action_' . $this->slug . '_' . $this->getCurrentRowAction(), $this->getCurrentRowItem() );
-
-        }
 
     }
 
@@ -581,76 +563,38 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     }
 
     /**
-     * Just returns $_REQUEST['currentBulkAction'] or default value.
-     *
-     * @return string
-     */
-    public function getCurrentcurrentBulkAction() {
-
-        if( isset( $_REQUEST['currentBulkAction'] ) && ! empty( $_REQUEST['currentBulkAction'] ) ){
-
-            return esc_sql( $_REQUEST['currentBulkAction'] );
-
-        } else {
-
-            return esc_sql( $this->params['currentBulkAction'] );
-
-        }
-
-    }
-
-    /**
-     * Just returns $_REQUEST['bulkItems'] or default value.
+     * Just returns $_REQUEST['currentActions'] or default value.
      *
      * @return array
      */
-    public function getCurrentBulkItems() {
+    public function getCurrentActions() {
 
-        if( isset( $_REQUEST['bulkItems'] ) && ! empty( $_REQUEST['bulkItems'] ) ){
+        if( isset( $_REQUEST['currentActions'] ) && ! empty( $_REQUEST['currentActions'] ) ){
 
-            return (array) esc_sql( $_REQUEST['bulkItems'] );
+            return (array) esc_sql( $_REQUEST['currentActions'] );
 
         } else {
 
-            return (array) esc_sql( $this->params['currentBulkItems'] );
+            return (array) esc_sql( $this->params['currentActions'] );
 
         }
 
     }
 
     /**
-     * Just returns $_REQUEST['currentRowAction'] or default value.
+     * Just returns $_REQUEST['selectedItems'] or default value.
      *
-     * @return string
+     * @return array
      */
-    public function getCurrentRowAction() {
+    public function getSelectedItems() {
 
-        if( isset( $_REQUEST['currentRowAction'] ) && ! empty( $_REQUEST['currentRowAction'] ) ){
+        if( isset( $_REQUEST['selectedItems'] ) && ! empty( $_REQUEST['selectedItems'] ) ){
 
-            return esc_sql( $_REQUEST['currentRowAction'] );
+            return (array) esc_sql( $_REQUEST['selectedItems'] );
 
         } else {
 
-            return esc_sql( $this->params['currentRowAction'] );
-
-        }
-
-    }
-
-    /**
-     * Just returns $_REQUEST['currentRowItem'] or default value.
-     *
-     * @return string
-     */
-    public function getCurrentRowItem() {
-
-        if( isset( $_REQUEST['currentRowItem'] ) && ! empty( $_REQUEST['currentRowItem'] ) ){
-
-            return esc_sql( $_REQUEST['currentRowItem'] );
-
-        } else {
-
-            return esc_sql( $this->params['currentRowItem'] );
+            return (array) esc_sql( $this->params['selectedItems'] );
 
         }
 
