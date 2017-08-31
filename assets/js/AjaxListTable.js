@@ -11,10 +11,16 @@
         list = {
             isLocked:           false,
             data:               {
-                'nonce':                nonce,
-                'ajaxDisplayAction':    ajaxDisplayAction
+                'nonce':            nonce,
+                'action':           ajaxDisplayAction,
+                'paged':            '',
+                'order':            '',
+                'orderBy':          '',
+                'search':           '',
+                'view':             '',
+                'currentActions':   {},
+                'selectedItems':    {}
             },
-            temp:               {},
             init:               function(){
 
                 // This will have its utility when dealing with the page number input
@@ -183,28 +189,6 @@
                 } );
 
                 //  ----------------------------------------
-                //  CLICK - Apply bulk action
-                //  ----------------------------------------
-
-                ajaxListTable.find( '.bulkactions input[type="submit"]' ).on( 'click', function(e) {
-
-                    e.preventDefault();
-
-                    var inputSelect = $( this ).closest( '.bulkactions' ).find( 'select' );
-
-                    if( ! list.isLocked && inputSelect.val() !== '-1' ) {
-
-                        list.isLocked = true;   //  Lock callbacks
-
-                        list.temp.currentBulkAction     = inputSelect.val();
-                        list.temp.currentBulkItems      = ajaxListTable.find( '.check-column [name="item-id"]:checked' ).map( function(){ return $( this ).val(); } ).get();
-
-                        list.update();
-                    }
-
-                } );
-
-                //  ----------------------------------------
                 //  CLICK - Row action
                 //  ----------------------------------------
 
@@ -216,8 +200,16 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        list.temp.currentRowAction     = $( this ).attr( 'data-row-action' );
-                        list.temp.currentRowItem       = $( this ).attr( 'data-row-item' );
+                        var action = {};        //  Definition of action array
+
+                        var actionSlug = $( this ).attr( 'data-row-action' )        || null;
+                        var actionData = $( this ).attr( 'data-row-action-data' )   || null;
+
+                        if( actionSlug ){
+
+                            list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
+
+                        }
 
                         list.update();
                     }
@@ -266,26 +258,21 @@
                 } );
 
             },
-            update:             function(){
+            updateSelectedRows: function() {
+
+                list.data.selectedItems = ajaxListTable.find( '.check-column [data-row-checkbox]:checked' ).map( function(){ return JSON.parse( $( this ).attr( 'data-row-checkbox' ) ); } ).get();
+
+            },
+            update:             function() {
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
+
+                list.updateSelectedRows();
 
                 $.ajax( {
                     type:   'POST',
                     url:    ajaxurl,
-                    data:   {
-                        nonce:              list.data.nonce                 || '',
-                        action:             list.data.ajaxDisplayAction     || '',
-                        paged:              list.data.paged                 || '',
-                        order:              list.data.order                 || '',
-                        orderBy:            list.data.orderBy               || '',
-                        search:             list.data.search                || '',
-                        view:               list.data.view                  || '',
-                        currentBulkAction:  list.temp.currentBulkAction     || '',
-                        currentBulkItems:   list.temp.currentBulkItems      || '',
-                        currentRowAction:   list.temp.currentRowAction      || '',
-                        currentRowItem:     list.temp.currentRowItem        || ''
-                    },
+                    data:   list.data,
                     success: function( response ) {
 
                         if( parseInt( response ) !== 0 ){
@@ -298,7 +285,7 @@
 
                         } else {
 
-                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-hidden"></i>' );
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-lock"></i>' );
                             console.log( "General problem with access to ajax action?" );
 
                         }
@@ -307,14 +294,14 @@
                     statusCode: {
                         403: function () {
 
-                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-hidden"></i>' );
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-lock"></i>' );
                             console.log( "You need to refresh your session." );
 
                         }
                     },
                     fail:   function() {
 
-                        ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-hidden"></i>' );
+                        ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-welcome-comments"></i>' );
                         console.log( "Got an error while calling ListTable AJAX." );
 
                     },

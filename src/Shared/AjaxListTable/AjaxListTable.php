@@ -58,10 +58,8 @@ abstract class AjaxListTable {
             'search'            =>  '',
             'view'              =>  'default',
             'noItemsText'       =>  'No items found.',
-            'currentBulkAction' =>  null,
-            'currentBulkItems'  =>  array(),
-            'currentRowAction'  =>  null,
-            'currentRowItem'    =>  null
+            'currentActions'    =>  array(),
+            'selectedItems'     =>  array()
         );
 
         //  ----------------------------------------
@@ -222,13 +220,16 @@ abstract class AjaxListTable {
     /**
      * Creates checkbox for bulk actions column.
      *
-     * @param int $itemId
+     * @param mixed $data   - Data passed to checkbox
      *
      * @return string - Checkbox HTML
      */
-    public function generateRowCheckbox( $itemId ) {
+    public function generateRowCheckbox( $data ) {
 
-        return sprintf( '<input type="checkbox" name="item-id" value="%1$s">', $itemId );
+        $dataAsJson         = wp_json_encode( $data );
+        $safeDataAsJson     = esc_html( $dataAsJson );
+
+        return sprintf( '<input type="checkbox" data-row-checkbox="%1$s">', $safeDataAsJson );
 
     }
 
@@ -240,17 +241,17 @@ abstract class AjaxListTable {
      *      {actionSlug}    =>  array(
      *          'title'         =>  "Title",        //  (optional)
      *          'url'           =>  '#',            //  (optional)
-     *          'ajax'          =>  false           //  (optional)
+     *          'ajax'          =>  false,          //  (optional)
+     *          'data'          =>  array( 'thg' )  //  (optional)
      *      )
      * )
      *
      * @param array $actions
-     * @param string $itemId - ID of your item
      * @param bool  $alwaysVisible
      *
      * @return string - Whole row actions HTML
      */
-    public function generateRowActions( $actions, $itemId = null, $alwaysVisible = false ) {
+    public function generateRowActions( $actions, $alwaysVisible = false ) {
 
         $rowActions = array();
 
@@ -262,11 +263,12 @@ abstract class AjaxListTable {
 
             $defaultActionArgs = array(
                 'title'     =>  $actionSlug,
-                'url'       =>  '',
-                'ajax'      =>  false
+                'url'       =>  '#',
+                'ajax'      =>  false,
+                'data'      =>  null
             );
 
-            $actionArgs = array_merge( $defaultActionArgs, $actionArgs );
+            $actionArgs = wp_parse_args( $actionArgs, $defaultActionArgs );
 
             //  ----------------------------------------
             //  Link tag attributes
@@ -274,12 +276,22 @@ abstract class AjaxListTable {
 
             $tagAttributes = array();
 
-            $tagAttributes[]        = sprintf( 'href="%1$s"', esc_attr( $actionArgs['url'] ) );
+            //  Tag attributes
+
+            $tagAttributes[]        = sprintf( 'href="%1$s"', esc_attr( $actionArgs['url'] ) );         //  Action url
 
             if( $actionArgs['ajax'] === true ){
 
-                $tagAttributes[]    = sprintf( 'data-row-action="%1$s"', $actionSlug );
-                $tagAttributes[]    = sprintf( 'data-row-item="%1$s"', $itemId );
+                $tagAttributes[]    = sprintf( 'data-row-action="%1$s"', $actionSlug );                 //  Action slug
+
+                if( ! empty( $actionArgs['data'] ) ){
+
+                    $dataAsJson         = wp_json_encode( $actionArgs['data'] );
+                    $safeDataAsJson     = esc_html( $dataAsJson );
+
+                    $tagAttributes[]    = sprintf( 'data-row-action-data="%1$s"', $safeDataAsJson );    //  Action data ( as json )
+
+                }
 
             }
 
@@ -370,7 +382,7 @@ abstract class AjaxListTable {
     }
 
     /**
-     * @param string $search
+     * @param string $view
      */
     public function setView( $view ) {
 
