@@ -418,7 +418,64 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         
         $actions = $this->get_bar_actions();
 
-        submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction" ) );
+        $html = '';
+
+        //  ----------------------------------------
+        //  Prepare groups and components
+        //  ----------------------------------------
+
+        foreach( $actions as $actionSlug => $components ){
+
+            $html .= sprintf( '<span data-bar-action="%1$s">', $actionSlug );
+
+            foreach( $components as $componentSlug => $component ){
+
+                //  ----------------------------------------
+                //  Defaults
+                //  ----------------------------------------
+
+                $defaultComponent = array(
+                    'type'      =>  'text',
+                    'select'    =>  array(),
+                    'title'     =>  '',
+                    'data'      =>  null
+                );
+
+                $component = wp_parse_args( $component, $defaultComponent );
+
+                //  ----------------------------------------
+                //  Choose proper type of component
+                //  ----------------------------------------
+
+                if( $component['type'] === 'select' ){  //  --- SELECT ---
+
+                    $html .= sprintf( '<select data-bar-action-component="%1$s">', $componentSlug );
+
+                    foreach( $component['select'] as $selectOptionSlug => $selectOptionArray ){
+
+                        $html .= sprintf( '<option>%1$s</option>', $selectOptionArray['title'] );
+
+                    }
+
+                    $html .= sprintf( '</select>' );
+
+                } else {
+
+
+
+                }
+
+            }
+
+            $html .= sprintf( '</span>' );
+
+        }
+
+        //  ----------------------------------------
+        //  Display HTML
+        //  ----------------------------------------
+
+        echo $html;
 
     }
 
