@@ -72,14 +72,30 @@
 
                         var componentParents = $( this ).parentsUntil( '.actions', '[data-bar-component]' );
 
-                        // var actionSlug = $( this ).attr( 'data-row-action' )        || null;
-                        // var actionData = $( this ).attr( 'data-row-action-data' )   || null;
-                        //
-                        // if( actionSlug ){
-                        //
-                        //     list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
-                        //
-                        // }
+                        if( componentParents.length ){
+
+                            componentParents.each( function(){
+
+
+
+                            } );
+
+                        } else {
+
+
+
+                        }
+
+
+
+                        var actionSlug = $( this ).attr( 'data-bar-component' )         || null;
+                        var actionData = $( this ).attr( 'data-action-data' )           || null;
+
+                        if( actionSlug ){
+
+                            list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
+
+                        }
 
                         list.update();
 
