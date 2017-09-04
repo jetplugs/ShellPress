@@ -211,27 +211,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *
      * @return array
      */
-    public function get_bar_actions() {
-
-        $barActions = array();
-
-        /**
-         * Apply filter on empty array.
-         * Filter tag: `bulk_{tableSlug}`
-         *
-         * @param array $barActions
-         */
-        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions );
-
-        return $barActions;
-
-    }
-
-    /**
-     * **** WP_List_Table specific
-     *
-     * @return array
-     */
     public function get_columns() {
 
         $columns = array();
@@ -417,10 +396,18 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      * @see getDisplayOfBarActionComponent()
      */
     protected function bar_actions() {
-        
-        $components = $this->get_bar_actions();
 
-        foreach( $components as $component ){
+        $barActions = array();
+
+        /**
+         * Apply filter on empty array.
+         * Filter tag: `bulk_{tableSlug}`
+         *
+         * @param array $barActions
+         */
+        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions );
+
+        foreach( $barActions as $component ){
 
             echo $this->getDisplayOfBarActionComponent( $component );
 

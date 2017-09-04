@@ -403,17 +403,6 @@ abstract class WP_Ajax_List_Table {
 	}
 
 	/**
-	 * Get an associative array ( option_name => option_title ) with the list
-	 * of bulk actions available on this table.
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 *
-	 * @return array
-	 */
-	protected abstract function get_bar_actions();
-
-	/**
 	 * Display the bulk actions dropdown.
 	 *
 	 * @since 3.1.0
