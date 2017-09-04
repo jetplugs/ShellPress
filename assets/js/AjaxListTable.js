@@ -59,6 +59,35 @@
                 } );
 
                 //  ----------------------------------------
+                //  CLICK - Bar actions submit
+                //  ----------------------------------------
+
+                ajaxListTable.find( '.bulkactions [type="submit"]' ).on( 'click', function(e) {
+
+                    e.preventDefault();
+
+                    if( ! list.isLocked ) {
+
+                        list.isLocked = true;   //  Lock callbacks
+
+                        var componentParents = $( this ).parentsUntil( '.actions', '[data-bar-component]' );
+
+                        // var actionSlug = $( this ).attr( 'data-row-action' )        || null;
+                        // var actionData = $( this ).attr( 'data-row-action-data' )   || null;
+                        //
+                        // if( actionSlug ){
+                        //
+                        //     list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
+                        //
+                        // }
+
+                        list.update();
+
+                    }
+
+                } );
+
+                //  ----------------------------------------
                 //  CLICK - Sortable link
                 //  ----------------------------------------
 
@@ -199,8 +228,6 @@
                     if( ! list.isLocked ) {
 
                         list.isLocked = true;   //  Lock callbacks
-
-                        var action = {};        //  Definition of action array
 
                         var actionSlug = $( this ).attr( 'data-row-action' )        || null;
                         var actionData = $( this ).attr( 'data-row-action-data' )   || null;
