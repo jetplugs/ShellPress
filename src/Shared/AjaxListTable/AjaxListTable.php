@@ -464,4 +464,92 @@ abstract class AjaxListTable {
 
     }
 
+    //  ================================================================================
+    //  FILTERS
+    //  ================================================================================
+
+    /**
+     * @param $action
+     */
+    public function _f_barActionComponent_Group( $action ) {
+
+        //  ----------------------------------------
+        //  Foreach group
+        //  ----------------------------------------
+
+        foreach( $actions as $actionGroup ){
+
+            //  ----------------------------------------
+            //  Group attributes
+            //  ----------------------------------------
+
+            $attrArray = array();
+
+            isset( $actionGroup['id'] )     ?: $attrArray[] = sprintf( 'data-bar-action="%1$s"', $actionGroup['id'] );  //  Action id
+
+            if( isset( $actionGroup['attributes'] ) ){
+
+                foreach( $actionGroup['attributes'] as $attrName => $attrValue ){
+
+                    $attrArray[] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
+
+                }
+
+            }
+
+            $html .= sprintf( '<span %1$s>', implode( ' ', $attrArray ) );
+
+            //  ----------------------------------------
+            //  Components inside group
+            //  ----------------------------------------
+
+            if( isset( $actionGroup['components'] ) ){
+
+                foreach( $actionGroup as $component ){
+
+                    //  ----------------------------------------
+                    //  Defaults
+                    //  ----------------------------------------
+
+                    $defaultComponent = array(
+                        'id'        =>  '',
+                        'type'      => 'text',
+                        'select'    => array(),
+                        'title'     => '',
+                        'data'      => null
+                    );
+
+                    $component = wp_parse_args( $component, $defaultComponent );
+
+                    //  ----------------------------------------
+                    //  Choose proper type of component
+                    //  ----------------------------------------
+
+                    if( $component[ 'type' ] === 'select' ){  //  --- SELECT ---
+
+                        $html .= sprintf( '<select data-bar-component="%1$s">', $componentSlug );
+
+                        foreach( $component[ 'select' ] as $selectOptionSlug => $selectOptionArray ){
+
+                            $html .= sprintf( '<option>%1$s</option>', $selectOptionArray[ 'title' ] );
+
+                        }
+
+                        $html .= sprintf( '</select>' );
+
+                    } else{
+
+
+                    }
+
+                }
+
+            }
+
+            $html .= sprintf( '</span>' );
+
+        }
+
+    }
+
 }

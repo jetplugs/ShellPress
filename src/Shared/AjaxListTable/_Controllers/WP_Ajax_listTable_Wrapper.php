@@ -413,55 +413,71 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     /**
      * Display the actions controls on navigation bar.
+     *
+     * @see getDisplayOfBarActionComponent()
      */
     protected function bar_actions() {
         
-        $actions = $this->get_bar_actions();
+        $components = $this->get_bar_actions();
+
+        foreach( $components as $component ){
+
+            echo $this->getDisplayOfBarActionComponent( $component );
+
+        }
+
+    }
+
+    /**
+     * Get HTML of every type of bar actions component.
+     *
+     * @param array $action
+     *
+     * @return string
+     */
+    private function getDisplayOfBarActionComponent( $component ) {
 
         $html = '';
 
+        if( ! isset( $component['type'] ) || empty( $component['type'] ) ) {   //  We don't know type of component. Abort.
+
+            return $html;
+
+        }
+
         //  ----------------------------------------
-        //  Prepare groups and components
+        //  Component attributes
         //  ----------------------------------------
 
-        foreach( $actions as $actionSlug => $components ){
+        $attrArray = array();
 
-            $html .= sprintf( '<span data-bar-action="%1$s">', $actionSlug );
+        if( isset( $component['attributes'] ) ){
 
-            foreach( $components as $componentSlug => $component ){
+            foreach( $component['attributes'] as $attrName => $attrValue ){
 
-                //  ----------------------------------------
-                //  Defaults
-                //  ----------------------------------------
+                $attrArray[ $attrName ] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
 
-                $defaultComponent = array(
-                    'type'      =>  'text',
-                    'select'    =>  array(),
-                    'title'     =>  '',
-                    'data'      =>  null
-                );
+            }
 
-                $component = wp_parse_args( $component, $defaultComponent );
+        }
 
-                //  ----------------------------------------
-                //  Choose proper type of component
-                //  ----------------------------------------
+        if( isset( $component['id'] ) )     $attrArray[] = sprintf( 'data-bar-component="%1$s"', $component['id'] );  //  Action id
 
-                if( $component['type'] === 'select' ){  //  --- SELECT ---
+        //  ----------------------------------------
+        //  Type: group
+        //  ----------------------------------------
 
-                    $html .= sprintf( '<select data-bar-action-component="%1$s">', $componentSlug );
+        if( $component['type'] === 'group' ){
 
-                    foreach( $component['select'] as $selectOptionSlug => $selectOptionArray ){
+            $html .= sprintf( '<span %1$s>', implode( ' ', $attrArray ) );
 
-                        $html .= sprintf( '<option>%1$s</option>', $selectOptionArray['title'] );
+            //  This component is a group of components, so we call this method again
 
-                    }
+            if( isset( $component['components'] ) ){
 
-                    $html .= sprintf( '</select>' );
+                foreach( (array) $component['components'] as $subComponent ){
 
-                } else {
-
-
+                    $html .= $this->getDisplayOfBarActionComponent( $subComponent );
 
                 }
 
@@ -469,13 +485,76 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
             $html .= sprintf( '</span>' );
 
+        } else
+
+        //  ----------------------------------------
+        //  Type: select
+        //  ----------------------------------------
+
+        if( $component['type'] === 'select' ){
+
+            $html .= sprintf( '<select %1$s>', implode( ' ', $attrArray ) );
+
+            //  This component is a group of components, so we call this method again
+
+            if( isset( $component['select'] ) ){
+
+                foreach( (array) $component['select'] as $selectOption ){
+
+                    //  Defaults
+
+                    $defaultSelectOption = array(
+                        'id'        =>  '',
+                        'title'     =>  'Title',
+                        'data'      =>  array()
+                    );
+
+                    $selectOption = wp_parse_args( $selectOption, $defaultSelectOption );
+
+                    //  Attributes
+
+                    $optionAttrArray = array();
+
+                    if( isset( $selectOption['id'] ) )      $optionAttrArray[] = sprintf( 'value="%1$s"', $selectOption['id'] );
+                    if( isset( $selectOption['data'] ) )    $optionAttrArray[] = sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $selectOption['data'] ) ) );
+
+                    if( isset( $component['default'] ) && $component['default'] === $selectOption['id']  ){
+
+                        $optionAttrArray[] = 'selected="selected"';
+
+                    }
+
+                    //  Display options
+
+                    $html .= sprintf( '<option %1$s>%2$s</option>', implode( ' ', $optionAttrArray ), $selectOption['title'] );
+
+                }
+
+            }
+
+            $html .= sprintf( '</select>' );
+
+        } else
+
+        //  ----------------------------------------
+        //  Type: submit
+        //  ----------------------------------------
+
+        if( $component['type'] === 'submit' ){
+
+            if( isset( $component['data'] ) )   $attrArray[]        =   sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $component['data'] ) ) );
+
+            if( isset( $component['title'] ) )  $attrArray['value'] =   sprintf( 'value="%1$s"', $component['title'] );
+
+                                                $attrArray['type']  =   sprintf( 'type="submit"' );
+
+
+
+            $html .= sprintf( '<input %1$s>', implode( ' ', $attrArray ) );
+
         }
 
-        //  ----------------------------------------
-        //  Display HTML
-        //  ----------------------------------------
-
-        echo $html;
+        return $html;
 
     }
 
