@@ -151,13 +151,14 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * Apply filter on empty array.
          * Filter tag: `items_{tableSlug}`
          *
-         * @param array $items
-         * @param int $itemsPerPage
-         * @param int $paged
-         * @param string $search
-         * @param string $order
-         * @param string $orderBy
-         * @param string $view
+         * @param array     $items
+         * @param int       $itemsPerPage
+         * @param int       $paged
+         * @param string    $search
+         * @param string    $order
+         * @param string    $orderBy
+         * @param string    $view
+         * @param array     $actions
          */
         $this->items = apply_filters( 'items_' . $this->slug, array(),
             $this->getItemsPerPage(),   //  $itemsPerPage
@@ -165,7 +166,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
             $this->getSearch(),         //  $search
             $this->getOrder(),          //  $order
             $this->getOrderBy(),        //  $orderBy
-            $this->getView()            //  $view
+            $this->getView(),           //  $view
+            $this->getCurrentActions()  //  $actions
         );
 
         //  ----------------------------------------
@@ -198,7 +200,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
              * Do bulk action.
              * Action tag: `bulk_{tableSlug}_(currentActionSlug)`
              *
-             * @param array $itemsIds
+             * @param array $actionData
+             * @param array $selectedItems
              */
             do_action( 'action_' . $this->slug . '_' . $actionSlug, $actionData, $selectedItems );
 
