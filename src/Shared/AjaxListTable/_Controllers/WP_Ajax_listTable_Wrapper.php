@@ -439,7 +439,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * Get HTML of every type of bar actions component.
      *
-     * @param array $action
+     * @param array $component
      *
      * @return string
      */

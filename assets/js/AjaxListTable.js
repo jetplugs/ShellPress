@@ -28,11 +28,6 @@
                 var timer;
                 var delay = 500;
 
-                //  ----------------------------------------
-                //  Reset dataTemp
-                //  ----------------------------------------
-
-                list.dataTemp = [];
 
                 //  ----------------------------------------
                 //  CLICK - Pagination links
@@ -78,11 +73,13 @@
 
                             var actionSlug;
                             var actionData;
+                            var actionOption;
 
                             if( $( this ).is( 'select' ) ){
 
-                                actionSlug = $( this ).attr( 'data-bar-component' )                             || null;
-                                actionData = $( this ).find( 'option:selected' ).attr( 'data-action-data' )     || null;
+                                actionSlug      = $( this ).attr( 'data-bar-component' )                             || null;
+                                actionData      = $( this ).find( 'option:selected' ).attr( 'data-action-data' )     || null;
+                                actionOption    = $( this ).val();
 
                             } else
 
@@ -94,6 +91,13 @@
                             }
 
                             //  Adding action to request.
+
+                            if( actionSlug && actionOption ){
+
+                                list.data.currentActions[ actionSlug ] = {};
+                                list.data.currentActions[ actionSlug ][actionOption] = JSON.parse( actionData );
+
+                            } else
 
                             if( actionSlug ){
 
