@@ -508,6 +508,16 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
                     }
 
+                    //  Remember clicke doption
+
+                    $currentActions = $this->getCurrentActions();
+
+                    if( isset( $currentActions[ $component['id'] ][ $selectOption['id'] ] ) ){
+
+                        $optionAttrArray[] = 'selected="selected"';
+
+                    }
+
                     //  Display options
 
                     $html .= sprintf( '<option %1$s>%2$s</option>', implode( ' ', $optionAttrArray ), $selectOption['title'] );
