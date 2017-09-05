@@ -424,9 +424,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
             printf( '<span class="group" data-bar-group="%1$s" style="margin-right:15px; display:inline-block;">', $groupSlug );
 
-            foreach( $group as $component ){
+            foreach( $group as $actionId => $component ){
 
-                echo $this->getDisplayOfBarActionComponent( $component );
+                echo $this->getDisplayOfBarActionComponent( $actionId, $component );
 
             }
 
@@ -439,15 +439,35 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * Get HTML of every type of bar actions component.
      *
+     * @param string $actionId
      * @param array $component
      *
      * @return string
      */
-    private function getDisplayOfBarActionComponent( $component ) {
+    private function getDisplayOfBarActionComponent( $actionId, $component ) {
 
         $html = '';
 
-        if( ! isset( $component['type'] ) || empty( $component['type'] ) ) {   //  We don't know type of component. Abort.
+        //  ----------------------------------------
+        //  Defaults
+        //  ----------------------------------------
+
+        $componentDefault = array(
+            'temp'          =>  true,
+            'type'          =>  null,
+            'attributes'    =>  array(),
+            'select'        =>  array(),
+            'default'       =>  null,
+            'title'         =>  ''
+        );
+
+        $component = wp_parse_args( $component, $componentDefault );
+
+        //  ----------------------------------------
+        //  Requirement of type definition
+        //  ----------------------------------------
+
+        if( empty( $component['type'] ) ) {   //  We don't know type of component. Abort.
 
             return $html;
 
@@ -459,17 +479,19 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         $attrArray = array();
 
-        if( isset( $component['attributes'] ) ){
+        $attrArray[] = sprintf( 'data-action-id="%1$s"', $actionId );    //  Action id
 
-            foreach( $component['attributes'] as $attrName => $attrValue ){
+        foreach( $component['attributes'] as $attrName => $attrValue ){
 
-                $attrArray[ $attrName ] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
-
-            }
+            $attrArray[ $attrName ] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
 
         }
 
-        if( isset( $component['id'] ) )     $attrArray[] = sprintf( 'data-bar-component="%1$s"', $component['id'] );  //  Action id
+        if( $component['temp'] === true ){
+
+            $attrArray[] = sprintf( 'data-action-temp="%1$s"', $actionId );
+
+        }
 
         //  ----------------------------------------
         //  Type: select
@@ -481,48 +503,44 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
             //  This component is a group of components, so we call this method again
 
-            if( isset( $component['select'] ) ){
+            foreach( (array) $component['select'] as $optionId => $selectOption ){
 
-                foreach( (array) $component['select'] as $selectOption ){
+                //  Defaults
 
-                    //  Defaults
+                $defaultSelectOption = array(
+                    'title'     =>  'Title',
+                    'data'      =>  ''
+                );
 
-                    $defaultSelectOption = array(
-                        'id'        =>  '',
-                        'title'     =>  'Title',
-                        'data'      =>  ''
-                    );
+                $selectOption = wp_parse_args( $selectOption, $defaultSelectOption );
 
-                    $selectOption = wp_parse_args( $selectOption, $defaultSelectOption );
+                //  Attributes
 
-                    //  Attributes
+                $optionAttrArray = array();
 
-                    $optionAttrArray = array();
+                $optionAttrArray[] = sprintf( 'value="%1$s"', $optionId );
 
-                    if( isset( $selectOption['id'] ) )      $optionAttrArray[] = sprintf( 'value="%1$s"', $selectOption['id'] );
-                    if( isset( $selectOption['data'] ) )    $optionAttrArray[] = sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $selectOption['data'] ) ) );
+                $optionAttrArray[] = sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $selectOption['data'] ) ) );
 
-                    if( isset( $component['default'] ) && $component['default'] === $selectOption['id']  ){
+                if( $component['default'] === $optionId  ){
 
-                        $optionAttrArray[] = 'selected="selected"';
-
-                    }
-
-                    //  Remember clicke doption
-
-                    $currentActions = $this->getCurrentActions();
-
-                    if( isset( $currentActions[ $component['id'] ][ $selectOption['id'] ] ) ){
-
-                        $optionAttrArray[] = 'selected="selected"';
-
-                    }
-
-                    //  Display options
-
-                    $html .= sprintf( '<option %1$s>%2$s</option>', implode( ' ', $optionAttrArray ), $selectOption['title'] );
+                    $optionAttrArray[] = 'selected="selected"';
 
                 }
+
+                //  Remember clicke doption
+
+                $currentActions = $this->getCurrentActions();
+
+                if( isset( $currentActions[ $actionId ][ $optionId ] ) ){
+
+                    $optionAttrArray[] = 'selected="selected"';
+
+                }
+
+                //  Display options
+
+                $html .= sprintf( '<option %1$s>%2$s</option>', implode( ' ', $optionAttrArray ), $selectOption['title'] );
 
             }
 
@@ -536,11 +554,11 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         if( $component['type'] === 'submit' ){
 
-            if( isset( $component['data'] ) )   $attrArray[]        =   sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $component['data'] ) ) );
+            $attrArray[]        =   sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $component['data'] ) ) );
 
-            if( isset( $component['title'] ) )  $attrArray['value'] =   sprintf( 'value="%1$s"', $component['title'] );
+            $attrArray['value'] =   sprintf( 'value="%1$s"', $component['title'] );
 
-                                                $attrArray['type']  =   sprintf( 'type="submit"' );
+            $attrArray['type']  =   sprintf( 'type="submit"' );
 
 
 

@@ -69,7 +69,7 @@
 
                         var actionsGroup = $( this ).closest( '[data-bar-group]' );
 
-                        actionsGroup.find( '[data-bar-component]' ).each( function(){
+                        actionsGroup.find( '[data-action-id]' ).each( function(){
 
                             var actionSlug;
                             var actionData;
@@ -77,7 +77,7 @@
 
                             if( $( this ).is( 'select' ) ){
 
-                                actionSlug      = $( this ).attr( 'data-bar-component' )                             || null;
+                                actionSlug      = $( this ).attr( 'data-action-id' )                             || null;
                                 actionData      = $( this ).find( 'option:selected' ).attr( 'data-action-data' )     || null;
                                 actionOption    = $( this ).val();
 
@@ -85,7 +85,7 @@
 
                             if( $( this ).is( '[type="submit"]' ) ){
 
-                                actionSlug = $( this ).attr( 'data-bar-component' )         || null;
+                                actionSlug = $( this ).attr( 'data-action-id' )         || null;
                                 actionData = $( this ).attr( 'data-action-data' )           || null;
 
                             }
@@ -247,7 +247,7 @@
                 //  CLICK - Row action
                 //  ----------------------------------------
 
-                ajaxListTable.find( '.row-actions [data-row-action]' ).on( 'click', function(e) {
+                ajaxListTable.find( '.row-actions [data-action-id]' ).on( 'click', function(e) {
 
                     e.preventDefault();
 
@@ -255,8 +255,8 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        var actionSlug = $( this ).attr( 'data-row-action' )        || null;
-                        var actionData = $( this ).attr( 'data-row-action-data' )   || null;
+                        var actionSlug = $( this ).attr( 'data-action-id' )        || null;
+                        var actionData = $( this ).attr( 'data-action-data' )   || null;
 
                         if( actionSlug ){
 
@@ -316,6 +316,21 @@
                 list.data.selectedItems = ajaxListTable.find( '.check-column [data-row-checkbox]:checked' ).map( function(){ return JSON.parse( $( this ).attr( 'data-row-checkbox' ) ); } ).get();
 
             },
+            clearTempActions: function() {
+
+                ajaxListTable.find( '[data-action-temp]' ).each( function(){
+
+                    var tempActionId = $( this ).attr( 'data-action-temp' )     || null;
+
+                    if( tempActionId && tempActionId in list.data.currentActions ){
+
+                        delete list.data.currentActions[ tempActionId ];
+
+                    }
+
+                } );
+
+            },
             update:             function() {
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
@@ -358,9 +373,9 @@
                     },
                     complete:   function() {
 
-                        list.clearTemp();       //  Clear temporary data
+                        list.clearTempActions();        //  Clear temporary data
 
-                        list.isLocked = false;  //  Unlock callbacks
+                        list.isLocked = false;          //  Unlock callbacks
 
                     }
                 } );
@@ -383,11 +398,6 @@
                 }
 
                 return false;
-
-            },
-            clearTemp:      function() {
-
-                list.temp = {};
 
             }
         };

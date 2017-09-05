@@ -265,7 +265,8 @@ abstract class AjaxListTable {
                 'title'     =>  $actionSlug,
                 'url'       =>  '#',
                 'ajax'      =>  false,
-                'data'      =>  null
+                'data'      =>  null,
+                'temp'      =>  true
             );
 
             $actionArgs = wp_parse_args( $actionArgs, $defaultActionArgs );
@@ -282,20 +283,26 @@ abstract class AjaxListTable {
 
             if( $actionArgs['ajax'] === true ){
 
-                $tagAttributes[]    = sprintf( 'data-row-action="%1$s"', $actionSlug );                 //  Action slug
+                $tagAttributes[]    = sprintf( 'data-action-id="%1$s"', $actionSlug );                 //  Action slug
 
                 if( ! empty( $actionArgs['data'] ) ){
 
                     $dataAsJson         = wp_json_encode( $actionArgs['data'] );
                     $safeDataAsJson     = esc_html( $dataAsJson );
 
-                    $tagAttributes[]    = sprintf( 'data-row-action-data="%1$s"', $safeDataAsJson );    //  Action data ( as json )
+                    $tagAttributes[]    = sprintf( 'data-action-data="%1$s"', $safeDataAsJson );    //  Action data ( as json )
 
                 }
 
             }
 
-            $tagAttributesString = implode( '', $tagAttributes );
+            if( $actionArgs['temp'] === true ){                                                     //  Temp action id
+
+                $tagAttributes[] = sprintf( 'data-action-temp="%1$s"', $actionSlug );
+
+            }
+
+            $tagAttributesString = implode( ' ', $tagAttributes );
 
             //  ----------------------------------------
             //  Preparing links
