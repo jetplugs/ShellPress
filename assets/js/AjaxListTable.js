@@ -68,34 +68,24 @@
 
                     if( ! list.isLocked ) {
 
-                        list.isLocked = true;   //  Lock callbacks
+                        list.isLocked = true;       //  Lock callbacks
 
-                        var componentParents = $( this ).parentsUntil( '.actions', '[data-bar-component]' );
+                        list.updateSelectedRows();  //  Get selected rows
 
-                        if( componentParents.length ){
+                        var actionsGroup = $( this ).closest( '[data-bar-group]' );
 
-                            componentParents.each( function(){
+                        actionsGroup.find( '[data-bar-component]' ).each( function(){
 
+                            var actionSlug = $( this ).attr( 'data-bar-component' )         || null;
+                            var actionData = $( this ).attr( 'data-action-data' )           || null;
 
+                            if( actionSlug ){
 
-                            } );
+                                list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
 
-                        } else {
+                            }
 
-
-
-                        }
-
-
-
-                        var actionSlug = $( this ).attr( 'data-bar-component' )         || null;
-                        var actionData = $( this ).attr( 'data-action-data' )           || null;
-
-                        if( actionSlug ){
-
-                            list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
-
-                        }
+                        } );
 
                         list.update();
 
@@ -309,8 +299,6 @@
             update:             function() {
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
-
-                list.updateSelectedRows();
 
                 $.ajax( {
                     type:   'POST',

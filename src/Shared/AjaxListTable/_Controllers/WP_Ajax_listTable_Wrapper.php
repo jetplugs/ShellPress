@@ -211,6 +211,27 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *
      * @return array
      */
+    public function get_bar_actions() {
+
+        $barActions = array();
+
+        /**
+         * Apply filter on empty array.
+         * Filter tag: `bulk_{tableSlug}`
+         *
+         * @param array $barActions
+         */
+        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions );
+
+        return $barActions;
+
+    }
+
+    /**
+     * **** WP_List_Table specific
+     *
+     * @return array
+     */
     public function get_columns() {
 
         $columns = array();
@@ -397,19 +418,19 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     protected function bar_actions() {
 
-        $barActions = array();
+        $barActions = $this->get_bar_actions();
 
-        /**
-         * Apply filter on empty array.
-         * Filter tag: `bulk_{tableSlug}`
-         *
-         * @param array $barActions
-         */
-        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions );
+        foreach( $barActions as $groupSlug => $group ){
 
-        foreach( $barActions as $component ){
+            printf( '<span class="group" data-bar-group="%1$s" style="margin-right:15px; display:inline-block;">', $groupSlug );
 
-            echo $this->getDisplayOfBarActionComponent( $component );
+            foreach( $group as $component ){
+
+                echo $this->getDisplayOfBarActionComponent( $component );
+
+            }
+
+            printf( '</span>' );
 
         }
 
@@ -449,30 +470,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         }
 
         if( isset( $component['id'] ) )     $attrArray[] = sprintf( 'data-bar-component="%1$s"', $component['id'] );  //  Action id
-
-        //  ----------------------------------------
-        //  Type: group
-        //  ----------------------------------------
-
-        if( $component['type'] === 'group' ){
-
-            $html .= sprintf( '<span %1$s>', implode( ' ', $attrArray ) );
-
-            //  This component is a group of components, so we call this method again
-
-            if( isset( $component['components'] ) ){
-
-                foreach( (array) $component['components'] as $subComponent ){
-
-                    $html .= $this->getDisplayOfBarActionComponent( $subComponent );
-
-                }
-
-            }
-
-            $html .= sprintf( '</span>' );
-
-        } else
 
         //  ----------------------------------------
         //  Type: select
