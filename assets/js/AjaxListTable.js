@@ -76,8 +76,24 @@
 
                         actionsGroup.find( '[data-bar-component]' ).each( function(){
 
-                            var actionSlug = $( this ).attr( 'data-bar-component' )         || null;
-                            var actionData = $( this ).attr( 'data-action-data' )           || null;
+                            var actionSlug;
+                            var actionData;
+
+                            if( $( this ).is( 'select' ) ){
+
+                                actionSlug = $( this ).attr( 'data-bar-component' )                             || null;
+                                actionData = $( this ).find( 'option:selected' ).attr( 'data-action-data' )     || null;
+
+                            } else
+
+                            if( $( this ).is( '[type="submit"]' ) ){
+
+                                actionSlug = $( this ).attr( 'data-bar-component' )         || null;
+                                actionData = $( this ).attr( 'data-action-data' )           || null;
+
+                            }
+
+                            //  Adding action to request.
 
                             if( actionSlug ){
 
@@ -240,7 +256,7 @@
 
                         if( actionSlug ){
 
-                            list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
+                            list.data.currentActions[ actionSlug ] = JSON.parse( actionData )
 
                         }
 

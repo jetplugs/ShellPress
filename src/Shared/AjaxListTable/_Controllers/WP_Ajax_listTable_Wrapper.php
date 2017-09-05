@@ -490,7 +490,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
                     $defaultSelectOption = array(
                         'id'        =>  '',
                         'title'     =>  'Title',
-                        'data'      =>  array()
+                        'data'      =>  ''
                     );
 
                     $selectOption = wp_parse_args( $selectOption, $defaultSelectOption );
