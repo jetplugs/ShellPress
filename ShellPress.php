@@ -1,33 +1,15 @@
 <?php
-namespace shellpress\v1_0_6;
+namespace shellpress\v1_0_7;
 
-use shellpress\v1_0_6\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_6\src\Factory\Factory;
-use shellpress\v1_0_6\src\Logger;
-use shellpress\v1_0_6\src\Options;
+use shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_7\src\Factory\Factory;
+use shellpress\v1_0_7\src\Logger;
+use shellpress\v1_0_7\src\Options;
 
 
 /**
  * Core class of plugin. To use it, simple extend it.
  * **Please remember to define `protected static $sp;` property in new class.**
- *
- * Changelog
- * ----------------------------------
- * v1_0_5:
- * + Ajax ListTable
- *
- * v1_0_4:
- * + Every class property has been moved to single array
- *
- * v1_0_3:
- * + Requirement checker
- * + Changed properties visibility
- *
- * v1_0_2:
- * + Refactored to static
- *
- * v1_0_1:
- *
  */
 abstract class ShellPress {
 
@@ -253,7 +235,7 @@ abstract class ShellPress {
      */
 	private static function _initAutoloader() {
 
-        if( ! class_exists( 'shellpress\v1_0_6\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
             require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
@@ -263,7 +245,7 @@ abstract class ShellPress {
 
         $autoloaderArgs['object'] = new Psr4AutoloaderClass();
         $autoloaderArgs['object']->register();
-        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_6', __DIR__ );
+        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_7', __DIR__ );
 
     }
 

@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_6\src\Shared\AdminPageFramework\CustomFields\RadioReveal;
+namespace shellpress\v1_0_7\src\Shared\AdminPageFramework\CustomFields\RadioReveal;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,9 +7,9 @@ namespace shellpress\v1_0_6\src\Shared\AdminPageFramework\CustomFields\RadioReve
  * Time: 01:51
  */
 
-use SP_v1_0_6_AdminPageFramework_FieldType_radio;
+use SP_v1_0_7_AdminPageFramework_FieldType_radio;
 
-class FieldType_radioreveal extends SP_v1_0_6_AdminPageFramework_FieldType_radio {
+class FieldType_radioreveal extends SP_v1_0_7_AdminPageFramework_FieldType_radio {
 
     /**
      * Defines the field type slugs used for this field type.

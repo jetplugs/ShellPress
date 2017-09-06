@@ -42,7 +42,7 @@ That's how PSR-4 works. Every file have namespace build with `your name` \ `plug
 <?php
 namespace myname\pluginname\src;
 
-use shellpress\v1_0_6\ShellPress;
+use shellpress\v1_0_7\ShellPress;
 
 /**
  * App.php
@@ -51,7 +51,7 @@ use shellpress\v1_0_6\ShellPress;
  * Extends ShellPress for basic plugin helpers.
  */
 
-if( ! class_exists( 'shellpress\v1_0_6\ShellPress' ) ){
+if( ! class_exists( 'shellpress\v1_0_7\ShellPress' ) ){
 
     require_once( dirname( __DIR__ ) . '/lib/ShellPress/ShellPress.php' );
 
