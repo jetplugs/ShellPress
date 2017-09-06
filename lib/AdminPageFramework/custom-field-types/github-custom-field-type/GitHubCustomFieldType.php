@@ -1,9 +1,9 @@
 <?php
-if ( ! class_exists( 'SP_v1_0_6_GitHubCustomFieldType' ) ) :
+if ( ! class_exists( 'SP_v1_0_7_GitHubCustomFieldType' ) ) :
 /**
  * @version     1.0.1
  */
-class SP_v1_0_6_GitHubCustomFieldType extends SP_v1_0_6_AdminPageFramework_FieldType {
+class SP_v1_0_7_GitHubCustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldType {
         
     /**
      * Defines the field type slugs used for this field type.

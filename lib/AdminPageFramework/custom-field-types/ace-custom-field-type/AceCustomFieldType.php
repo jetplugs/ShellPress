@@ -1,9 +1,9 @@
 <?php
 /**
- * SP_v1_0_6_AceCustomFieldType, for the  Admin Page Framework by Michael Uno, is written by Per Soderlind - http://soderlind.no
+ * SP_v1_0_7_AceCustomFieldType, for the  Admin Page Framework by Michael Uno, is written by Per Soderlind - http://soderlind.no
  */
-if ( ! class_exists( 'SP_v1_0_6_AceCustomFieldType' ) ) :
-class SP_v1_0_6_AceCustomFieldType extends SP_v1_0_6_AdminPageFramework_FieldType {
+if ( ! class_exists( 'SP_v1_0_7_AceCustomFieldType' ) ) :
+class SP_v1_0_7_AceCustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldType {
 
     /**
      * Defines the field type slugs used for this field type.

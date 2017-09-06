@@ -7,10 +7,10 @@
  * @author      Michael Uno <michael@michaeluno.jp>
  * @copyright   2013-2017 (c) Michael Uno
  * @license     MIT <http://opensource.org/licenses/MIT>
- * @package     SP_v1_0_6_AdminPageFramework
+ * @package     SP_v1_0_7_AdminPageFramework
  */
 
-if ( ! class_exists( 'SP_v1_0_6_ToggleCustomFieldType' ) ) :
+if ( ! class_exists( 'SP_v1_0_7_ToggleCustomFieldType' ) ) :
 /**
  * A field type that lets the user toggle a switch.
  * 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'SP_v1_0_6_ToggleCustomFieldType' ) ) :
  * @version     0.0.3b
  * @requires    Admin Page Framework 3.8.8 or above.
  */
-class SP_v1_0_6_ToggleCustomFieldType extends SP_v1_0_6_AdminPageFramework_FieldType_checkbox {
+class SP_v1_0_7_ToggleCustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldType_checkbox {
 
     /**
      * Defines the field type slugs used for this field type.
@@ -143,7 +143,7 @@ class SP_v1_0_6_ToggleCustomFieldType extends SP_v1_0_6_AdminPageFramework_Field
                 _initalizeToggles( this );
             });
             
-            jQuery().registerSP_v1_0_6_AdminPageFrameworkCallbacks( {
+            jQuery().registerSP_v1_0_7_AdminPageFrameworkCallbacks( {
                 /**
                  * Called when a field of this field type gets repeated.
                  */

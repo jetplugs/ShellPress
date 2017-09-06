@@ -7,10 +7,10 @@
  * @author      Michael Uno <michael@michaeluno.jp>
  * @copyright   2013-2017 (c) Michael Uno
  * @license     MIT <http://opensource.org/licenses/MIT>
- * @package     SP_v1_0_6_AdminPageFramework
+ * @package     SP_v1_0_7_AdminPageFramework
  */
 
-if ( ! class_exists( 'SP_v1_0_6_PostTypeTaxonomyCustomFieldType' ) ) :
+if ( ! class_exists( 'SP_v1_0_7_PostTypeTaxonomyCustomFieldType' ) ) :
 /**
  * A field type that lets the user select taxonomy terms of selected post types.
  * 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'SP_v1_0_6_PostTypeTaxonomyCustomFieldType' ) ) :
  * @version     0.0.1b
  * @requires    Admin Page Framework 3.8.8 or above.
  */
-class SP_v1_0_6_PostTypeTaxonomyCustomFieldType extends SP_v1_0_6_AdminPageFramework_FieldType_taxonomy {
+class SP_v1_0_7_PostTypeTaxonomyCustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldType_taxonomy {
 
     /**
      * Defines the field type slugs used for this field type.
@@ -137,10 +137,10 @@ jQuery( document ).ready( function(){
     
     // Add the select all and none buttons.
     jQuery( '.shellpress-checkbox-container-posttype[data-select_all_button]' ).each( function( iIndex ){
-        jQuery( this ).before( '<div class=\"select_all_button_container\" onclick=\"jQuery( this ).selectAllSP_v1_0_6_AdminPageFrameworkCheckboxes(); return false;\"><a class=\"select_all_button button button-small\">' + jQuery( this ).data( 'select_all_button' ) + '</a></div>' );
+        jQuery( this ).before( '<div class=\"select_all_button_container\" onclick=\"jQuery( this ).selectAllSP_v1_0_7_AdminPageFrameworkCheckboxes(); return false;\"><a class=\"select_all_button button button-small\">' + jQuery( this ).data( 'select_all_button' ) + '</a></div>' );
     });            
     jQuery( '.shellpress-checkbox-container-posttype[data-select_none_button]' ).each( function( iIndex ){
-        jQuery( this ).before( '<div class=\"select_none_button_container\" onclick=\"jQuery( this ).deselectAllSP_v1_0_6_AdminPageFrameworkCheckboxes(); return false;\"><a class=\"select_all_button button button-small\">' + jQuery( this ).data( 'select_none_button' ) + '</a></div>' );
+        jQuery( this ).before( '<div class=\"select_none_button_container\" onclick=\"jQuery( this ).deselectAllSP_v1_0_7_AdminPageFrameworkCheckboxes(); return false;\"><a class=\"select_all_button button button-small\">' + jQuery( this ).data( 'select_none_button' ) + '</a></div>' );
     });
     
     // When the post type check-boxes are clicked, show/hide the corresponding taxonomy elements.
@@ -199,7 +199,7 @@ jQuery( document ).ready( function(){
     } );
     
 
-    jQuery().registerSP_v1_0_6_AdminPageFrameworkCallbacks( {
+    jQuery().registerSP_v1_0_7_AdminPageFrameworkCallbacks( {
         /**
          * Called when a field gets repeated.
          */

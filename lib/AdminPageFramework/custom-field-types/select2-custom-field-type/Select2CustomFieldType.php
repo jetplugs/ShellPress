@@ -7,10 +7,10 @@
  * @author      Michael Uno <michael@michaeluno.jp>
  * @copyright   2013-2017 (c) Michael Uno
  * @license     MIT <http://opensource.org/licenses/MIT>
- * @package     SP_v1_0_6_AdminPageFramework
+ * @package     SP_v1_0_7_AdminPageFramework
  */
 
-if ( ! class_exists( 'SP_v1_0_6_Select2CustomFieldType' ) ) :
+if ( ! class_exists( 'SP_v1_0_7_Select2CustomFieldType' ) ) :
 /**
  * A filed of the `select2` field type lets the user select items from a predefined list by typing the item name and the items possibly be fetched with AJAX.
  * 
@@ -79,7 +79,7 @@ if ( ! class_exists( 'SP_v1_0_6_Select2CustomFieldType' ) ) :
  * @supports    IE8 or above. (uses JSON object)
  * @requires    Admin Page Framework 3.8.14
  */
-class SP_v1_0_6_Select2CustomFieldType extends SP_v1_0_6_AdminPageFramework_FieldType_select {
+class SP_v1_0_7_Select2CustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldType_select {
 
     /**
      * Defines the field type slugs used for this field type.
@@ -549,7 +549,7 @@ class SP_v1_0_6_Select2CustomFieldType extends SP_v1_0_6_AdminPageFramework_Fiel
     });
     
 
-    jQuery().registerSP_v1_0_6_AdminPageFrameworkCallbacks( {
+    jQuery().registerSP_v1_0_7_AdminPageFrameworkCallbacks( {
         /**
          * Called when a field of this field type gets repeated.
          */
