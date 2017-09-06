@@ -16,7 +16,7 @@ _ShellPress_ comes with built in, easy to use class autoloader.
 
 - I decided to create it as an abstract static class, so you can extend it and use everywhere in your project.
 
-- **NEW!** Normalized tables! ( still alpha )
+- **NEW!** [Normalized tables!](https://github.com/dualjack/ShellPress/wiki/Ajax-ListTable) ( still alpha )
 
 # Requirements
 - PHP 5.3 ( namespacing of course )
