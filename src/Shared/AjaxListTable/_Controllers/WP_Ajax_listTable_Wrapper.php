@@ -194,11 +194,20 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         $currentActions     = $this->getCurrentActions();
         $selectedItems      = $this->getSelectedItems();
 
+        /**
+         * Do bulk actions.
+         * Action tag: `actions_{tableSlug}`
+         *
+         * @param array $currentActions
+         * @param array $selectedItems
+         */
+        do_action( 'actions_' . $this->slug, $currentActions, $selectedItems );
+
         foreach( $currentActions as $actionSlug => $actionData ){
 
             /**
              * Do bulk action.
-             * Action tag: `bulk_{tableSlug}_(currentActionSlug)`
+             * Action tag: `action_{tableSlug}_(currentActionSlug)`
              *
              * @param array $actionData
              * @param array $selectedItems
@@ -460,7 +469,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
             'type'          =>  null,
             'attributes'    =>  array(),
             'select'        =>  array(),
-            'default'       =>  null,
             'title'         =>  ''
         );
 
@@ -525,19 +533,17 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
                 $optionAttrArray[] = sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $selectOption['data'] ) ) );
 
-                if( $component['default'] === $optionId  ){
-
-                    $optionAttrArray[] = 'selected="selected"';
-
-                }
-
-                //  Remember clicke doption
+                //  Remember clicked option
 
                 $currentActions = $this->getCurrentActions();
 
-                if( isset( $currentActions[ $actionId ][ $optionId ] ) ){
+                if( $component['temp'] === false ){
 
-                    $optionAttrArray[] = 'selected="selected"';
+                    if( isset( $currentActions[ $actionId ][ $optionId ] ) ){
+
+                        $optionAttrArray[] = 'selected="selected"';
+
+                    }
 
                 }
 
