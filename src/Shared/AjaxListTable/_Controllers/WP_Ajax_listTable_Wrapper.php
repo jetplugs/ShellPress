@@ -203,19 +203,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          */
         do_action( 'actions_' . $this->slug, $currentActions, $selectedItems );
 
-        foreach( $currentActions as $actionSlug => $actionData ){
-
-            /**
-             * Do bulk action.
-             * Action tag: `action_{tableSlug}_(currentActionSlug)`
-             *
-             * @param array $actionData
-             * @param array $selectedItems
-             */
-            do_action( 'action_' . $this->slug . '_' . $actionSlug, $actionData, $selectedItems );
-
-        }
-
     }
 
     /**
