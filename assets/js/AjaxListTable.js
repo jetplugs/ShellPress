@@ -340,10 +340,15 @@
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
 
+                var request = jQuery.extend( true, {}, list.data );     //  Create deep copy of object
+
+                list.clearTempActions();                                //  Clear temporary data
+                list.clearRowSelections();                              //  Clear selections
+
                 $.ajax( {
                     type:   'POST',
                     url:    ajaxurl,
-                    data:   list.data,
+                    data:   request,
                     success: function( response ) {
 
                         if( parseInt( response ) !== 0 ){
@@ -377,10 +382,6 @@
 
                     },
                     complete:   function() {
-
-                        list.clearTempActions();        //  Clear temporary data
-
-                        list.clearRowSelections();      //  Clear selections
 
                         list.isLocked = false;          //  Unlock callbacks
 
