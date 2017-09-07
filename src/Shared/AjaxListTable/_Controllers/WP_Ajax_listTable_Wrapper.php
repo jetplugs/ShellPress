@@ -213,14 +213,16 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     public function get_bar_actions() {
 
         $barActions = array();
+        $currentView = $this->getView();
 
         /**
          * Apply filter on empty array.
          * Filter tag: `bar_actions_{tableSlug}`
          *
-         * @param array $barActions
+         * @param array     $barActions
+         * @param string    $currentView
          */
-        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions );
+        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions, $currentView );
 
         return $barActions;
 
