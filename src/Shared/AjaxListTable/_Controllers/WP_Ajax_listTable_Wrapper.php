@@ -647,9 +647,6 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getTotalItems() {
 
-
-        App::logger()->debug( print_r( $this->params, true ) );
-
         if( isset( $_REQUEST['totalitems'] ) && ! empty( $_REQUEST['totalitems'] ) ){
 
             return (int) $_REQUEST['totalitems'];
