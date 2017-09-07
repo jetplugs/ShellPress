@@ -331,6 +331,11 @@
                 } );
 
             },
+            clearRowSelections: function() {
+
+                list.data.selectedItems = {}
+
+            },
             update:             function() {
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
@@ -374,6 +379,8 @@
                     complete:   function() {
 
                         list.clearTempActions();        //  Clear temporary data
+
+                        list.clearRowSelections();      //  Clear selections
 
                         list.isLocked = false;          //  Unlock callbacks
 
