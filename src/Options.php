@@ -90,7 +90,7 @@ class Options {
      */
     public function update( $data ) {
 
-        return update_option( $this->optionsKey, $data );
+        return update_option( $this->getOptionsKey(), $data );
 
     }
 
