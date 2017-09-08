@@ -3,6 +3,7 @@ namespace shellpress\v1_0_7;
 
 use shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_0_7\src\Factory\Factory;
+use shellpress\v1_0_7\src\Helpers;
 use shellpress\v1_0_7\src\Logger;
 use shellpress\v1_0_7\src\Options;
 
@@ -59,6 +60,9 @@ abstract class ShellPress {
                 'flushFrequency'    =>  false,
                 'logFormat'         =>  false,
                 'appendContext'     =>  true
+            ),
+            'helpers'       =>  array(
+                'object'            =>  null
             )
 		);
 
@@ -71,6 +75,7 @@ abstract class ShellPress {
         static::_initAutoloader();
         static::_initOptions();
         static::_initLogger();
+        static::_initHelpers();
 
         //  ----------------------------------------
         //  Calling hooks
@@ -293,6 +298,17 @@ abstract class ShellPress {
 
     }
 
+    /**
+     * Initialize Helpers.
+     */
+    private static function _initHelpers() {
+
+        $helpersArgs = & static::$sp['helpers'];    //  reference
+
+        $helpersArgs['object'] = new Helpers();
+
+    }
+
     //  ================================================================================
     //  COMPONONETS
     //  ================================================================================
@@ -338,6 +354,17 @@ abstract class ShellPress {
     public static function options() {
 
         return static::$sp['options']['object'];
+
+    }
+
+    /**
+     * Gets helpers object.
+     *
+     * @return Helpers
+     */
+    public static function helpers() {
+
+        return static::$sp['helpers']['object'];
 
     }
 
