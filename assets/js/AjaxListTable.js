@@ -45,7 +45,7 @@
                         var query = this.search.substring( 1 );
 
                         //  Writing attributes
-                        ajaxListTable.attr( 'data-paged',       list._query( query, 'paged' ) || '1' );
+                        list.data.paged = list._query( query, 'paged' ) || '1';
 
                         list.update();
 
@@ -158,7 +158,7 @@
                             timer = window.setTimeout(function () {
 
                                 //  Writing attributes
-                                list.data.pagesd = parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1';
+                                list.data.paged = parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1';
 
                                 list.update();
 
