@@ -477,19 +477,19 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  Component attributes
         //  ----------------------------------------
 
-        $attrArray = array();
+        $attrArray                      = array();
 
-        $attrArray[] = sprintf( 'data-action-id="%1$s"', $actionId );    //  Action id
+        $attrArray['data-action-id']    = sprintf( 'data-action-id="%1$s"', $actionId );    //  Action id
+
+	    if( $component['temp'] === true ){
+
+		    $attrArray['data-action-temp'] = sprintf( 'data-action-temp="%1$s"', $actionId );
+
+	    }
 
         foreach( $component['attributes'] as $attrName => $attrValue ){
 
             $attrArray[ $attrName ] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
-
-        }
-
-        if( $component['temp'] === true ){
-
-            $attrArray[] = sprintf( 'data-action-temp="%1$s"', $actionId );
 
         }
 
@@ -508,19 +508,20 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
                 //  Defaults
 
                 $defaultSelectOption = array(
-                    'title'     =>  'Title',
-                    'data'      =>  ''
+                    'title'         =>  'Title',
+                    'data'          =>  '',
+	                'attributes'    =>  array()
                 );
 
                 $selectOption = wp_parse_args( $selectOption, $defaultSelectOption );
 
                 //  Attributes
 
-                $optionAttrArray = array();
+                $optionAttrArray                        = array();
 
-                $optionAttrArray[] = sprintf( 'value="%1$s"', $optionId );
+                $optionAttrArray['value']               = sprintf( 'value="%1$s"', $optionId );
 
-                $optionAttrArray[] = sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $selectOption['data'] ) ) );
+                $optionAttrArray['data-action-data']    = sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $selectOption['data'] ) ) );
 
                 //  Remember clicked option
 
@@ -530,11 +531,19 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
                     if( isset( $currentActions[ $actionId ][ $optionId ] ) ){
 
-                        $optionAttrArray[] = 'selected="selected"';
+                        $optionAttrArray['selected'] = 'selected="selected"';
 
                     }
 
                 }
+
+                //  Custom attributes
+
+	            foreach( $selectOption['attributes'] as $attrName => $attrValue ){
+
+		            $optionAttrArray[ $attrName ] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
+
+	            }
 
                 //  Display options
 

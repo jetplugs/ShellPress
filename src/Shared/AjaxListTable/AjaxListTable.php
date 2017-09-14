@@ -446,8 +446,6 @@ abstract class AjaxListTable {
 
         ob_start();
 
-//        printf( '<pre>%1$s</pre>', print_r( $_REQUEST, true ) );
-
         echo $this->getDisplayOfNotices();
 
         if( $this->isListOfViewsVisible() ){
