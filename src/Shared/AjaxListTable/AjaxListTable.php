@@ -82,18 +82,38 @@ abstract class AjaxListTable {
 
     /**
      * Call this method to get main table wrapper.
+     *
+     * @param array $attributes     Div root attributes. Attr => Value
+     * @param string $loader        HTML of loader.
      */
-    public function getDisplayRoot() {
+    public function getDisplayRoot( $attributes = array(), $loader = null ) {
 
-        $attributes = array();
-
-        $html = sprintf( '<div id="%1$s" class="%2$s" %3$s>',
-            $this->getSlug(),
-            'sp-ajax-list-table',
-            implode( ' ', $attributes )
+        $defaultAttributes = array(
+            'id'    =>  $this->getSlug(),
+            'class' =>  'sp-ajax-list-table'
         );
 
-        $html .= sprintf( '<div class="spinner is-active" style="float:none"></div>' );
+        $attributes = wp_parse_args( $attributes, $defaultAttributes );
+
+        $attrHTML = array();
+
+        foreach( $attributes as $attr => $value ){
+
+            $attrHTML[] = sprintf( '%1$s="%2$s"', $attr, $value );
+
+        }
+
+        $html = sprintf( '<div %1$s>', implode( ' ', $attrHTML ) );
+
+        if( $loader === null ){
+
+            $html .= sprintf( '<div class="spinner is-active" style="float:none"></div>' );
+
+        } else {
+
+            $html .= $loader;
+
+        }
 
         $html .= sprintf( '</div>' );
 
