@@ -8,6 +8,7 @@ namespace shellpress\v1_0_7\src\Shared\AdminPageFramework\CustomFields\RadioReve
  */
 
 use SP_v1_0_7_AdminPageFramework_FieldType_radio;
+use tmc\mailboo\src\App;
 
 class FieldType_radioreveal extends SP_v1_0_7_AdminPageFramework_FieldType_radio {
 
@@ -66,7 +67,7 @@ class FieldType_radioreveal extends SP_v1_0_7_AdminPageFramework_FieldType_radio
         $scripts = array(
             array(
                 'src'           => __DIR__ . '/RadioReveal.js',
-                'version'       =>  'ShellPress_v1_0_5',
+                'version'       =>  'SP_v1_0_7',
                 'dependancies'  =>  array( 'jquery' )
             )
         );
