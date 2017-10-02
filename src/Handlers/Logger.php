@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_7\src;
+namespace shellpress\v1_0_7\src\Handlers;
 
 use shellpress\v1_0_7\lib\KLogger\KLogger;
 use shellpress\v1_0_7\lib\Psr\Log\LogLevel;

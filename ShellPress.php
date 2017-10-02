@@ -2,23 +2,63 @@
 namespace shellpress\v1_0_7;
 
 use shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_7\src\Factory\Factory;
-use shellpress\v1_0_7\src\Helpers;
-use shellpress\v1_0_7\src\Logger;
-use shellpress\v1_0_7\src\Options;
-
+use shellpress\v1_0_7\src\Handlers\Helpers;
+use shellpress\v1_0_7\src\Handlers\Logger;
+use shellpress\v1_0_7\src\Handlers\Options;
 
 /**
  * Core class of plugin. To use it, simple extend it.
- * **Please remember to define `protected static $sp;` property in new class.**
  */
 abstract class ShellPress {
 
     /**
+     * Main container for all objects.
      * You need to redefine it in your static class!!
+     *
      * @var array
      */
     protected static $sp;   //  <-- Copy this line!!!
+
+    /** @var static */
+    private static $instance = null;
+
+    /** @var Options */
+    public $options;
+
+    /** @var Helpers */
+    public $helpers;
+
+    /** @var Psr4AutoloaderClass */
+    public $autoloader;
+
+    /** @var Logger */
+    public $logger;
+
+    /**
+     * Private forbidden constructor.
+     */
+    private function __construct() {
+
+
+
+    }
+
+    /**
+     * Gets singleton instance.
+     *
+     * @return static
+     */
+    public static function getInstance() {
+
+        if( static::$instance === null ){
+
+            static::$instance = new static();
+
+        }
+
+        return static::$instance;
+
+    }
 
     /**
      * Call this method as soon as possible!
@@ -28,7 +68,6 @@ abstract class ShellPress {
      * @param string $pluginVersion     - set your plugin version. It will be used in scripts suffixing etc.
      * @param array|null $initArgs      - additional components arguments
      */
-
 	public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
 
 	    //  ----------------------------------------
@@ -44,9 +83,6 @@ abstract class ShellPress {
 			'options'	    =>	array(
 			    'object'        =>  null,
 			    'optionsKey'    =>  $pluginPrefix
-            ),
-            'factory'       =>  array(
-                'object'        =>  null
             ),
             'autoloader'    =>  array(
                 'object'    =>  null
@@ -84,8 +120,6 @@ abstract class ShellPress {
         register_activation_hook( static::getMainPluginFile(),      array( get_called_class(), 'onActivation' ) );
         register_deactivation_hook( static::getMainPluginFile(),    array( get_called_class(), 'onDeactivation' ) );
 
-        add_action( 'init',                                         array( get_called_class(), 'onInit' ) );
-
         //  ----------------------------------------
         //  Everything is ready. Call onSetUp()
         //  ----------------------------------------
@@ -104,13 +138,6 @@ abstract class ShellPress {
      * @return void
      */
     public static function onSetUp() {}
-
-    /**
-     * Called automaticly on init hook.
-     *
-     * @return void
-     */
-	public static function onInit() {}
 
     /**
      * Called automaticly on plugin activation.
@@ -286,18 +313,6 @@ abstract class ShellPress {
 
     }
 
-
-    /**
-     * Initialize Factory.
-     */
-    private static function _initFactory() {
-
-        $factoryArgs = & static::$sp['factory'];    //  reference
-
-        $factoryArgs['object'] = new Factory();
-
-    }
-
     /**
      * Initialize Helpers.
      */
@@ -332,17 +347,6 @@ abstract class ShellPress {
     public static function autoloader() {
 
         return static::$sp['autoloader']['object'];
-
-    }
-
-    /**
-     * Gets factory object.
-     *
-     * @return Factory
-     */
-    public static function factory() {
-
-        return static::$sp['factory']['object'];
 
     }
 
