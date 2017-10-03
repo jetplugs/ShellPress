@@ -12,22 +12,22 @@ use shellpress\v1_0_7\src\Handlers\OptionsHandler;
 abstract class ShellPress {
 
     /** @var static */
-    private static $instances = array();
+    protected static $_instances = array();
 
     /** @var array */
     private $initArgs = array();
 
     /** @var OptionsHandler */
-    public $optionsHandler;
+    private $optionsHandler;
 
     /** @var HelpersHandler */
-    public $helpersHandler;
+    private $helpersHandler;
 
     /** @var Psr4AutoloaderClass */
-    public $autoloadingHandler;
+    private $autoloadingHandler;
 
     /** @var LogHandler */
-    public $logHandler;
+    private $logHandler;
 
     /**
      * Private forbidden constructor.
@@ -47,13 +47,13 @@ abstract class ShellPress {
 
         $calledClass = get_called_class();
 
-        if( ! isset( static::$instances[ $calledClass ] ) ){
+        if( ! isset( static::$_instances[ $calledClass ] ) ){
 
-            static::$instances[ $calledClass ] = new static();
+            static::$_instances[ $calledClass ] = new static();
 
         }
 
-        return static::$instances[ $calledClass ];
+        return static::$_instances[ $calledClass ];
 
     }
 
