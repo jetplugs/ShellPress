@@ -7,10 +7,10 @@
  * @author      Michael Uno <michael@michaeluno.jp>
  * @copyright   2013-2017 (c) Michael Uno
  * @license     MIT <http://opensource.org/licenses/MIT>
- * @package     SP_v1_0_7_AdminPageFramework
+ * @package     SP_v1_0_8_AdminPageFramework
  */
 
-if ( ! class_exists( 'SP_v1_0_7_PathCustomFieldType' ) ) :
+if ( ! class_exists( 'SP_v1_0_8_PathCustomFieldType' ) ) :
 /**
  * A field type that lets the user pick a file located on the server.
  * 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'SP_v1_0_7_PathCustomFieldType' ) ) :
  * @version     0.0.3b
  * @requires    Admin Page Framework 3.8.8
  */
-class SP_v1_0_7_PathCustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldType_image {
+class SP_v1_0_8_PathCustomFieldType extends SP_v1_0_8_AdminPageFramework_FieldType_image {
 
     /**
      * Defines the field type slugs used for this field type.
@@ -182,7 +182,7 @@ class SP_v1_0_7_PathCustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldTy
                 bindFileTree( this );
             });
 
-            jQuery().registerSP_v1_0_7_AdminPageFrameworkCallbacks( {
+            jQuery().registerSP_v1_0_8_AdminPageFrameworkCallbacks( {
                 /**
                  * Called when a field of this field type gets repeated.
                  */
@@ -421,7 +421,7 @@ if ( jQuery( 'a#select_path_{$sInputID}' ).length == 0 ) {
     jQuery( 'input#{$sInputID}' ).after( $_sButtonHTML );
 }
 jQuery( document ).ready( function(){   
-    //setSP_v1_0_7_AdminPageFrameworkMediaUploader( '{$sInputID}', 'true' === '{$_sRpeatable}' );
+    //setSP_v1_0_8_AdminPageFrameworkMediaUploader( '{$sInputID}', 'true' === '{$_sRpeatable}' );
 });
 JAVASCRIPTS;
                     

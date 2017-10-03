@@ -7,10 +7,10 @@
  * @author      Michael Uno <michael@michaeluno.jp>
  * @copyright   2013-2017 (c) Michael Uno
  * @license     MIT <http://opensource.org/licenses/MIT>
- * @package     SP_v1_0_7_AdminPageFramework
+ * @package     SP_v1_0_8_AdminPageFramework
  */
 
-if ( ! class_exists( 'SP_v1_0_7_NoUISliderCustomFieldType' ) ) :
+if ( ! class_exists( 'SP_v1_0_8_NoUISliderCustomFieldType' ) ) :
 /**
  * A field type that lets the user toggle a switch.
  * 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'SP_v1_0_7_NoUISliderCustomFieldType' ) ) :
  * @version     0.0.4
  * @remark      Requires Admin Page Framework 3.8.8 or above.
  */
-class SP_v1_0_7_NoUISliderCustomFieldType extends SP_v1_0_7_AdminPageFramework_FieldType_text {
+class SP_v1_0_8_NoUISliderCustomFieldType extends SP_v1_0_8_AdminPageFramework_FieldType_text {
 
     /**
      * Defines the field type slugs used for this field type.

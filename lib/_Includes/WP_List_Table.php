@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_7\lib\_Includes;
+namespace shellpress\v1_0_8\lib\_Includes;
 /**
  * Administration API: WP_List_Table class
  *

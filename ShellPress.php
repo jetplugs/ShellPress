@@ -1,10 +1,10 @@
 <?php
-namespace shellpress\v1_0_7;
+namespace shellpress\v1_0_8;
 
-use shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_7\src\Handlers\HelpersHandler;
-use shellpress\v1_0_7\src\Handlers\LogHandler;
-use shellpress\v1_0_7\src\Handlers\OptionsHandler;
+use shellpress\v1_0_8\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_0_8\src\Handlers\HelpersHandler;
+use shellpress\v1_0_8\src\Handlers\LogHandler;
+use shellpress\v1_0_8\src\Handlers\OptionsHandler;
 
 /**
  * Core class of plugin. To use it, simple extend it.
@@ -299,7 +299,7 @@ abstract class ShellPress {
      */
 	private function _initAutoloadingHandler() {
 
-        if( ! class_exists( 'shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_0_8\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
             require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
@@ -307,7 +307,7 @@ abstract class ShellPress {
 
         $this->autoloadingHandler = new Psr4AutoloaderClass();
         $this->autoloadingHandler->register();
-        $this->autoloadingHandler->addNamespace( 'shellpress\v1_0_7', __DIR__ );
+        $this->autoloadingHandler->addNamespace( 'shellpress\v1_0_8', __DIR__ );
 
     }
 
