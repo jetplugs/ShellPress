@@ -7,7 +7,7 @@ namespace shellpress\v1_0_7\src\Handlers;
  * Time: 18:33
  */
 
-class Options {
+class OptionsHandler {
 
     /** @var string */
     protected $optionsKey;
@@ -16,7 +16,7 @@ class Options {
     protected $optionsData;
 
     /**
-     * Options constructor.
+     * OptionsHandler constructor.
      *
      * @param $optionsKey
      */

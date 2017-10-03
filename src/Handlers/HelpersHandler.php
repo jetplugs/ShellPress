@@ -7,7 +7,7 @@ namespace shellpress\v1_0_7\src\Handlers;
  * Time: 14:41
  */
 
-class Helpers {
+class HelpersHandler {
 
     /**
      * Merge two arrays without structure changing and overriding values

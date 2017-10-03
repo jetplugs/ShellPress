@@ -12,7 +12,7 @@ use shellpress\v1_0_7\lib\Psr\Log\LogLevel;
  * Originally written for use with wpSearch
  *
  * Usage:
- * $log = new Katzgrau\KLogger\Logger('/var/log/', Psr\Log\LogLevel::INFO);
+ * $log = new Katzgrau\KLogHandler\LogHandler('/var/log/', Psr\Log\LogLevel::INFO);
  * $log->info('Returned a million search results'); //Prints to the log file
  * $log->error('Oh dear.'); //Prints to the log file
  * $log->debug('x = 5'); //Prints nothing due to current severity threshhold

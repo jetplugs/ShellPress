@@ -3,11 +3,11 @@
 namespace shellpress\v1_0_7\lib\Psr\Log;
 
 /**
- * This is a simple Logger trait that classes unable to extend AbstractLogger
+ * This is a simple LogHandler trait that classes unable to extend AbstractLogger
  * (because they extend another class, etc) can include.
  *
  * It simply delegates all log-level-specific methods to the `log` method to
- * reduce boilerplate code that a simple Logger that does the same thing with
+ * reduce boilerplate code that a simple LogHandler that does the same thing with
  * messages regardless of the error level has to implement.
  */
 trait LoggerTrait

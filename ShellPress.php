@@ -2,42 +2,37 @@
 namespace shellpress\v1_0_7;
 
 use shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_7\src\Handlers\Helpers;
-use shellpress\v1_0_7\src\Handlers\Logger;
-use shellpress\v1_0_7\src\Handlers\Options;
+use shellpress\v1_0_7\src\Handlers\HelpersHandler;
+use shellpress\v1_0_7\src\Handlers\LogHandler;
+use shellpress\v1_0_7\src\Handlers\OptionsHandler;
 
 /**
  * Core class of plugin. To use it, simple extend it.
  */
 abstract class ShellPress {
 
-    /**
-     * Main container for all objects.
-     * You need to redefine it in your static class!!
-     *
-     * @var array
-     */
-    protected static $sp;   //  <-- Copy this line!!!
-
     /** @var static */
-    private static $instance = null;
+    private static $instances = array();
 
-    /** @var Options */
-    public $options;
+    /** @var array */
+    private $initArgs = array();
 
-    /** @var Helpers */
-    public $helpers;
+    /** @var OptionsHandler */
+    public $optionsHandler;
+
+    /** @var HelpersHandler */
+    public $helpersHandler;
 
     /** @var Psr4AutoloaderClass */
-    public $autoloader;
+    public $autoloadingHandler;
 
-    /** @var Logger */
-    public $logger;
+    /** @var LogHandler */
+    public $logHandler;
 
     /**
      * Private forbidden constructor.
      */
-    private function __construct() {
+    private final function __construct() {
 
 
 
@@ -48,15 +43,17 @@ abstract class ShellPress {
      *
      * @return static
      */
-    public static function getInstance() {
+    public final static function getInstance() {
 
-        if( static::$instance === null ){
+        $calledClass = get_called_class();
 
-            static::$instance = new static();
+        if( ! isset( static::$instances[ $calledClass ] ) ){
+
+            static::$instances[ $calledClass ] = new static();
 
         }
 
-        return static::$instance;
+        return static::$instances[ $calledClass ];
 
     }
 
@@ -66,65 +63,60 @@ abstract class ShellPress {
      * @param string $mainPluginFile    - absolute path to main plugin file (__FILE__).
      * @param string $pluginPrefix      - will be used to prefix everything in plugin
      * @param string $pluginVersion     - set your plugin version. It will be used in scripts suffixing etc.
-     * @param array|null $initArgs      - additional components arguments
+     * @param array $initArgs           - additional components arguments
      */
 	public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
+
+	    $instance = static::getInstance();
 
 	    //  ----------------------------------------
 	    //  Prepare arguments
 	    //  ----------------------------------------
 
 		$defaultInitArgs = array(
-		    'app'           =>  array(
+		    'app'                   =>  array(
 		        'mainPluginFile'        =>  $mainPluginFile,
                 'pluginPrefix'          =>  $pluginPrefix,
                 'pluginVersion'         =>  $pluginVersion
             ),
-			'options'	    =>	array(
-			    'object'        =>  null,
-			    'optionsKey'    =>  $pluginPrefix
+			'optionsHandler'	    =>	array(
+			    'optionsKey'            =>  $pluginPrefix
             ),
-            'autoloader'    =>  array(
-                'object'    =>  null
-            ),
-            'logger'        =>  array(
-                'object'            =>  null,
-                'directory'         =>  dirname( $mainPluginFile ) . '/log',
-                'logLevel'          =>  'debug',
-                'dateFormat'        =>  'Y-m-d G:i:s.u',
-                'filename'          =>  'log_' . date( 'd-m-Y' ) . '.log',
-                'flushFrequency'    =>  false,
-                'logFormat'         =>  false,
-                'appendContext'     =>  true
-            ),
-            'helpers'       =>  array(
-                'object'            =>  null
+            'logHandler'            =>  array(
+                'object'                =>  null,
+                'directory'             =>  dirname( $mainPluginFile ) . '/log',
+                'logLevel'              =>  'debug',
+                'dateFormat'            =>  'Y-m-d G:i:s.u',
+                'filename'              =>  'log_' . date( 'd-m-Y' ) . '.log',
+                'flushFrequency'        =>  false,
+                'logFormat'             =>  false,
+                'appendContext'         =>  true
             )
 		);
 
-		static::$sp = array_replace_recursive( $defaultInitArgs, $initArgs );   // replace default init arguments with specified by developer
+		$instance->initArgs = array_replace_recursive( $defaultInitArgs, $initArgs );   // replace default init arguments with specified by developer
 
         //  -----------------------------------
         //  Initialize components
         //  -----------------------------------
 
-        static::_initAutoloader();
-        static::_initOptions();
-        static::_initLogger();
-        static::_initHelpers();
+        $instance->_initAutoloadingHandler();
+        $instance->_initOptionsHandler();
+        $instance->_initLogHandler();
+        $instance->_initHelpers();
 
         //  ----------------------------------------
-        //  Calling hooks
+        //  Initialize hooks
         //  ----------------------------------------
 
-        register_activation_hook( static::getMainPluginFile(),      array( get_called_class(), 'onActivation' ) );
-        register_deactivation_hook( static::getMainPluginFile(),    array( get_called_class(), 'onDeactivation' ) );
+        $instance->_initActivationHook();
+        $instance->_initDeactivationHook();
 
         //  ----------------------------------------
         //  Everything is ready. Call onSetUp()
         //  ----------------------------------------
 
-        static::onSetUp();
+        $instance->_a_onSetUp();
 
 	}
 
@@ -137,21 +129,21 @@ abstract class ShellPress {
      *
      * @return void
      */
-    public static function onSetUp() {}
+    public abstract function _a_onSetUp();
 
     /**
      * Called automaticly on plugin activation.
      *
      * @return void
      */
-	public static function onActivation() {}
+	public abstract function _a_onActivation();
 
     /**
      * Called automaticly on plugin deactivation.
      *
      * @return void
      */
-	public static function onDeactivation() {}
+	public abstract function _a_onDeactivation();
 
 	//  ================================================================================
 	//  GETTERS
@@ -168,11 +160,11 @@ abstract class ShellPress {
 
         if( $stringToPrefix === null ){
 
-            return static::$sp['app']['pluginPrefix'];
+            return static::getInstance()->initArgs['app']['pluginPrefix'];
 
         } else {
 
-            return static::$sp['app']['pluginPrefix'] . $stringToPrefix;
+            return static::getInstance()->initArgs['app']['pluginPrefix'] . $stringToPrefix;
 
         }
 
@@ -243,7 +235,7 @@ abstract class ShellPress {
      */
     public static function getMainPluginFile() {
 
-        return static::$sp['app']['mainPluginFile'];
+        return static::getInstance()->initArgs['app']['mainPluginFile'];
 
     }
 
@@ -254,7 +246,47 @@ abstract class ShellPress {
      */
     public static function getPluginVersion() {
 
-        return static::$sp['app']['pluginVersion'];
+        return static::getInstance()->initArgs['app']['pluginVersion'];
+
+    }
+
+    /**
+     * Checks if application is used inside a plugin.
+     * It returns false, if directory is not equal ../wp-content/plugins
+     *
+     * @return bool
+     */
+    public function isInsidePlugin() {
+
+        if( strpos( __DIR__, 'wp-content/plugins' ) !== false ){
+
+            return true;
+
+        } else {
+
+            return false;
+
+        }
+
+    }
+
+    /**
+     * Checks if application is used inside a theme.
+     * It returns false, if directory is not equal ../wp-content/themes
+     *
+     * @return bool
+     */
+    public function isInsideTheme() {
+
+        if( strpos( __DIR__, 'wp-content/themes' ) !== false ){
+
+            return true;
+
+        } else {
+
+            return false;
+
+        }
 
     }
 
@@ -265,7 +297,7 @@ abstract class ShellPress {
     /**
      * Initialize PSR4 Autoloader.
      */
-	private static function _initAutoloader() {
+	private function _initAutoloadingHandler() {
 
         if( ! class_exists( 'shellpress\v1_0_7\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
@@ -273,30 +305,28 @@ abstract class ShellPress {
 
         }
 
-        $autoloaderArgs = & static::$sp['autoloader'];    //  reference
-
-        $autoloaderArgs['object'] = new Psr4AutoloaderClass();
-        $autoloaderArgs['object']->register();
-        $autoloaderArgs['object']->addNamespace( 'shellpress\v1_0_7', __DIR__ );
+        $this->autoloadingHandler = new Psr4AutoloaderClass();
+        $this->autoloadingHandler->register();
+        $this->autoloadingHandler->addNamespace( 'shellpress\v1_0_7', __DIR__ );
 
     }
 
     /**
      * Initialize Logging handler.
      */
-    private static function _initLogger() {
+    private function _initLogHandler() {
 
-        $loggerArgs = & static::$sp['logger'];      //  reference
+        $logHandlerArgs = $this->initArgs['logHandler'];
         
-        $loggerArgs['object'] = new Logger(
-            $loggerArgs['directory'],
-            $loggerArgs['logLevel'],
+        $this->logHandler = new LogHandler(
+            $logHandlerArgs['directory'],
+            $logHandlerArgs['logLevel'],
             array(
-                $loggerArgs['dateFormat'],
-                $loggerArgs['filename'],
-                $loggerArgs['flushFrequency'],
-                $loggerArgs['logFormat'],
-                $loggerArgs['appendContext']
+                $logHandlerArgs['dateFormat'],
+                $logHandlerArgs['filename'],
+                $logHandlerArgs['flushFrequency'],
+                $logHandlerArgs['logFormat'],
+                $logHandlerArgs['appendContext']
             )
         );
 
@@ -305,22 +335,52 @@ abstract class ShellPress {
     /**
      * Initialize options handler.
      */
-    private static function _initOptions() {
+    private function _initOptionsHandler() {
 
-        $optionsArgs = & static::$sp['options'];    //  reference
-
-        $optionsArgs['object'] = new Options( $optionsArgs['optionsKey'] );
+        $this->optionsHandler = new OptionsHandler( $this->initArgs['optionsHandler']['optionsKey'] );
 
     }
 
     /**
-     * Initialize Helpers.
+     * Initialize HelpersHandler.
      */
-    private static function _initHelpers() {
+    private function _initHelpers() {
 
-        $helpersArgs = & static::$sp['helpers'];    //  reference
+        $this->helpersHandler = new HelpersHandler();
 
-        $helpersArgs['object'] = new Helpers();
+    }
+
+    /**
+     * Initialize plugin activation hook.
+     */
+    private function _initActivationHook() {
+
+        if( $this->isInsidePlugin() ){
+
+            register_activation_hook( static::getMainPluginFile(),      array( $this, '_a_onActivation') );
+
+        } else {
+
+            add_action( 'after_switch_theme',                           array( $this, '_a_onActivation' ) );
+
+        }
+
+    }
+
+    /**
+     * Initialize plugin deactivation hook.
+     */
+    private function _initDeactivationHook() {
+
+        if( $this->isInsidePlugin() ){
+
+            register_deactivation_hook( static::getMainPluginFile(),    array( $this, '_a_onDeactivation') );
+
+        } else {
+
+            add_action( 'switch_theme',                                 array( $this, '_a_onDeactivation' ) );
+
+        }
 
     }
 
@@ -329,46 +389,46 @@ abstract class ShellPress {
     //  ================================================================================
 
     /**
-     * Gets logger object.
+     * Gets LogHandler object.
      *
-     * @return Logger
+     * @return LogHandler
      */
-    public static function logger() {
+    public static function log() {
 
-        return static::$sp['logger']['object'];
+        return static::getInstance()->logHandler;
 
     }
 
     /**
-     * Gets autoloader object.
+     * Gets AutoloadingHandler object.
      *
      * @return Psr4AutoloaderClass
      */
-    public static function autoloader() {
+    public static function autoloading() {
 
-        return static::$sp['autoloader']['object'];
+        return static::getInstance()->autoloadingHandler;
 
     }
 
     /**
-     * Gets options object.
+     * Gets OptionsHandler object.
      *
-     * @return Options
+     * @return OptionsHandler
      */
     public static function options() {
 
-        return static::$sp['options']['object'];
+        return static::getInstance()->optionsHandler;
 
     }
 
     /**
-     * Gets helpers object.
+     * Gets HelpersHandler object.
      *
-     * @return Helpers
+     * @return HelpersHandler
      */
     public static function helpers() {
 
-        return static::$sp['helpers']['object'];
+        return static::getInstance()->helpersHandler;
 
     }
 

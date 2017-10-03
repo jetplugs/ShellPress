@@ -4,10 +4,10 @@ namespace shellpress\v1_0_7\src\Handlers;
 use shellpress\v1_0_7\lib\KLogger\KLogger;
 use shellpress\v1_0_7\lib\Psr\Log\LogLevel;
 
-class Logger extends KLogger {
+class LogHandler extends KLogger {
 
     /**
-     * Logger constructor.
+     * LogHandler constructor.
      * Call parent constructor too.
      *
      * @param string $logDirectory
