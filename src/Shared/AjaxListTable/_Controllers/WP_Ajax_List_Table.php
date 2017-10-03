@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_5\src\Shared\AjaxListTable\_Controllers;
+namespace shellpress\v1_0_7\src\Shared\AjaxListTable\_Controllers;
 /**
  * Administration API: WP_List_Table class
  *
@@ -61,7 +61,7 @@ abstract class WP_Ajax_List_Table {
 	 * @access private
 	 * @var array
 	 */
-	private $_actions;
+	protected $_actions;
 
 	/**
 	 * Cached pagination output.
@@ -70,7 +70,7 @@ abstract class WP_Ajax_List_Table {
 	 * @access private
 	 * @var string
 	 */
-	private $_pagination;
+	protected $_pagination;
 
 	/**
 	 * The view switcher modes.
@@ -403,19 +403,6 @@ abstract class WP_Ajax_List_Table {
 	}
 
 	/**
-	 * Get an associative array ( option_name => option_title ) with the list
-	 * of bulk actions available on this table.
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 *
-	 * @return array
-	 */
-	protected function get_bulk_actions() {
-		return array();
-	}
-
-	/**
 	 * Display the bulk actions dropdown.
 	 *
 	 * @since 3.1.0
@@ -424,258 +411,7 @@ abstract class WP_Ajax_List_Table {
 	 * @param string $which The location of the bulk actions: 'top' or 'bottom'.
 	 *                      This is designated as optional for backward compatibility.
 	 */
-	protected function bulk_actions( $which = '' ) {
-		if ( is_null( $this->_actions ) ) {
-			$this->_actions = $this->get_bulk_actions();
-			/**
-			 * Filters the list table Bulk Actions drop-down.
-			 *
-			 * The dynamic portion of the hook name, `$this->screen->id`, refers
-			 * to the ID of the current screen, usually a string.
-			 *
-			 * This filter can currently only be used to remove bulk actions.
-			 *
-			 * @since 3.5.0
-			 *
-			 * @param array $actions An array of the available bulk actions.
-			 */
-			$this->_actions = apply_filters( "bulk_actions-{$this->screen->id}", $this->_actions );
-			$two = '';
-		} else {
-			$two = '2';
-		}
-
-		if ( empty( $this->_actions ) )
-			return;
-
-		echo '<label for="bulk-action-selector-' . esc_attr( $which ) . '" class="screen-reader-text">' . __( 'Select bulk action' ) . '</label>';
-		echo '<select name="action' . $two . '" id="bulk-action-selector-' . esc_attr( $which ) . "\">\n";
-		echo '<option value="-1">' . __( 'Bulk Actions' ) . "</option>\n";
-
-		foreach ( $this->_actions as $name => $title ) {
-			$class = 'edit' === $name ? ' class="hide-if-no-js"' : '';
-
-			echo "\t" . '<option value="' . $name . '"' . $class . '>' . $title . "</option>\n";
-		}
-
-		echo "</select>\n";
-
-		submit_button( __( 'Apply' ), 'action', '', false, array( 'id' => "doaction$two" ) );
-		echo "\n";
-	}
-
-	/**
-	 * Get the current action selected from the bulk actions dropdown.
-	 *
-	 * @since 3.1.0
-	 * @access public
-	 *
-	 * @return string|false The action name or False if no action was selected
-	 */
-	public function current_action() {
-		if ( isset( $_REQUEST['filter_action'] ) && ! empty( $_REQUEST['filter_action'] ) )
-			return false;
-
-		if ( isset( $_REQUEST['action'] ) && -1 != $_REQUEST['action'] )
-			return $_REQUEST['action'];
-
-		if ( isset( $_REQUEST['action2'] ) && -1 != $_REQUEST['action2'] )
-			return $_REQUEST['action2'];
-
-		return false;
-	}
-
-	/**
-	 * Generate row actions div
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 *
-	 * @param array $actions The list of actions
-	 * @param bool $always_visible Whether the actions should be always visible
-	 * @return string
-	 */
-	public function row_actions( $actions, $always_visible = false ) {
-		$action_count = count( $actions );
-		$i = 0;
-
-		if ( !$action_count )
-			return '';
-
-		$out = '<div class="' . ( $always_visible ? 'row-actions visible' : 'row-actions' ) . '">';
-		foreach ( $actions as $action => $link ) {
-			++$i;
-			( $i == $action_count ) ? $sep = '' : $sep = ' | ';
-			$out .= "<span class='$action'>$link$sep</span>";
-		}
-		$out .= '</div>';
-
-		$out .= '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>';
-
-		return $out;
-	}
-
-	/**
-	 * Display a monthly dropdown for filtering items
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 *
-	 * @global wpdb      $wpdb
-	 * @global WP_Locale $wp_locale
-	 *
-	 * @param string $post_type
-	 */
-	protected function months_dropdown( $post_type ) {
-		global $wpdb, $wp_locale;
-
-		/**
-		 * Filters whether to remove the 'Months' drop-down from the post list table.
-		 *
-		 * @since 4.2.0
-		 *
-		 * @param bool   $disable   Whether to disable the drop-down. Default false.
-		 * @param string $post_type The post type.
-		 */
-		if ( apply_filters( 'disable_months_dropdown', false, $post_type ) ) {
-			return;
-		}
-
-		$extra_checks = "AND post_status != 'auto-draft'";
-		if ( ! isset( $_REQUEST['post_status'] ) || 'trash' !== $_REQUEST['post_status'] ) {
-			$extra_checks .= " AND post_status != 'trash'";
-		} elseif ( isset( $_REQUEST['post_status'] ) ) {
-			$extra_checks = $wpdb->prepare( ' AND post_status = %s', $_REQUEST['post_status'] );
-		}
-
-		$months = $wpdb->get_results( $wpdb->prepare( "
-			SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
-			FROM $wpdb->posts
-			WHERE post_type = %s
-			$extra_checks
-			ORDER BY post_date DESC
-		", $post_type ) );
-
-		/**
-		 * Filters the 'Months' drop-down results.
-		 *
-		 * @since 3.7.0
-		 *
-		 * @param object $months    The months drop-down query results.
-		 * @param string $post_type The post type.
-		 */
-		$months = apply_filters( 'months_dropdown_results', $months, $post_type );
-
-		$month_count = count( $months );
-
-		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
-			return;
-
-		$m = isset( $_REQUEST['m'] ) ? (int) $_REQUEST['m'] : 0;
-?>
-		<label for="filter-by-date" class="screen-reader-text"><?php _e( 'Filter by date' ); ?></label>
-		<select name="m" id="filter-by-date">
-			<option<?php selected( $m, 0 ); ?> value="0"><?php _e( 'All dates' ); ?></option>
-<?php
-		foreach ( $months as $arc_row ) {
-			if ( 0 == $arc_row->year )
-				continue;
-
-			$month = zeroise( $arc_row->month, 2 );
-			$year = $arc_row->year;
-
-			printf( "<option %s value='%s'>%s</option>\n",
-				selected( $m, $year . $month, false ),
-				esc_attr( $arc_row->year . $month ),
-				/* translators: 1: month name, 2: 4-digit year */
-				sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year )
-			);
-		}
-?>
-		</select>
-<?php
-	}
-
-	/**
-	 * Display a view switcher
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 *
-	 * @param string $current_mode
-	 */
-	protected function view_switcher( $current_mode ) {
-?>
-		<input type="hidden" name="mode" value="<?php echo esc_attr( $current_mode ); ?>" />
-		<div class="view-switch">
-<?php
-			foreach ( $this->modes as $mode => $title ) {
-				$classes = array( 'view-' . $mode );
-				if ( $current_mode === $mode )
-					$classes[] = 'current';
-				printf(
-					"<a href='%s' class='%s' id='view-switch-$mode'><span class='screen-reader-text'>%s</span></a>\n",
-					esc_url( add_query_arg( 'mode', $mode ) ),
-					implode( ' ', $classes ),
-					$title
-				);
-			}
-		?>
-		</div>
-<?php
-	}
-
-	/**
-	 * Display a comment count bubble
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 *
-	 * @param int $post_id          The post ID.
-	 * @param int $pending_comments Number of pending comments.
-	 */
-	protected function comments_bubble( $post_id, $pending_comments ) {
-		$approved_comments = get_comments_number();
-
-		$approved_comments_number = number_format_i18n( $approved_comments );
-		$pending_comments_number = number_format_i18n( $pending_comments );
-
-		$approved_only_phrase = sprintf( _n( '%s comment', '%s comments', $approved_comments ), $approved_comments_number );
-		$approved_phrase = sprintf( _n( '%s approved comment', '%s approved comments', $approved_comments ), $approved_comments_number );
-		$pending_phrase = sprintf( _n( '%s pending comment', '%s pending comments', $pending_comments ), $pending_comments_number );
-
-		// No comments at all.
-		if ( ! $approved_comments && ! $pending_comments ) {
-			printf( '<span aria-hidden="true">—</span><span class="screen-reader-text">%s</span>',
-				__( 'No comments' )
-			);
-		// Approved comments have different display depending on some conditions.
-		} elseif ( $approved_comments ) {
-			printf( '<a href="%s" class="post-com-count post-com-count-approved"><span class="comment-count-approved" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></a>',
-				esc_url( add_query_arg( array( 'p' => $post_id, 'comment_status' => 'approved' ), admin_url( 'edit-comments.php' ) ) ),
-				$approved_comments_number,
-				$pending_comments ? $approved_phrase : $approved_only_phrase
-			);
-		} else {
-			printf( '<span class="post-com-count post-com-count-no-comments"><span class="comment-count comment-count-no-comments" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></span>',
-				$approved_comments_number,
-				$pending_comments ? __( 'No approved comments' ) : __( 'No comments' )
-			);
-		}
-
-		if ( $pending_comments ) {
-			printf( '<a href="%s" class="post-com-count post-com-count-pending"><span class="comment-count-pending" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></a>',
-				esc_url( add_query_arg( array( 'p' => $post_id, 'comment_status' => 'moderated' ), admin_url( 'edit-comments.php' ) ) ),
-				$pending_comments_number,
-				$pending_phrase
-			);
-		} else {
-			printf( '<span class="post-com-count post-com-count-pending post-com-count-no-pending"><span class="comment-count comment-count-no-pending" aria-hidden="true">%s</span><span class="screen-reader-text">%s</span></span>',
-				$pending_comments_number,
-				$approved_comments ? __( 'No pending comments' ) : __( 'No comments' )
-			);
-		}
-	}
+	protected abstract function bar_actions();
 
 	/**
 	 * Get the current page number
@@ -692,37 +428,6 @@ abstract class WP_Ajax_List_Table {
 			$pagenum = $this->_pagination_args['total_pages'];
 
 		return max( 1, $pagenum );
-	}
-
-	/**
-	 * Get number of items to display on a single page
-	 *
-	 * @since 3.1.0
-	 * @access protected
-	 *
-	 * @param string $option
-	 * @param int    $default
-	 * @return int
-	 */
-	protected function get_items_per_page( $option, $default = 20 ) {
-		$per_page = (int) get_user_option( $option );
-		if ( empty( $per_page ) || $per_page < 1 )
-			$per_page = $default;
-
-		/**
-		 * Filters the number of items to be displayed on each page of the list table.
-		 *
-		 * The dynamic hook name, $option, refers to the `per_page` option depending
-		 * on the type of list table in use. Possible values include: 'edit_comments_per_page',
-		 * 'sites_network_per_page', 'site_themes_network_per_page', 'themes_network_per_page',
-		 * 'users_network_per_page', 'edit_post_per_page', 'edit_page_per_page',
-		 * 'edit_{$post_type}_per_page', etc.
-		 *
-		 * @since 2.9.0
-		 *
-		 * @param int $per_page Number of items to be displayed. Default 20.
-		 */
-		return (int) apply_filters( $option, $per_page );
 	}
 
 	/**
@@ -855,9 +560,7 @@ abstract class WP_Ajax_List_Table {
 	 *
 	 * @return array
 	 */
-	public function get_columns() {
-		die( 'function WP_List_Table::get_columns() must be over-ridden in a sub-class.' );
-	}
+	public abstract function get_columns();
 
 	/**
 	 * Get a list of sortable columns. The format is:
@@ -872,9 +575,7 @@ abstract class WP_Ajax_List_Table {
 	 *
 	 * @return array
 	 */
-	protected function get_sortable_columns() {
-		return array();
-	}
+	protected abstract function get_sortable_columns();
 
 	/**
 	 * Gets the name of the default primary column.
@@ -1038,8 +739,8 @@ abstract class WP_Ajax_List_Table {
 		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 		$current_url = remove_query_arg( 'paged', $current_url );
 
-		if ( isset( $_REQUEST['orderby'] ) ) {
-			$current_orderby = $_REQUEST['orderby'];
+		if ( isset( $_REQUEST['orderBy'] ) ) {
+			$current_orderby = $_REQUEST['orderBy'];
 		} else {
 			$current_orderby = '';
 		}
@@ -1133,7 +834,6 @@ abstract class WP_Ajax_List_Table {
 
 </table>
 <?php
-		$this->display_tablenav( 'bottom' );
 	}
 
 	/**
@@ -1161,7 +861,7 @@ abstract class WP_Ajax_List_Table {
 
 		<?php if ( $this->has_items() ): ?>
 		<div class="alignleft actions bulkactions">
-			<?php $this->bulk_actions( $which ); ?>
+			<?php $this->bar_actions(); ?>
 		</div>
 		<?php endif;
 		$this->extra_tablenav( $which );

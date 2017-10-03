@@ -1,9 +1,9 @@
 <?php
 
-namespace shellpress\v1_0_5\lib\Psr\Log;
+namespace shellpress\v1_0_7\lib\Psr\Log;
 
 /**
- * This Logger can be used to avoid conditional log calls.
+ * This LogHandler can be used to avoid conditional log calls.
  *
  * Logging should always be optional, and if no logger is provided to your
  * library creating a NullLogger instance to have something to throw logs at

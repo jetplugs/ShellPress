@@ -4,17 +4,22 @@
 
 ( function( $ ) {
 
-    $.fn.ShellPressAjaxListTable = function( args ){
+    $.fn.ShellPressAjaxListTable = function( nonce, ajaxDisplayAction ){
 
         var ajaxListTable = $( this );
 
         list = {
             isLocked:           false,
-            dataTemp:           {
-                bulkAction:         null,
-                bulkItems:          null,
-                rowAction:          null,
-                rowItem:            null
+            data:               {
+                'nonce':            nonce,
+                'action':           ajaxDisplayAction,
+                'paged':            '',
+                'order':            '',
+                'orderBy':          '',
+                'search':           '',
+                'view':             '',
+                'currentActions':   {},
+                'selectedItems':    {}
             },
             init:               function(){
 
@@ -23,11 +28,6 @@
                 var timer;
                 var delay = 500;
 
-                //  ----------------------------------------
-                //  Reset dataTemp
-                //  ----------------------------------------
-
-                list.dataTemp = [];
 
                 //  ----------------------------------------
                 //  CLICK - Pagination links
@@ -45,7 +45,67 @@
                         var query = this.search.substring( 1 );
 
                         //  Writing attributes
-                        ajaxListTable.attr( 'data-paged',       list._query( query, 'paged' ) || '1' );
+                        list.data.paged = list._query( query, 'paged' ) || '1';
+
+                        list.update();
+
+                    }
+
+                } );
+
+                //  ----------------------------------------
+                //  CLICK - Bar actions submit
+                //  ----------------------------------------
+
+                ajaxListTable.find( '.bulkactions [type="submit"]' ).on( 'click', function(e) {
+
+                    e.preventDefault();
+
+                    if( ! list.isLocked ) {
+
+                        list.isLocked = true;       //  Lock callbacks
+
+                        list.updateSelectedRows();  //  Get selected rows
+
+                        var actionsGroup = $( this ).closest( '[data-bar-group]' );
+
+                        actionsGroup.find( '[data-action-id]' ).each( function(){
+
+                            var actionSlug;
+                            var actionData;
+                            var actionOption;
+
+                            if( $( this ).is( 'select' ) ){
+
+                                actionSlug      = $( this ).attr( 'data-action-id' )                             || null;
+                                actionData      = $( this ).find( 'option:selected' ).attr( 'data-action-data' )     || null;
+                                actionOption    = $( this ).val();
+
+                            } else
+
+                            if( $( this ).is( '[type="submit"]' ) ){
+
+                                actionSlug = $( this ).attr( 'data-action-id' )         || null;
+                                actionData = $( this ).attr( 'data-action-data' )           || null;
+
+                            }
+
+                            //  Adding action to request.
+
+                            if( actionSlug && actionOption ){
+
+                                list.data.currentActions[ actionSlug ] = {};
+                                list.data.currentActions[ actionSlug ][actionOption] = JSON.parse( actionData );
+
+                            } else
+
+                            if( actionSlug ){
+
+                                list.data.currentActions[ actionSlug ] = JSON.parse( actionData );
+
+                            }
+
+                        } );
 
                         list.update();
 
@@ -69,8 +129,8 @@
                         var query = this.search.substring( 1 );
 
                         //  Writing attributes
-                        ajaxListTable.attr( 'data-order', list._query( query, 'order' ) || 'asc' );
-                        ajaxListTable.attr( 'data-orderby', list._query( query, 'orderby' ) || 'id' );
+                        list.data.order     = list._query( query, 'order' ) || 'asc';
+                        list.data.orderBy   = list._query( query, 'orderby' ) || 'id';
 
                         list.update();
 
@@ -98,7 +158,7 @@
                             timer = window.setTimeout(function () {
 
                                 //  Writing attributes
-                                ajaxListTable.attr('data-paged', parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1');
+                                list.data.paged = parseInt( ajaxListTable.find('input[name="paged"]').val() ) || '1';
 
                                 list.update();
 
@@ -130,8 +190,8 @@
                             timer = window.setTimeout(function () {
 
                                 //  Writing attributes
-                                ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '');
-                                ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
+                                list.data.search    = ajaxListTable.find('input[name="search"]').val() || '';
+                                list.data.paged     = 1;   //  Reset pagination
 
                                 list.update();
 
@@ -155,8 +215,8 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        ajaxListTable.attr('data-search', ajaxListTable.find('input[name="search"]').val() || '' );
-                        ajaxListTable.attr('data-paged', 1 );   //  Reset pagination
+                        list.data.search    = ajaxListTable.find('input[name="search"]').val() || '';
+                        list.data.paged     =  1;   //  Reset pagination
 
                         list.update();
                     }
@@ -164,7 +224,7 @@
                 } );
 
                 //  ----------------------------------------
-                //  CLICK - Search
+                //  CLICK - View
                 //  ----------------------------------------
 
                 ajaxListTable.find( '.subsubsub a[data-value]' ).on( 'click', function(e) {
@@ -175,30 +235,8 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        ajaxListTable.attr( 'data-view', $( this ).attr( 'data-value' ) || '' );
-                        ajaxListTable.attr( 'data-paged', 1 );   //  Reset pagination
-
-                        list.update();
-                    }
-
-                } );
-
-                //  ----------------------------------------
-                //  CLICK - Apply bulk action
-                //  ----------------------------------------
-
-                ajaxListTable.find( '.bulkactions input[type="submit"]' ).on( 'click', function(e) {
-
-                    e.preventDefault();
-
-                    var inputSelect = $( this ).closest( '.bulkactions' ).find( 'select' );
-
-                    if( ! list.isLocked && inputSelect.val() !== '-1' ) {
-
-                        list.isLocked = true;   //  Lock callbacks
-
-                        list.dataTemp.bulkAction    = inputSelect.val();
-                        list.dataTemp.bulkItems     = ajaxListTable.find( '.check-column [name="item-id"]:checked' ).map( function(){ return $( this ).val(); } ).get();
+                        list.data.view      = $( this ).attr( 'data-value' ) || '';
+                        list.data.paged     = 1;   //  Reset pagination
 
                         list.update();
                     }
@@ -209,7 +247,7 @@
                 //  CLICK - Row action
                 //  ----------------------------------------
 
-                ajaxListTable.find( '.row-actions [data-row-action]' ).on( 'click', function(e) {
+                ajaxListTable.find( '.row-actions [data-action-id]' ).on( 'click', function(e) {
 
                     e.preventDefault();
 
@@ -217,8 +255,14 @@
 
                         list.isLocked = true;   //  Lock callbacks
 
-                        list.dataTemp.rowAction     = $( this ).attr( 'data-row-action' );
-                        list.dataTemp.rowItem       = $( this ).attr( 'data-row-item' );
+                        var actionSlug = $( this ).attr( 'data-action-id' )        || null;
+                        var actionData = $( this ).attr( 'data-action-data' )   || null;
+
+                        if( actionSlug ){
+
+                            list.data.currentActions[ actionSlug ] = JSON.parse( actionData )
+
+                        }
 
                         list.update();
                     }
@@ -267,51 +311,79 @@
                 } );
 
             },
-            update:             function(){
+            updateSelectedRows: function() {
+
+                list.data.selectedItems = ajaxListTable.find( '.check-column [data-row-checkbox]:checked' ).map( function(){ return JSON.parse( $( this ).attr( 'data-row-checkbox' ) ); } ).get();
+
+            },
+            clearTempActions: function() {
+
+                ajaxListTable.find( '[data-action-temp]' ).each( function(){
+
+                    var tempActionId = $( this ).attr( 'data-action-temp' )     || null;
+
+                    if( tempActionId && tempActionId in list.data.currentActions ){
+
+                        delete list.data.currentActions[ tempActionId ];
+
+                    }
+
+                } );
+
+            },
+            clearRowSelections: function() {
+
+                list.data.selectedItems = {}
+
+            },
+            update:             function() {
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
+
+                var request = jQuery.extend( true, {}, list.data );     //  Create deep copy of object
+
+                list.clearTempActions();                                //  Clear temporary data
+                list.clearRowSelections();                              //  Clear selections
 
                 $.ajax( {
                     type:   'POST',
                     url:    ajaxurl,
-                    data:   {
-                        nonce:      ajaxListTable.attr( 'data-nonce' ),
-                        action:     ajaxListTable.attr( 'data-ajax-action' ),
-                        paged:      ajaxListTable.attr( 'data-paged' ),
-                        order:      ajaxListTable.attr( 'data-order' ),
-                        orderby:    ajaxListTable.attr( 'data-orderby' ),
-                        search:     ajaxListTable.attr( 'data-search' ),
-                        view:       ajaxListTable.attr( 'data-view' ),
-                        bulkaction: list.dataTemp.bulkAction || '',
-                        bulkitems:  list.dataTemp.bulkItems || '',
-                        rowaction:  list.dataTemp.rowAction || '',
-                        rowitem:    list.dataTemp.rowItem || ''
-                    },
+                    data:   request,
                     success: function( response ) {
 
-                        response = $.parseJSON( response );
+                        if( parseInt( response ) !== 0 ){
 
-                        ajaxListTable.html( response );
+                            response = $.parseJSON( response );
 
-                        list.init();
+                            ajaxListTable.html( response );
+
+                            list.init();
+
+                        } else {
+
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-lock"></i>' );
+                            console.log( "General problem with access to ajax action?" );
+
+                        }
 
                     },
                     statusCode: {
                         403: function () {
 
-                            ajaxListTable.html( '<div class="spinner is-active" style="float:none"></div>' );
+                            ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-lock"></i>' );
                             console.log( "You need to refresh your session." );
 
                         }
                     },
                     fail:   function() {
 
+                        ajaxListTable.html( '<i class="dashicons dashicons-update"></i><i class="dashicons dashicons-welcome-comments"></i>' );
                         console.log( "Got an error while calling ListTable AJAX." );
 
                     },
                     complete:   function() {
 
-                        list.isLocked = false;  //  Unlock callbacks
+                        list.isLocked = false;          //  Unlock callbacks
 
                     }
                 } );

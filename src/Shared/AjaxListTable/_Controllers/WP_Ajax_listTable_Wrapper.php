@@ -1,11 +1,12 @@
 <?php
-namespace shellpress\v1_0_5\src\Shared\AjaxListTable\_Controllers;
+namespace shellpress\v1_0_7\src\Shared\AjaxListTable\_Controllers;
 
 /**
  * @author DualJack
  * Date: 2017-07-25
  * Time: 19:46
  */
+use tmc\mailboo\src\App;
 
 /**
  * Class AjaxListTable.
@@ -15,39 +16,15 @@ namespace shellpress\v1_0_5\src\Shared\AjaxListTable\_Controllers;
  * The code style is different in some parts of class, because it extends
  * the core class WP_List_Table - made by WordPress team.
  *
- * @package shellpress\v1_0_5\src\Shared
+ * @package shellpress\v1_0_7\src\Shared
  */
 class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
     /** @var string */
     public $slug;
 
-    /** @var string */
-    public $ajaxActionName;
-
-    /** @var int */
-    public $totalItems = 0;
-
-    /** @var int */
-    public $itemsPerPage = 20;
-
-    /** @var string */
-    public $order = 'asc';
-
-    /** @var string */
-    public $orderBy = 'id';
-
-    /** @var int */
-    public $paged = 1;
-
-    /** @var string */
-    public $search = '';
-
-    /** @var string */
-    public $view = 'default';
-
-    /** @var string */
-    public $noItemsText = "No items found.";
+    /** @var array */
+    public $params;
 
     /**
      * Table columns headers array.
@@ -67,33 +44,20 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public $headers = array();
 
-    /** @var array */
-    public $currentBulkItems = array();
-
-    /** @var string|null */
-    public $currentBulkAction = null;
-
-    /** @var string|null */
-    public $currentRowAction = null;
-
-    /** @var string|null */
-    public $currentRowItem = null;
-
 
     /**
      * AjaxListTable constructor.
      *
-     * @param string $tableSlug - Unique key
-     * @param string $singular - Label for singular item
-     * @param string $plural - Label for plural items
+     * @param string $tableSlug     Unique key
+     * @param array $params           Table parameters
      */
-    public function __construct( $tableSlug, $singular, $plural ) {
+    public function __construct( $tableSlug, & $params ) {
 
         //Set parent defaults
         parent::__construct(
             array(
-                'singular'	=> $singular,
-                'plural'	=> $plural,
+                'singular'	=> 'item',
+                'plural'	=> 'items',
             )
         );
 
@@ -101,8 +65,9 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  Properties
         //  ----------------------------------------
 
-        $this->slug             = sanitize_key( $tableSlug );
-        $this->ajaxActionName   = 'display_' . $this->slug;
+        $this->slug = sanitize_key( $tableSlug );
+
+        $this->params = & $params;
 
     }
 
@@ -123,7 +88,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         //  Add bulk actions checkbox column
 
-        if( ! empty( $this->get_bulk_actions() ) ){
+        if( ! empty( $this->get_bar_actions() ) ){
 
             $headers['cb'] = array(
                 'title'     =>  '<input type="checkbox">'
@@ -186,23 +151,23 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * Apply filter on empty array.
          * Filter tag: `items_{tableSlug}`
          *
-         * @param array $items
-         * @param int $itemsPerPage
-         * @param int $paged
-         * @param string $search
-         * @param string $order
-         * @param string $orderBy
-         * @param string $view
+         * @param array     $items
+         * @param int       $itemsPerPage
+         * @param int       $paged
+         * @param string    $search
+         * @param string    $order
+         * @param string    $orderBy
+         * @param string    $view
+         * @param array     $actions
          */
-        $this->items = apply_filters(
-            'items_' . $this->slug,     //  Filter tag
-            array(),                    //  $items
-            $this->getItemsPerPage(),          //  $itemsPerPage
+        $this->items = apply_filters( 'items_' . $this->slug, array(),
+            $this->getItemsPerPage(),   //  $itemsPerPage
             $this->getPaged(),          //  $paged
             $this->getSearch(),         //  $search
             $this->getOrder(),          //  $order
             $this->getOrderBy(),        //  $orderBy
-            $this->getView()            //  $view
+            $this->getView(),           //  $view
+            $this->getCurrentActions()  //  $actions
         );
 
         //  ----------------------------------------
@@ -224,21 +189,19 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * Should be called before $this->prepare_items()
      */
-    public function process_bulk_action() {
+    public function process_current_actions() {
 
-        if( $this->getCurrentBulkAction() ){
+        $currentActions     = $this->getCurrentActions();
+        $selectedItems      = $this->getSelectedItems();
 
-            $itemsIds = (array) $this->getCurrentBulkItems();
-
-            /**
-             * Do bulk action.
-             * Action tag: `bulk_{tableSlug}_(currentBulkActionSlug)`
-             *
-             * @param array $itemsIds
-             */
-            do_action( 'bulk_' . $this->slug . '_' . $this->getCurrentBulkAction(), $itemsIds );
-
-        }
+        /**
+         * Do bulk actions.
+         * Action tag: `actions_{tableSlug}`
+         *
+         * @param array $currentActions
+         * @param array $selectedItems
+         */
+        do_action( 'actions_' . $this->slug, $currentActions, $selectedItems );
 
     }
 
@@ -247,40 +210,21 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *
      * @return array
      */
-    public function get_bulk_actions() {
+    public function get_bar_actions() {
 
-        $bulkActions = array();
+        $barActions = array();
+        $currentView = $this->getView();
 
         /**
          * Apply filter on empty array.
-         * Filter tag: `bulk_{tableSlug}`
+         * Filter tag: `bar_actions_{tableSlug}`
          *
-         * @param array $bulkActions
+         * @param array     $barActions
+         * @param string    $currentView
          */
-        $bulkActions = apply_filters( 'bulk_' . $this->slug, $bulkActions );
+        $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions, $currentView );
 
-        return $bulkActions;
-
-    }
-
-    /**
-     * Should be called before $this->prepare_items()
-     */
-    public function process_row_action() {
-
-        if( $this->getCurrentRowAction() ){
-
-            $itemId = $this->getCurrentRowItem();
-
-            /**
-             * Do row action.
-             * Action tag: `action_{tableSlug}_(currentRowActionSlug)`
-             *
-             * @param string $itemId
-             */
-            do_action( 'action_' . $this->slug . '_' . $this->getCurrentRowAction(), $this->getCurrentRowItem() );
-
-        }
+        return $barActions;
 
     }
 
@@ -415,12 +359,15 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function no_items() {
 
-        echo $this->noItemsText;
+        echo $this->params['noItemsText'];
 
     }
 
     /**
      * **** WP_List_Table specific
+     *
+     * @param mixed $item
+     * @param string $column_name
      *
      * @return string
      */
@@ -444,6 +391,8 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * **** WP_List_Table specific
      *
+     * @param mixed $item
+     *
      * @return string
      */
     public function column_cb( $item ) {
@@ -458,6 +407,171 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
          * @param mixed $item
          */
         $html = apply_filters( 'cell_' . $this->slug . '_cb', $html, $item );
+
+        return $html;
+
+    }
+
+    /**
+     * Display the actions controls on navigation bar.
+     *
+     * @see getDisplayOfBarActionComponent()
+     */
+    protected function bar_actions() {
+
+        $barActions = $this->get_bar_actions();
+
+        foreach( $barActions as $groupSlug => $group ){
+
+            printf( '<span class="group" data-bar-group="%1$s" style="margin-right:15px; display:inline-block;">', $groupSlug );
+
+            foreach( $group as $actionId => $component ){
+
+                echo $this->getDisplayOfBarActionComponent( $actionId, $component );
+
+            }
+
+            printf( '</span>' );
+
+        }
+
+    }
+
+    /**
+     * Get HTML of every type of bar actions component.
+     *
+     * @param string $actionId
+     * @param array $component
+     *
+     * @return string
+     */
+    private function getDisplayOfBarActionComponent( $actionId, $component ) {
+
+        $html = '';
+
+        //  ----------------------------------------
+        //  Defaults
+        //  ----------------------------------------
+
+        $componentDefault = array(
+            'temp'          =>  true,
+            'type'          =>  null,
+            'attributes'    =>  array(),
+            'select'        =>  array(),
+            'title'         =>  ''
+        );
+
+        $component = wp_parse_args( $component, $componentDefault );
+
+        //  ----------------------------------------
+        //  Requirement of type definition
+        //  ----------------------------------------
+
+        if( empty( $component['type'] ) ) {   //  We don't know type of component. Abort.
+
+            return $html;
+
+        }
+
+        //  ----------------------------------------
+        //  Component attributes
+        //  ----------------------------------------
+
+        $attrArray                      = array();
+
+        $attrArray['data-action-id']    = sprintf( 'data-action-id="%1$s"', $actionId );    //  Action id
+
+	    if( $component['temp'] === true ){
+
+		    $attrArray['data-action-temp'] = sprintf( 'data-action-temp="%1$s"', $actionId );
+
+	    }
+
+        foreach( $component['attributes'] as $attrName => $attrValue ){
+
+            $attrArray[ $attrName ] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
+
+        }
+
+        //  ----------------------------------------
+        //  Type: select
+        //  ----------------------------------------
+
+        if( $component['type'] === 'select' ){
+
+            $html .= sprintf( '<select %1$s>', implode( ' ', $attrArray ) );
+
+            //  This component is a group of components, so we call this method again
+
+            foreach( (array) $component['select'] as $optionId => $selectOption ){
+
+                //  Defaults
+
+                $defaultSelectOption = array(
+                    'title'         =>  'Title',
+                    'data'          =>  '',
+	                'attributes'    =>  array()
+                );
+
+                $selectOption = wp_parse_args( $selectOption, $defaultSelectOption );
+
+                //  Attributes
+
+                $optionAttrArray                        = array();
+
+                $optionAttrArray['value']               = sprintf( 'value="%1$s"', $optionId );
+
+                $optionAttrArray['data-action-data']    = sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $selectOption['data'] ) ) );
+
+                //  Remember clicked option
+
+                $currentActions = $this->getCurrentActions();
+
+                if( $component['temp'] === false ){
+
+                    if( isset( $currentActions[ $actionId ][ $optionId ] ) ){
+
+                        $optionAttrArray['selected'] = 'selected="selected"';
+
+                    }
+
+                }
+
+                //  Custom attributes
+
+	            foreach( $selectOption['attributes'] as $attrName => $attrValue ){
+
+		            $optionAttrArray[ $attrName ] = sprintf( '%1$s="%2$s"', $attrName, $attrValue );
+
+	            }
+
+                //  Display options
+
+                $html .= sprintf( '<option %1$s>%2$s</option>', implode( ' ', $optionAttrArray ), $selectOption['title'] );
+
+            }
+
+            $html .= sprintf( '</select>' );
+
+        } else
+
+        //  ----------------------------------------
+        //  Type: submit
+        //  ----------------------------------------
+
+        if( $component['type'] === 'submit' ){
+
+            $attrArray[]        =   sprintf( 'data-action-data="%1$s"', esc_attr( wp_json_encode( $component['data'] ) ) );
+
+            $attrArray['value'] =   sprintf( 'value="%1$s"', $component['title'] );
+
+            $attrArray['type']  =   sprintf( 'type="submit"' );
+
+
+
+            $html .= sprintf( '<input %1$s>', implode( ' ', $attrArray ) );
+
+        }
 
         return $html;
 
@@ -480,7 +594,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->order );
+            return esc_sql( $this->params['order'] );
 
         }
 
@@ -493,13 +607,13 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function getOrderBy() {
 
-        if( isset( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['orderby'] ) ){
+        if( isset( $_REQUEST['orderBy'] ) && ! empty( $_REQUEST['orderBy'] ) ){
 
-            return esc_sql( $_REQUEST['orderby'] );
+            return esc_sql( $_REQUEST['orderBy'] );
 
         } else {
 
-            return esc_sql( $this->orderBy );
+            return esc_sql( $this->params['orderBy'] );
 
         }
 
@@ -518,7 +632,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->paged;
+            return (int) $this->params['paged'];
 
         }
 
@@ -537,7 +651,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->totalItems;
+            return (int) $this->params['totalItems'];
 
         }
 
@@ -556,7 +670,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return (int) $this->itemsPerPage;
+            return (int) $this->params['itemsPerPage'];
 
         }
 
@@ -575,7 +689,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->search );
+            return esc_sql( $this->params['search'] );
 
         }
 
@@ -594,83 +708,45 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         } else {
 
-            return esc_sql( $this->view );
+            return esc_sql( $this->params['view'] );
 
         }
 
     }
 
     /**
-     * Just returns $_REQUEST['bulkaction'] or default value.
-     *
-     * @return string
-     */
-    public function getCurrentBulkAction() {
-
-        if( isset( $_REQUEST['bulkaction'] ) && ! empty( $_REQUEST['bulkaction'] ) ){
-
-            return esc_sql( $_REQUEST['bulkaction'] );
-
-        } else {
-
-            return esc_sql( $this->currentBulkAction );
-
-        }
-
-    }
-
-    /**
-     * Just returns $_REQUEST['bulkitems'] or default value.
+     * Just returns $_REQUEST['currentActions'] or default value.
      *
      * @return array
      */
-    public function getCurrentBulkItems() {
+    public function getCurrentActions() {
 
-        if( isset( $_REQUEST['bulkitems'] ) && ! empty( $_REQUEST['bulkitems'] ) ){
+        if( isset( $_REQUEST['currentActions'] ) && ! empty( $_REQUEST['currentActions'] ) ){
 
-            return (array) esc_sql( $_REQUEST['bulkitems'] );
+            return (array) esc_sql( $_REQUEST['currentActions'] );
 
         } else {
 
-            return (array) esc_sql( $this->currentBulkItems );
+            return (array) esc_sql( $this->params['currentActions'] );
 
         }
 
     }
 
     /**
-     * Just returns $_REQUEST['rowaction'] or default value.
+     * Just returns $_REQUEST['selectedItems'] or default value.
      *
-     * @return string
+     * @return array
      */
-    public function getCurrentRowAction() {
+    public function getSelectedItems() {
 
-        if( isset( $_REQUEST['rowaction'] ) && ! empty( $_REQUEST['rowaction'] ) ){
+        if( isset( $_REQUEST['selectedItems'] ) && ! empty( $_REQUEST['selectedItems'] ) ){
 
-            return esc_sql( $_REQUEST['rowaction'] );
+            return (array) esc_sql( $_REQUEST['selectedItems'] );
 
         } else {
 
-            return esc_sql( $this->currentRowAction );
-
-        }
-
-    }
-
-    /**
-     * Just returns $_REQUEST['rowitem'] or default value.
-     *
-     * @return string
-     */
-    public function getCurrentRowItem() {
-
-        if( isset( $_REQUEST['rowitem'] ) && ! empty( $_REQUEST['rowitem'] ) ){
-
-            return esc_sql( $_REQUEST['rowitem'] );
-
-        } else {
-
-            return esc_sql( $this->currentRowItem );
+            return (array) esc_sql( $this->params['selectedItems'] );
 
         }
 
