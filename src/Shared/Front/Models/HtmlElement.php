@@ -7,7 +7,7 @@ namespace shellpress\v1_0_8\src\Shared\Front\Models;
  * Time: 22:58
  */
 
-class Element {
+class HtmlElement {
 
     /** @var string */
     protected $tag;
@@ -32,7 +32,7 @@ class Element {
      * @param $tag
      * @param bool $isContainer
      *
-     * @return Element
+     * @return HtmlElement
      */
     public static function create( $tag, $isContainer = true ) {
 
@@ -150,7 +150,7 @@ class Element {
     }
 
     /**
-     * @param Element|string $content
+     * @param HtmlElement|string $content
      *
      * @return self
      */
@@ -163,7 +163,7 @@ class Element {
     }
 
     /**
-     * @param Element|string $content
+     * @param HtmlElement|string $content
      *
      * @return self
      */
@@ -176,13 +176,13 @@ class Element {
     }
 
     /**
-     * @param Element|string $content
+     * @param HtmlElement|string $content
      *
      * @return string
      */
     protected function parseContentToString( $content ) {
 
-        if( $content instanceof Element ){
+        if( $content instanceof HtmlElement ){
 
             return $content->getDisplay();
 
