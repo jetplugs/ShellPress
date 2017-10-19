@@ -21,10 +21,25 @@ class HtmlElement {
     /** @var string */
     protected $content = '';
 
+    /**
+     * HtmlElement constructor.
+     *
+     * @param string $tag
+     * @param bool $isContainer
+     */
     public function __construct( $tag, $isContainer = true ) {
 
         $this->tag          = (string) $tag;
         $this->isContainer  = (bool) $isContainer;
+
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString() {
+
+        return $this->getDisplay();
 
     }
 
@@ -117,7 +132,10 @@ class HtmlElement {
             $value = explode( ' ', $value );
         }
 
-        $this->attributes[ $attrName ] = array_unique( array_merge( $this->attributes[ $attrName ], $value ) );
+        $value = array_unique( array_merge( $this->attributes[ $attrName ], $value ) );                     //  Merge two arrays and unique them
+        $value = array_filter( $value,  function( $value ){ return empty( $value ) ? false : true;  } );    //  Remove empty values
+
+        $this->attributes[ $attrName ] = $value;
 
         return $this;
 
@@ -230,7 +248,7 @@ class HtmlElement {
             $firstSegment   = $this->getTag() . ' ' . $this->getAttributesAsString();
             $content        = $this->getContent();
 
-            return sprintf( '<%1$s>%2%s', $firstSegment, $content );
+            return sprintf( '<%1$s>%2$s', $firstSegment, $content );
 
         }
 
