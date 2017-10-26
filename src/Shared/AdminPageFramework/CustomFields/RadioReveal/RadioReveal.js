@@ -2,15 +2,47 @@
 
     $.fn.ShellPress_RadioReveal = function( reveal ) {
 
-        var fieldObj = $( this );
+        var radioReveal = {
+            fieldObj:           $( this ),
+            init:               function() {
 
-        $.each( reveal, function( inputValue, args ){
+                radioReveal.updateAll();
 
-            var inputObj = fieldObj.find( 'input[type="radio"][value="' + inputValue + '"]' );
+                radioReveal.fieldObj.find( 'input[type="radio"]' ).each( function(){
 
-            //  TODO rest of switching mechanism
+                    $( this ).on( 'change', function(){
 
-        } );
+                        radioReveal.updateAll();
+
+                    } );
+
+                } );
+
+            },
+            updateAll:           function(  ) {
+
+                radioReveal.fieldObj.find( 'input:not( :checked )[type="radio"]' ).each( function(){
+
+                    var inputId         = $( this ).val();
+                    var hideSelector    = reveal[ inputId ] || '';
+
+                    $( hideSelector ).hide();
+
+                } );
+
+                radioReveal.fieldObj.find( 'input:checked[type="radio"]' ).each( function(){
+
+                    var inputId         = $( this ).val();
+                    var showSelector    = reveal[ inputId ] || '';
+
+                    $( showSelector ).show();
+
+                } );
+
+            }
+        };
+
+        radioReveal.init(); //  Initialize
 
         return this;
 
