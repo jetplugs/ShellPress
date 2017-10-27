@@ -18,11 +18,18 @@ class FieldType_radioreveal extends SP_v1_0_8_AdminPageFramework_FieldType_radio
 
     /**
      * Defines the default key-values of this field type.
+     *
+     * Ezample of reveals array:
+     *
+     * array(
+     *      'a'     =>  '#field_1',
+     *      'b'     =>  '#field_2'
+     * )
      */
     protected $aDefaultKeys = array(
-        'label'         =>  array(),
-        'attributes'    =>  array(),
-        'reveals'       =>  array()
+        'label'                 =>  array(),
+        'attributes'            =>  array(),
+        'reveals'               =>  array()     //  Array of css selectors to reveal
     );
 
     /**
@@ -38,18 +45,18 @@ class FieldType_radioreveal extends SP_v1_0_8_AdminPageFramework_FieldType_radio
 
         $wholeFieldHtml = parent::getField( $fieldArray );
 
-        return $wholeFieldHtml . PHP_EOL . $this->_getRevealScript( $fieldArray['input_id'], $fieldArray['reveal'] );
+        return $wholeFieldHtml . PHP_EOL . $this->_getRevealScript( $fieldArray['_field_container_id'], $fieldArray['reveal'] );
 
     }
 
     /**
      * Gets whole javascript definition.
      *
-     * @param string $inputId
+     * @param string $fieldContainerId
      *
      * @return string
      */
-    protected function _getRevealScript( $inputId, $revealSelectors ) {
+    protected function _getRevealScript( $fieldContainerId, $revealSelectors ) {
 
         $jsonRevealSelectors = wp_json_encode( $revealSelectors );
 
@@ -58,7 +65,7 @@ class FieldType_radioreveal extends SP_v1_0_8_AdminPageFramework_FieldType_radio
             
                 var revealSelectors = JSON.parse( '{$jsonRevealSelectors}' );
                 
-                $( '#field-{$inputId}' ).ShellPress_RadioReveal( revealSelectors );
+                $( '#{$fieldContainerId}' ).ShellPress_RadioReveal( revealSelectors );
                 
             });
         ";
