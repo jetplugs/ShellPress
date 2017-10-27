@@ -26,6 +26,7 @@
                     var inputId         = $( this ).val();
                     var hideSelector    = reveal[ inputId ] || '';
 
+                    $( this ).closest( 'label' ).removeClass( 'active' );
                     $( hideSelector ).hide();
 
                 } );
@@ -35,6 +36,7 @@
                     var inputId         = $( this ).val();
                     var showSelector    = reveal[ inputId ] || '';
 
+                    $( this ).closest( 'label' ).addClass( 'active' );
                     $( showSelector ).show();
 
                 } );
