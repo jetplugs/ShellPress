@@ -2,7 +2,7 @@
 namespace shellpress\v1_0_8;
 
 use shellpress\v1_0_8\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_8\src\Handlers\HelpersHandler;
+use shellpress\v1_0_8\src\Handlers\UtilityHandler;
 use shellpress\v1_0_8\src\Handlers\LogHandler;
 use shellpress\v1_0_8\src\Handlers\OptionsHandler;
 
@@ -20,8 +20,8 @@ abstract class ShellPress {
     /** @var OptionsHandler */
     private $optionsHandler;
 
-    /** @var HelpersHandler */
-    private $helpersHandler;
+    /** @var UtilityHandler */
+    private $utilityHandler;
 
     /** @var Psr4AutoloaderClass */
     private $autoloadingHandler;
@@ -346,7 +346,7 @@ abstract class ShellPress {
      */
     private function _initHelpers() {
 
-        $this->helpersHandler = new HelpersHandler();
+        $this->utilityHandler = new UtilityHandler();
 
     }
 
@@ -422,13 +422,13 @@ abstract class ShellPress {
     }
 
     /**
-     * Gets HelpersHandler object.
+     * Gets UtilityHandler object.
      *
-     * @return HelpersHandler
+     * @return UtilityHandler
      */
-    public static function helpers() {
+    public static function utility() {
 
-        return static::getInstance()->helpersHandler;
+        return static::getInstance()->utilityHandler;
 
     }
 
