@@ -65,14 +65,14 @@ class UtilityHandler {
         }
 
         //  Data rows.
-        foreach($array as $key => $val){
+        foreach( $array as $key => $val ){
 
             $tmp = '';
 
-            foreach($val as $cell_key => $cell_val){
+            foreach( $val as $cell_key => $cell_val ){
 
                 //  Escaping quotes.
-                $cell_val = str_replace($qut, "$qut$qut", $cell_val);
+                $cell_val = str_replace( $qut, "$qut$qut", $cell_val );
                 $tmp .= "$colSep$qut$cell_val$qut";
 
             }
