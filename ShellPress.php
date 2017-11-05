@@ -256,7 +256,7 @@ abstract class ShellPress {
      *
      * @return bool
      */
-    public function isInsidePlugin() {
+    public static function isInsidePlugin() {
 
         if( strpos( __DIR__, 'wp-content/plugins' ) !== false ){
 
@@ -276,7 +276,7 @@ abstract class ShellPress {
      *
      * @return bool
      */
-    public function isInsideTheme() {
+    public static function isInsideTheme() {
 
         if( strpos( __DIR__, 'wp-content/themes' ) !== false ){
 
@@ -355,7 +355,7 @@ abstract class ShellPress {
      */
     private function _initActivationHook() {
 
-        if( $this->isInsidePlugin() ){
+        if( static::getInstance()->isInsidePlugin() ){
 
             register_activation_hook( static::getMainPluginFile(),      array( $this, '_a_onActivation') );
 
@@ -372,7 +372,7 @@ abstract class ShellPress {
      */
     private function _initDeactivationHook() {
 
-        if( $this->isInsidePlugin() ){
+        if( static::getInstance()->isInsidePlugin() ){
 
             register_deactivation_hook( static::getMainPluginFile(),    array( $this, '_a_onDeactivation') );
 
