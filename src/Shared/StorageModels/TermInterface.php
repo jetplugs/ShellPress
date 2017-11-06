@@ -1,13 +1,15 @@
 <?php
 namespace shellpress\v1_0_9\src\Shared\StorageModels;
-use WP_Error;
-use WP_Term;
 
 /**
  * @author jakubkuranda@gmail.com
  * Date: 2017-11-06
  * Time: 22:35
  */
+
+use WP_Error;
+use WP_Term;
+
 class TermInterface {
 
     /** @var string */
