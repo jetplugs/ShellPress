@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_8\src\Shared\AdminPageFramework;
+namespace shellpress\v1_0_9\src\Shared\AdminPageFramework;
 
 use TMC_v3_8_15_AdminPageFramework;
 
