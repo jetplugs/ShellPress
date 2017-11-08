@@ -99,7 +99,7 @@ class PostInterface {
      */
     public function getTitle() {
 
-        return $this->post->post_title;
+        return $this->getPost()->post_title;
 
     }
 
@@ -116,6 +116,31 @@ class PostInterface {
 
     }
 
+
+    /**
+     * Returns post content ( raw ).
+     *
+     * @return string
+     */
+    public function getContent() {
+
+        return $this->getPost()->post_content;
+
+    }
+
+    /**
+     * Sets post content.
+     *
+     * @param string $content
+     *
+     * @return int|WP_Error
+     */
+    public function setContent( $content ) {
+
+        return $this->updateObjectArg( 'post_content', $content );
+
+    }
+
     /**
      * Returns post status in raw form.
      *
@@ -123,7 +148,7 @@ class PostInterface {
      */
     public function getStatus() {
 
-        return $this->post->post_status;
+        return $this->getPost()->post_status;
 
     }
 
@@ -147,7 +172,7 @@ class PostInterface {
      */
     public function getDateOfCreation() {
 
-        return $this->post->post_date;
+        return $this->getPost()->post_date;
 
     }
 
