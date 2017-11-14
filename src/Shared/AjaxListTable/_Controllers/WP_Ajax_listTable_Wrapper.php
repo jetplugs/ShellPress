@@ -53,7 +53,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      */
     public function __construct( $tableSlug, & $params ) {
 
-        //Set parent defaults
+        //  Set parent defaults
         parent::__construct(
             array(
                 'singular'	=> 'item',

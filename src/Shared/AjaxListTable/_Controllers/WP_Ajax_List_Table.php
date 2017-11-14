@@ -859,11 +859,12 @@ abstract class WP_Ajax_List_Table {
 		?>
 	<div class="tablenav <?php echo esc_attr( $which ); ?>">
 
-		<?php if ( $this->has_items() ): ?>
 		<div class="alignleft actions bulkactions">
 			<?php $this->bar_actions(); ?>
 		</div>
-		<?php endif;
+
+        <?php
+
 		$this->extra_tablenav( $which );
 		$this->pagination( $which );
 ?>
