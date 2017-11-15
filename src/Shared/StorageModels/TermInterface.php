@@ -77,7 +77,7 @@ class TermInterface {
      */
     public function getId() {
 
-        return (int) $this->term->term_id;
+        return (int) $this->getTerm()->term_id;
 
     }
 
@@ -88,7 +88,7 @@ class TermInterface {
      */
     public function getName() {
 
-        return $this->term->name;
+        return $this->getTerm()->name;
 
     }
 
@@ -112,7 +112,7 @@ class TermInterface {
      */
     public function getDescription() {
 
-        return $this->term->description;
+        return $this->getTerm()->description;
 
     }
 
@@ -136,7 +136,7 @@ class TermInterface {
      */
     public function getSlug() {
 
-        return $this->term->slug;
+        return $this->getTerm()->slug;
 
     }
 
@@ -150,6 +150,38 @@ class TermInterface {
     public function setSlug( $slug ) {
 
         return $this->updateObjectArg( 'slug', $slug );
+
+    }
+
+    /**
+     * Returns metadata.
+     *
+     * @param string $metaKey
+     * @param null $defaultValue
+     * @param bool $single
+     *
+     * @return mixed
+     */
+    public function getMeta( $metaKey, $defaultValue = null, $single = true ) {
+
+        $value = get_term_meta( $this->getId(), $metaKey, $single );
+
+        return empty( $value ) ? $defaultValue : $value;
+
+    }
+
+    /**
+     * Sets metadata.
+     *
+     * @param string $metaKey
+     * @param string $value
+     * @param string $prevValue
+     *
+     * @return bool|int
+     */
+    public function setMeta( $metaKey, $value, $prevValue = '' ) {
+
+        return update_term_meta( $this->getId(), $metaKey, $value, $prevValue );
 
     }
 
