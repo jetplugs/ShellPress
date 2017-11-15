@@ -731,9 +731,9 @@ abstract class WP_Ajax_List_Table {
 	 *
 	 * @staticvar int $cb_counter
 	 *
-	 * @param bool $with_id Whether to set the id attribute or not
+	 * @param bool $withId Whether to set the id attribute or not
 	 */
-	public function print_column_headers( $with_id = true ) {
+	protected function print_column_headers( $withId = true ) {
 		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
 		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
@@ -792,7 +792,7 @@ abstract class WP_Ajax_List_Table {
 
 			$tag = ( 'cb' === $column_key ) ? 'td' : 'th';
 			$scope = ( 'th' === $tag ) ? 'scope="col"' : '';
-			$id = $with_id ? "id='$column_key'" : '';
+			$id = $withId ? "id='$column_key'" : '';
 
 			if ( !empty( $class ) )
 				$class = "class='" . join( ' ', $class ) . "'";

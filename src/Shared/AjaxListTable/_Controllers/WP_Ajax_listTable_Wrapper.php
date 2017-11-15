@@ -438,6 +438,80 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     }
 
     /**
+     * **** WP_List_Table specific
+     *
+     * @param bool $withId
+     */
+    protected function print_column_headers( $withId = true ) {
+
+        list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
+
+        $current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+        $current_url = remove_query_arg( 'paged', $current_url );
+
+        if ( isset( $_REQUEST['orderBy'] ) && ! empty( $_REQUEST['orderBy'] ) ) {
+            $current_orderby = $_REQUEST['orderBy'];
+        } else {
+            $current_orderby = $this->params['orderBy'];
+        }
+
+        if ( isset( $_REQUEST['order'] ) && 'desc' === $_REQUEST['order'] ) {
+            $current_order = 'desc';
+        } else {
+            $current_order = $this->params['order'];
+        }
+
+        if ( ! empty( $columns['cb'] ) ) {
+            static $cb_counter = 1;
+            $columns['cb'] = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">' . __( 'Select All' ) . '</label>'
+                             . '<input id="cb-select-all-' . $cb_counter . '" type="checkbox" />';
+            $cb_counter++;
+        }
+
+        foreach ( $columns as $column_key => $column_display_name ) {
+            $class = array( 'manage-column', "column-$column_key" );
+
+            if ( in_array( $column_key, $hidden ) ) {
+                $class[] = 'hidden';
+            }
+
+            if ( 'cb' === $column_key )
+                $class[] = 'check-column';
+            elseif ( in_array( $column_key, array( 'posts', 'comments', 'links' ) ) )
+                $class[] = 'num';
+
+            if ( $column_key === $primary ) {
+                $class[] = 'column-primary';
+            }
+
+            if ( isset( $sortable[$column_key] ) ) {
+                list( $orderby, $desc_first ) = $sortable[$column_key];
+
+                if ( $current_orderby === $orderby ) {
+                    $order = 'asc' === $current_order ? 'desc' : 'asc';
+                    $class[] = 'sorted';
+                    $class[] = $current_order;
+                } else {
+                    $order = $desc_first ? 'desc' : 'asc';
+                    $class[] = 'sortable';
+                    $class[] = $desc_first ? 'asc' : 'desc';
+                }
+
+                $column_display_name = '<a href="' . esc_url( add_query_arg( compact( 'orderby', 'order' ), $current_url ) ) . '"><span>' . $column_display_name . '</span><span class="sorting-indicator"></span></a>';
+            }
+
+            $tag = ( 'cb' === $column_key ) ? 'td' : 'th';
+            $scope = ( 'th' === $tag ) ? 'scope="col"' : '';
+            $id = $withId ? "id='$column_key'" : '';
+
+            if ( !empty( $class ) )
+                $class = "class='" . join( ' ', $class ) . "'";
+
+            echo "<$tag $scope $id $class>$column_display_name</$tag>";
+        }
+    }
+
+    /**
      * Get HTML of every type of bar actions component.
      *
      * @param string $actionId
