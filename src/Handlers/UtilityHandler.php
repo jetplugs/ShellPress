@@ -17,7 +17,7 @@ class UtilityHandler {
      *
      * @return array - merged array
      */
-    function arrayMergeRecursiveDistinctSafe( array &$array1, array &$array2 ){
+    public function arrayMergeRecursiveDistinctSafe( array &$array1, array &$array2 ){
 
         $merged = $array1;
 
@@ -44,7 +44,7 @@ class UtilityHandler {
      *
      * @return string|false
      */
-    function arrayToCSV( $array, $hasHeaderRow = true, $colSep = ",", $rowSep = "\n", $qut = '"') {
+    public function arrayToCSV( $array, $hasHeaderRow = true, $colSep = ",", $rowSep = "\n", $qut = '"') {
 
         $output = '';
 
@@ -82,6 +82,19 @@ class UtilityHandler {
         }
 
         return $output;
+    }
+
+    /**
+     * Returns var_export() wrapped with <pre> tag.
+     *
+     * @param mixed $var
+     *
+     * @return string
+     */
+    public function getFormattedVarExport( $var ) {
+
+        return sprintf( '<pre>%1$s</pre>', var_export( $var, true ) );
+
     }
 
 }
