@@ -175,19 +175,22 @@ abstract class AjaxListTable {
     /**
      * Gets search box visibility.
      *
-     * @param bool $isVisible - if set, this method works as setter
-     *
      * @return bool
      */
-    public function isSearchBoxVisible( $isVisible = null ) {
+    public function getSearchBoxVisibility() {
 
-        if( $isVisible !== null ){
+        return (bool) $this->isSearchboxVisible;
 
-            $this->isSearchboxVisible = $isVisible;
+    }
 
-        }
+    /**
+     * Sets visibility of search box.
+     *
+     * @param bool $isVisible
+     */
+    public function setSearchBoxVisibility( $isVisible ) {
 
-        return $this->isSearchboxVisible;
+        $this->isSearchboxVisible = $isVisible;
 
     }
 
@@ -198,15 +201,20 @@ abstract class AjaxListTable {
      *
      * @return bool
      */
-    public function isListOfViewsVisible( $isVisible = null ) {
-
-        if( $isVisible !== null ){
-
-            $this->isListOfViewsVisible = $isVisible;
-
-        }
+    public function getListOfViewsVisibility() {
 
         return $this->isListOfViewsVisible;
+
+    }
+
+    /**
+     * Sets visibility of list of views.
+     *
+     * @param bool $isVisible
+     */
+    public function setListOfViewsVisibility( $isVisible ) {
+
+        $this->isListOfViewsVisible = $isVisible;
 
     }
 
@@ -460,23 +468,23 @@ abstract class AjaxListTable {
 
         $listTable = new WP_Ajax_listTable_Wrapper( $this->getSlug(), $this->ajaxParams );
 
-        $listTable->process_current_actions();
+        $listTable->processCurrentActions();
 
-        $listTable->prepare_items();
+        $listTable->prepareItems();
 
         ob_start();
 
         echo $this->getDisplayOfNotices();
 
-        if( $this->isListOfViewsVisible() ){
+        if( $this->getListOfViewsVisibility() ){
 
             $listTable->views();
 
         }
 
-        if( $this->isSearchboxVisible() ){
+        if( $this->getSearchBoxVisibility() ){
 
-            $listTable->search_box( __( "Search" ), $this->getSlug() );
+            $listTable->searchBox( __( "Search" ), $this->getSlug() );
 
         }
 

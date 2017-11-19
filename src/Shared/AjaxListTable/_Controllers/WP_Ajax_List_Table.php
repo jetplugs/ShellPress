@@ -264,7 +264,7 @@ abstract class WP_Ajax_List_Table {
 	 * @access public
 	 * @abstract
 	 */
-	public function prepare_items() {
+	public function prepareItems() {
 		die( 'function WP_List_Table::prepare_items() must be over-ridden in a sub-class.' );
 	}
 
@@ -346,7 +346,7 @@ abstract class WP_Ajax_List_Table {
 	 * @param string $text     The 'submit' button label.
 	 * @param string $input_id ID attribute value for the search input field.
 	 */
-	public function search_box( $text, $input_id ) {
+	public function searchBox($text, $input_id ) {
 
         $searchValue = isset($_REQUEST['search']) ? esc_attr( wp_unslash( $_REQUEST['search'] ) ) : '';
 
@@ -1013,7 +1013,7 @@ abstract class WP_Ajax_List_Table {
 	 * @access public
 	 */
 	public function ajax_response() {
-		$this->prepare_items();
+		$this->prepareItems();
 
 		ob_start();
 		if ( ! empty( $_REQUEST['no_placeholder'] ) ) {

@@ -78,7 +78,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * **** WP_List_Table specific
      */
-    public function prepare_items() {
+    public function prepareItems() {
 
         //  ----------------------------------------
         //  Columns headers hook
@@ -189,7 +189,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * Should be called before $this->prepare_items()
      */
-    public function process_current_actions() {
+    public function processCurrentActions() {
 
         $currentActions     = $this->getCurrentActions();
         $selectedItems      = $this->getSelectedItems();

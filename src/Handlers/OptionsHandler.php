@@ -61,9 +61,9 @@ class OptionsHandler {
 
             $option = $this->optionsData;
 
-            foreach ($pathPieces as $pathNode) {
+            foreach( $pathPieces as $pathNode ){
 
-                if (isset($option[$pathNode])) {
+                if( isset( $option[$pathNode] ) ){
 
                     $option = &$option[$pathNode];
 
