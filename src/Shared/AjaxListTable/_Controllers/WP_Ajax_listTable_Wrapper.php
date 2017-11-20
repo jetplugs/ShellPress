@@ -88,7 +88,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
         //  Add bulk actions checkbox column
 
-        if( ! empty( $this->get_bar_actions() ) ){
+        if( $this->hasBarActions() ){
 
             $headers['cb'] = array(
                 'title'     =>  '<input type="checkbox">'
@@ -225,6 +225,23 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         $barActions = apply_filters( 'bar_actions_' . $this->slug, $barActions, $currentView );
 
         return $barActions;
+
+    }
+
+    /**
+     * Checks if there are defined bar actions.
+     *
+     * @return bool
+     */
+    public function hasBarActions() {
+
+        $barActions = $this->get_bar_actions();
+
+        if( empty( $barActions ) ){
+            return false;
+        } else {
+            return true;
+        }
 
     }
 
