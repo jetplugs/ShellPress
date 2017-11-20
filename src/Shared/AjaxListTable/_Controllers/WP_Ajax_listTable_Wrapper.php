@@ -56,6 +56,9 @@ class WP_Ajax_listTable_Wrapper {
     /** @var object */
     protected $screen;
 
+    /** @var string */
+    protected $pagination;
+
 
 
     /**
@@ -285,6 +288,337 @@ class WP_Ajax_listTable_Wrapper {
 
         return $barActions;
 
+    }
+
+    /**
+     * Displays the search box.
+     *
+     * @since 3.1.0
+     * @access public
+     *
+     * @param string $text     The 'submit' button label.
+     * @param string $input_id ID attribute value for the search input field.
+     */
+    public function searchBox($text, $input_id ) {
+
+        $searchValue = isset($_REQUEST['search']) ? esc_attr( wp_unslash( $_REQUEST['search'] ) ) : '';
+
+        printf( '<p class="search-box">' );
+        printf( '<label class="screen-reader-text" for="%1$s">%2$s</label>', esc_attr( $input_id ), $text );
+        printf( '<input type="search" id="%1$s" name="search" value="%2$s" />', esc_attr( $input_id ), $searchValue );
+        printf( get_submit_button( $text, '', '', false, array( 'id' => 'search-submit' ) ) );
+        printf( '</p>' );
+
+    }
+
+    /**
+     * Display the table
+     *
+     * @since 3.1.0
+     * @access public
+     */
+    public function display() {
+
+        $this->display_tablenav( 'top' );
+        ?>
+        <table class="wp-list-table <?php echo implode( ' ', array( 'widefat', 'fixed', 'striped' ) ); ?>">
+            <thead>
+            <tr>
+                <?php $this->print_column_headers(); ?>
+            </tr>
+            </thead>
+
+            <tbody id="the-list">
+            <?php $this->display_rows_or_placeholder(); ?>
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <?php $this->print_column_headers( false ); ?>
+            </tr>
+            </tfoot>
+
+        </table>
+        <?php
+    }
+
+    /**
+     * Generate the tbody element for the list table.
+     *
+     * @since 3.1.0
+     * @access public
+     */
+    public function display_rows_or_placeholder() {
+        if ( $this->has_items() ) {
+            $this->display_rows();
+        } else {
+            echo '<tr class="no-items"><td class="colspanchange" colspan="' . $this->get_column_count() . '">';
+            $this->no_items();
+            echo '</td></tr>';
+        }
+    }
+
+    /**
+     * Return number of visible columns
+     *
+     * @since 3.1.0
+     * @access public
+     *
+     * @return int
+     */
+    public function get_column_count() {
+        list ( $columns, $hidden ) = $this->get_column_info();
+        $hidden = array_intersect( array_keys( $columns ), array_filter( $hidden ) );
+        return count( $columns ) - count( $hidden );
+    }
+
+    /**
+     * Generate the table rows
+     *
+     * @since 3.1.0
+     * @access public
+     */
+    public function display_rows() {
+        foreach ( $this->items as $item )
+            $this->single_row( $item );
+    }
+
+    /**
+     * Generates content for a single row of the table
+     *
+     * @since 3.1.0
+     * @access public
+     *
+     * @param object $item The current item
+     */
+    public function single_row( $item ) {
+        echo '<tr>';
+        $this->single_row_columns( $item );
+        echo '</tr>';
+    }
+
+    /**
+     * Generates the columns for a single row of the table
+     *
+     * @since 3.1.0
+     * @access protected
+     *
+     * @param object $item The current item
+     */
+    protected function single_row_columns( $item ) {
+        list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
+
+        foreach ( $columns as $column_name => $column_display_name ) {
+            $classes = "$column_name column-$column_name";
+            if ( $primary === $column_name ) {
+                $classes .= ' has-row-actions column-primary';
+            }
+
+            if ( in_array( $column_name, $hidden ) ) {
+                $classes .= ' hidden';
+            }
+
+            // Comments column uses HTML in the display name with screen reader text.
+            // Instead of using esc_attr(), we strip tags to get closer to a user-friendly string.
+            $data = 'data-colname="' . wp_strip_all_tags( $column_display_name ) . '"';
+
+            $attributes = "class='$classes' $data";
+
+            if ( 'cb' === $column_name ) {
+                echo '<th scope="row" class="check-column">';
+                echo $this->column_cb( $item );
+                echo '</th>';
+            } elseif ( method_exists( $this, '_column_' . $column_name ) ) {
+                echo call_user_func(
+                    array( $this, '_column_' . $column_name ),
+                    $item,
+                    $classes,
+                    $data,
+                    $primary
+                );
+            } elseif ( method_exists( $this, 'column_' . $column_name ) ) {
+                echo "<td $attributes>";
+                echo call_user_func( array( $this, 'column_' . $column_name ), $item );
+                echo $this->handle_row_actions( $item, $column_name, $primary );
+                echo "</td>";
+            } else {
+                echo "<td $attributes>";
+                echo $this->column_default( $item, $column_name );
+                echo $this->handle_row_actions( $item, $column_name, $primary );
+                echo "</td>";
+            }
+        }
+    }
+
+    /**
+     * Generates and display row actions links for the list table.
+     *
+     * @since 4.3.0
+     * @access protected
+     *
+     * @param object $item        The item being acted upon.
+     * @param string $column_name Current column name.
+     * @param string $primary     Primary column name.
+     * @return string The row actions HTML, or an empty string if the current column is the primary column.
+     */
+    protected function handle_row_actions( $item, $column_name, $primary ) {
+        return $column_name === $primary ? '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>' : '';
+    }
+
+    /**
+     * Whether the table has items to display or not
+     *
+     * @since 3.1.0
+     * @access public
+     *
+     * @return bool
+     */
+    public function has_items() {
+        return !empty( $this->items );
+    }
+
+    /**
+     * Generate the table navigation above or below the table
+     *
+     * @since 3.1.0
+     * @access protected
+     * @param string $which
+     */
+    protected function display_tablenav( $which ) {
+        ?>
+        <div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+            <div class="alignleft actions bulkactions">
+                <?php $this->bar_actions(); ?>
+            </div>
+
+            <?php
+            $this->pagination( $which );
+            ?>
+
+            <br class="clear" />
+        </div>
+        <?php
+    }
+
+    /**
+     * Display the pagination.
+     *
+     * @since 3.1.0
+     * @access protected
+     *
+     * @param string $which
+     */
+    protected function pagination( $which ) {
+        if ( empty( $this->paginationArgs ) ) {
+            return;
+        }
+
+        $total_items = $this->paginationArgs['total_items'];
+        $total_pages = $this->paginationArgs['total_pages'];
+        $infinite_scroll = false;
+        if ( isset( $this->paginationArgs['infinite_scroll'] ) ) {
+            $infinite_scroll = $this->paginationArgs['infinite_scroll'];
+        }
+
+        $output = '<span class="displaying-num">' . sprintf( _n( '%s item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
+
+        $current = $this->getPagenum();
+        $removable_query_args = wp_removable_query_args();
+
+        $current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+
+        $current_url = remove_query_arg( $removable_query_args, $current_url );
+
+        $page_links = array();
+
+        $total_pages_before = '<span class="paging-input">';
+        $total_pages_after  = '</span></span>';
+
+        $disable_first = $disable_last = $disable_prev = $disable_next = false;
+
+        if ( $current == 1 ) {
+            $disable_first = true;
+            $disable_prev = true;
+        }
+        if ( $current == 2 ) {
+            $disable_first = true;
+        }
+        if ( $current == $total_pages ) {
+            $disable_last = true;
+            $disable_next = true;
+        }
+        if ( $current == $total_pages - 1 ) {
+            $disable_last = true;
+        }
+
+        if ( $disable_first ) {
+            $page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&laquo;</span>';
+        } else {
+            $page_links[] = sprintf( "<a class='first-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+                esc_url( remove_query_arg( 'paged', $current_url ) ),
+                __( 'First page' ),
+                '&laquo;'
+            );
+        }
+
+        if ( $disable_prev ) {
+            $page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&lsaquo;</span>';
+        } else {
+            $page_links[] = sprintf( "<a class='prev-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+                esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $current_url ) ),
+                __( 'Previous page' ),
+                '&lsaquo;'
+            );
+        }
+
+        if ( 'bottom' === $which ) {
+            $html_current_page  = $current;
+            $total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
+        } else {
+            $html_current_page = sprintf( "%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
+                '<label for="current-page-selector" class="screen-reader-text">' . __( 'Current Page' ) . '</label>',
+                $current,
+                strlen( $total_pages )
+            );
+        }
+        $html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+        $page_links[] = $total_pages_before . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . $total_pages_after;
+
+        if ( $disable_next ) {
+            $page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&rsaquo;</span>';
+        } else {
+            $page_links[] = sprintf( "<a class='next-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+                esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $current_url ) ),
+                __( 'Next page' ),
+                '&rsaquo;'
+            );
+        }
+
+        if ( $disable_last ) {
+            $page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&raquo;</span>';
+        } else {
+            $page_links[] = sprintf( "<a class='last-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+                esc_url( add_query_arg( 'paged', $total_pages, $current_url ) ),
+                __( 'Last page' ),
+                '&raquo;'
+            );
+        }
+
+        $pagination_links_class = 'pagination-links';
+        if ( ! empty( $infinite_scroll ) ) {
+            $pagination_links_class = ' hide-if-js';
+        }
+        $output .= "\n<span class='$pagination_links_class'>" . join( "\n", $page_links ) . '</span>';
+
+        if ( $total_pages ) {
+            $page_class = $total_pages < 2 ? ' one-page' : '';
+        } else {
+            $page_class = ' no-pages';
+        }
+        $this->pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+
+        echo $this->pagination;
     }
 
     /**
@@ -597,11 +931,11 @@ class WP_Ajax_listTable_Wrapper {
      */
     protected function get_column_info() {
         // $_column_headers is already set / cached
-        if ( isset( $this->_column_headers ) && is_array( $this->_column_headers ) ) {
+        if ( isset( $this->columnHeaders ) && is_array( $this->columnHeaders ) ) {
             // Back-compat for list tables that have been manually setting $_column_headers for horse reasons.
             // In 4.3, we added a fourth argument for primary column.
             $column_headers = array( array(), array(), array(), $this->get_primary_column_name() );
-            foreach ( $this->_column_headers as $key => $value ) {
+            foreach ( $this->columnHeaders as $key => $value ) {
                 $column_headers[ $key ] = $value;
             }
 
@@ -626,9 +960,9 @@ class WP_Ajax_listTable_Wrapper {
         }
 
         $primary = $this->get_primary_column_name();
-        $this->_column_headers = array( $columns, $hidden, $sortable, $primary );
+        $this->columnHeaders = array( $columns, $hidden, $sortable, $primary );
 
-        return $this->_column_headers;
+        return $this->columnHeaders;
     }
 
     /**
