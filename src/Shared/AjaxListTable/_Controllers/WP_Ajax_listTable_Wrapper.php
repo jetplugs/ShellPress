@@ -18,13 +18,13 @@ use tmc\mailboo\src\App;
  *
  * @package shellpress\v1_0_9\src\Shared
  */
-class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
+class WP_Ajax_listTable_Wrapper {
 
     /** @var string */
-    public $slug;
+    protected $slug;
 
     /** @var array */
-    public $params;
+    protected $params;
 
     /**
      * Table columns headers array.
@@ -42,32 +42,33 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *
      * @var array
      */
-    public $headers = array();
+    protected $headers = array();
+
+    /** @var array */
+    protected $columnHeaders;
+
+    /** @var array */
+    protected $items;
+
+    /** @var array */
+    protected $paginationArgs;
+
+    /** @var object */
+    protected $screen;
+
 
 
     /**
      * AjaxListTable constructor.
      *
      * @param string $tableSlug     Unique key
-     * @param array $params           Table parameters
+     * @param array $params         Table parameters
      */
     public function __construct( $tableSlug, & $params ) {
 
-        //  Set parent defaults
-        parent::__construct(
-            array(
-                'singular'	=> 'item',
-                'plural'	=> 'items',
-            )
-        );
-
-        //  ----------------------------------------
-        //  Properties
-        //  ----------------------------------------
-
         $this->slug = sanitize_key( $tableSlug );
-
         $this->params = & $params;
+        $this->screen = (object) array( 'id' => '_invalid', 'base' => '_are_belong_to_us' );    //  Fake object
 
     }
 
@@ -137,11 +138,11 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  Applying columns headers
         //  ----------------------------------------
 
-        $columns    = $this->get_columns();
-        $hidden     = $this->get_hidden_columns();
-        $sortable   = $this->get_sortable_columns();
+        $columns    = $this->getColumns();
+        $hidden     = $this->getHiddenColumns();
+        $sortable   = $this->getSortableColumns();
 
-        $this->_column_headers = array( $columns, $hidden, $sortable );
+        $this->columnHeaders = array( $columns, $hidden, $sortable );
 
         //  ----------------------------------------
         //  Items
@@ -174,7 +175,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
         //  Pagination arguments
         //  ----------------------------------------
 
-        $this->set_pagination_args(
+        $this->setPaginationArgs(
             array(
                 'total_items'	    =>  $this->getTotalItems(),
                 'per_page'	        =>  $this->getItemsPerPage(),
@@ -184,6 +185,64 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
             )
         );
 
+    }
+
+    /**
+     * An internal method that sets all the necessary pagination arguments
+     *
+     * @since 3.1.0
+     * @access protected
+     *
+     * @param array|string $args Array or string of arguments with information about the pagination.
+     */
+    protected function setPaginationArgs( $args ) {
+        $args = wp_parse_args( $args, array(
+            'total_items' => 0,
+            'total_pages' => 0,
+            'per_page' => 0,
+        ) );
+
+        if ( !$args['total_pages'] && $args['per_page'] > 0 )
+            $args['total_pages'] = ceil( $args['total_items'] / $args['per_page'] );
+
+        // Redirect if page number is invalid and headers are not already sent.
+        if ( ! headers_sent() && ! wp_doing_ajax() && $args['total_pages'] > 0 && $this->getPagenum() > $args['total_pages'] ) {
+            wp_redirect( add_query_arg( 'paged', $args['total_pages'] ) );
+            exit;
+        }
+
+        $this->paginationArgs = $args;
+    }
+
+    /**
+     * Access the pagination args.
+     *
+     * @since 3.1.0
+     * @access public
+     *
+     * @param string $key Pagination argument to retrieve. Common values include 'total_items',
+     *                    'total_pages', 'per_page', or 'infinite_scroll'.
+     * @return int Number of items that correspond to the given pagination argument.
+     */
+    public function getPaginationArg($key ) {
+
+        if ( 'page' === $key ) {
+            return $this->getPagenum();
+        } elseif ( isset( $this->paginationArgs[$key] ) ) {
+            return $this->paginationArgs[$key];
+        } else {
+            return null;
+        }
+
+    }
+
+    public function getPagenum() {
+        $pagenum = isset( $_REQUEST['paged'] ) ? absint( $_REQUEST['paged'] ) : 0;
+
+        if ( isset( $this->paginationArgs['total_pages'] ) && $pagenum > $this->paginationArgs['total_pages'] )
+            $pagenum = $this->paginationArgs['total_pages'];
+
+        return max( 1, $pagenum );
     }
 
     /**
@@ -250,7 +309,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *
      * @return array
      */
-    public function get_columns() {
+    public function getColumns() {
 
         $columns = array();
 
@@ -269,7 +328,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
      *
      * @return array
      */
-    public function get_sortable_columns() {
+    public function getSortableColumns() {
 
         $sortableColumns = array();
 
@@ -290,7 +349,7 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
     /**
      * @return array
      */
-    public function get_hidden_columns() {
+    public function getHiddenColumns() {
 
         $hiddenColumns = array();
 
@@ -526,6 +585,115 @@ class WP_Ajax_listTable_Wrapper extends WP_Ajax_List_Table {
 
             echo "<$tag $scope $id $class>$column_display_name</$tag>";
         }
+    }
+
+    /**
+     * Get a list of all, hidden and sortable columns, with filter applied
+     *
+     * @since 3.1.0
+     * @access protected
+     *
+     * @return array
+     */
+    protected function get_column_info() {
+        // $_column_headers is already set / cached
+        if ( isset( $this->_column_headers ) && is_array( $this->_column_headers ) ) {
+            // Back-compat for list tables that have been manually setting $_column_headers for horse reasons.
+            // In 4.3, we added a fourth argument for primary column.
+            $column_headers = array( array(), array(), array(), $this->get_primary_column_name() );
+            foreach ( $this->_column_headers as $key => $value ) {
+                $column_headers[ $key ] = $value;
+            }
+
+            return $column_headers;
+        }
+
+        $columns = get_column_headers( $this->screen );
+        $hidden = get_hidden_columns( $this->screen );
+
+        $sortable_columns = $this->getSortableColumns();
+
+        $sortable = array();
+        foreach ( $sortable_columns as $id => $data ) {
+            if ( empty( $data ) )
+                continue;
+
+            $data = (array) $data;
+            if ( !isset( $data[1] ) )
+                $data[1] = false;
+
+            $sortable[$id] = $data;
+        }
+
+        $primary = $this->get_primary_column_name();
+        $this->_column_headers = array( $columns, $hidden, $sortable, $primary );
+
+        return $this->_column_headers;
+    }
+
+    /**
+     * Gets the name of the primary column.
+     *
+     * @since 4.3.0
+     * @access protected
+     *
+     * @return string The name of the primary column.
+     */
+    protected function get_primary_column_name() {
+        $columns = get_column_headers( $this->screen );
+        $default = $this->get_default_primary_column_name();
+
+        // If the primary column doesn't exist fall back to the
+        // first non-checkbox column.
+        if ( ! isset( $columns[ $default ] ) ) {
+            $default = static::get_default_primary_column_name();
+        }
+
+        /**
+         * Filters the name of the primary column for the current list table.
+         *
+         * @since 4.3.0
+         *
+         * @param string $default Column name default for the specific list table, e.g. 'name'.
+         * @param string $context Screen ID for specific list table, e.g. 'plugins'.
+         */
+        $column  = apply_filters( 'list_table_primary_column', $default, $this->screen->id );
+
+        if ( empty( $column ) || ! isset( $columns[ $column ] ) ) {
+            $column = $default;
+        }
+
+        return $column;
+    }
+
+    /**
+     * Gets the name of the default primary column.
+     *
+     * @since 4.3.0
+     * @access protected
+     *
+     * @return string Name of the default primary column, in this case, an empty string.
+     */
+    protected function get_default_primary_column_name() {
+        $columns = $this->getColumns();
+        $column = '';
+
+        if ( empty( $columns ) ) {
+            return $column;
+        }
+
+        // We need a primary defined so responsive views show something,
+        // so let's fall back to the first non-checkbox column.
+        foreach ( $columns as $col => $column_name ) {
+            if ( 'cb' === $col ) {
+                continue;
+            }
+
+            $column = $col;
+            break;
+        }
+
+        return $column;
     }
 
     /**
