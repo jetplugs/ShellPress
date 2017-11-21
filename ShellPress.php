@@ -15,19 +15,19 @@ abstract class ShellPress {
     protected static $_instances = array();
 
     /** @var array */
-    private $initArgs = array();
+    private $_initArgs = array();
 
     /** @var OptionsHandler */
-    private $optionsHandler;
+    private $_optionsHandler;
 
     /** @var UtilityHandler */
-    private $utilityHandler;
+    private $_utilityHandler;
 
     /** @var Psr4AutoloaderClass */
-    private $autoloadingHandler;
+    private $_autoloadingHandler;
 
     /** @var LogHandler */
-    private $logHandler;
+    private $_logHandler;
 
     /**
      * Private forbidden constructor.
@@ -94,7 +94,7 @@ abstract class ShellPress {
             )
 		);
 
-		$instance->initArgs = array_replace_recursive( $defaultInitArgs, $initArgs );   // replace default init arguments with specified by developer
+		$instance->_initArgs = array_replace_recursive( $defaultInitArgs, $initArgs );   // replace default init arguments with specified by developer
 
         //  -----------------------------------
         //  Initialize components
@@ -160,11 +160,11 @@ abstract class ShellPress {
 
         if( $stringToPrefix === null ){
 
-            return static::getInstance()->initArgs['app']['pluginPrefix'];
+            return static::getInstance()->_initArgs['app']['pluginPrefix'];
 
         } else {
 
-            return static::getInstance()->initArgs['app']['pluginPrefix'] . $stringToPrefix;
+            return static::getInstance()->_initArgs['app']['pluginPrefix'] . $stringToPrefix;
 
         }
 
@@ -235,7 +235,7 @@ abstract class ShellPress {
      */
     public static function getMainPluginFile() {
 
-        return static::getInstance()->initArgs['app']['mainPluginFile'];
+        return static::getInstance()->_initArgs['app']['mainPluginFile'];
 
     }
 
@@ -246,7 +246,7 @@ abstract class ShellPress {
      */
     public static function getPluginVersion() {
 
-        return static::getInstance()->initArgs['app']['pluginVersion'];
+        return static::getInstance()->_initArgs['app']['pluginVersion'];
 
     }
 
@@ -305,9 +305,9 @@ abstract class ShellPress {
 
         }
 
-        $this->autoloadingHandler = new Psr4AutoloaderClass();
-        $this->autoloadingHandler->register();
-        $this->autoloadingHandler->addNamespace( 'shellpress\v1_0_9', __DIR__ );
+        $this->_autoloadingHandler = new Psr4AutoloaderClass();
+        $this->_autoloadingHandler->register();
+        $this->_autoloadingHandler->addNamespace( 'shellpress\v1_0_9', __DIR__ );
 
     }
 
@@ -316,9 +316,9 @@ abstract class ShellPress {
      */
     private function _initLogHandler() {
 
-        $logHandlerArgs = $this->initArgs['logHandler'];
+        $logHandlerArgs = $this->_initArgs['logHandler'];
         
-        $this->logHandler = new LogHandler(
+        $this->_logHandler = new LogHandler(
             $logHandlerArgs['directory'],
             $logHandlerArgs['logLevel'],
             array(
@@ -337,7 +337,7 @@ abstract class ShellPress {
      */
     private function _initOptionsHandler() {
 
-        $this->optionsHandler = new OptionsHandler( $this->initArgs['optionsHandler']['optionsKey'] );
+        $this->_optionsHandler = new OptionsHandler( $this->_initArgs['optionsHandler']['optionsKey'] );
 
     }
 
@@ -346,7 +346,7 @@ abstract class ShellPress {
      */
     private function _initHelpers() {
 
-        $this->utilityHandler = new UtilityHandler();
+        $this->_utilityHandler = new UtilityHandler();
 
     }
 
@@ -395,7 +395,7 @@ abstract class ShellPress {
      */
     public static function log() {
 
-        return static::getInstance()->logHandler;
+        return static::getInstance()->_logHandler;
 
     }
 
@@ -406,7 +406,7 @@ abstract class ShellPress {
      */
     public static function autoloading() {
 
-        return static::getInstance()->autoloadingHandler;
+        return static::getInstance()->_autoloadingHandler;
 
     }
 
@@ -417,7 +417,7 @@ abstract class ShellPress {
      */
     public static function options() {
 
-        return static::getInstance()->optionsHandler;
+        return static::getInstance()->_optionsHandler;
 
     }
 
@@ -428,7 +428,7 @@ abstract class ShellPress {
      */
     public static function utility() {
 
-        return static::getInstance()->utilityHandler;
+        return static::getInstance()->_utilityHandler;
 
     }
 
