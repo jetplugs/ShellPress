@@ -1,10 +1,10 @@
 <?php
-namespace shellpress\v1_0_9;
+namespace shellpress\v1_1_0;
 
-use shellpress\v1_0_9\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_0_9\src\Handlers\UtilityHandler;
-use shellpress\v1_0_9\src\Handlers\LogHandler;
-use shellpress\v1_0_9\src\Handlers\OptionsHandler;
+use shellpress\v1_1_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_1_0\src\Handlers\UtilityHandler;
+use shellpress\v1_1_0\src\Handlers\LogHandler;
+use shellpress\v1_1_0\src\Handlers\OptionsHandler;
 
 /**
  * Core class of plugin. To use it, simple extend it.
@@ -34,8 +34,6 @@ abstract class ShellPress {
      */
     private final function __construct() {
 
-
-
     }
 
     /**
@@ -54,6 +52,17 @@ abstract class ShellPress {
         }
 
         return static::$_instances[ $calledClass ];
+
+    }
+
+    /**
+     * Alias for getInstance().
+     *
+     * @return static
+     */
+    public final static function i() {
+
+        return static::getInstance();
 
     }
 
@@ -80,7 +89,8 @@ abstract class ShellPress {
                 'pluginVersion'         =>  $pluginVersion
             ),
 			'optionsHandler'	    =>	array(
-			    'optionsKey'            =>  $pluginPrefix
+			    'optionsKey'            =>  $pluginPrefix,
+                'defaultOptions'        =>  array()
             ),
             'logHandler'            =>  array(
                 'object'                =>  null,
@@ -106,17 +116,10 @@ abstract class ShellPress {
         $instance->_initHelpers();
 
         //  ----------------------------------------
-        //  Initialize hooks
-        //  ----------------------------------------
-
-        $instance->_initActivationHook();
-        $instance->_initDeactivationHook();
-
-        //  ----------------------------------------
         //  Everything is ready. Call onSetUp()
         //  ----------------------------------------
 
-        $instance->_a_onSetUp();
+        $instance->onSetUp();
 
 	}
 
@@ -129,21 +132,7 @@ abstract class ShellPress {
      *
      * @return void
      */
-    public abstract function _a_onSetUp();
-
-    /**
-     * Called automaticly on plugin activation.
-     *
-     * @return void
-     */
-	public abstract function _a_onActivation();
-
-    /**
-     * Called automaticly on plugin deactivation.
-     *
-     * @return void
-     */
-	public abstract function _a_onDeactivation();
+    protected abstract function onSetUp();
 
 	//  ================================================================================
 	//  GETTERS
@@ -299,7 +288,7 @@ abstract class ShellPress {
      */
 	private function _initAutoloadingHandler() {
 
-        if( ! class_exists( 'shellpress\v1_0_9\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_1_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
 
             require( dirname( __FILE__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 
@@ -307,7 +296,7 @@ abstract class ShellPress {
 
         $this->_autoloadingHandler = new Psr4AutoloaderClass();
         $this->_autoloadingHandler->register();
-        $this->_autoloadingHandler->addNamespace( 'shellpress\v1_0_9', __DIR__ );
+        $this->_autoloadingHandler->addNamespace( 'shellpress\v1_1_0', __DIR__ );
 
     }
 
@@ -337,7 +326,10 @@ abstract class ShellPress {
      */
     private function _initOptionsHandler() {
 
-        $this->_optionsHandler = new OptionsHandler( $this->_initArgs['optionsHandler']['optionsKey'] );
+        $this->_optionsHandler = new OptionsHandler( static::getInstance() );
+        $this->_optionsHandler->setOptionsKey( $this->_initArgs['optionsHandler']['optionsKey'] );
+        $this->_optionsHandler->setDefaultOptions( $this->_initArgs['optionsHandler']['defaultOptions'] );
+        $this->_optionsHandler->load();
 
     }
 
@@ -346,41 +338,7 @@ abstract class ShellPress {
      */
     private function _initHelpers() {
 
-        $this->_utilityHandler = new UtilityHandler();
-
-    }
-
-    /**
-     * Initialize plugin activation hook.
-     */
-    private function _initActivationHook() {
-
-        if( static::getInstance()->isInsidePlugin() ){
-
-            register_activation_hook( static::getMainPluginFile(),      array( $this, '_a_onActivation') );
-
-        } else {
-
-            add_action( 'after_switch_theme',                           array( $this, '_a_onActivation' ) );
-
-        }
-
-    }
-
-    /**
-     * Initialize plugin deactivation hook.
-     */
-    private function _initDeactivationHook() {
-
-        if( static::getInstance()->isInsidePlugin() ){
-
-            register_deactivation_hook( static::getMainPluginFile(),    array( $this, '_a_onDeactivation') );
-
-        } else {
-
-            add_action( 'switch_theme',                                 array( $this, '_a_onDeactivation' ) );
-
-        }
+        $this->_utilityHandler = new UtilityHandler( static::getInstance() );
 
     }
 

@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_9\src\Handlers;
+namespace shellpress\v1_1_0\src\Handlers;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,26 +7,21 @@ namespace shellpress\v1_0_9\src\Handlers;
  * Time: 18:33
  */
 
-class OptionsHandler {
+use shellpress\v1_1_0\ShellPress;
+
+class OptionsHandler extends Handler {
+
+    /** @var ShellPress */
+    protected $sp;
 
     /** @var string */
-    protected $optionsKey;
+    protected $optionsKey = '';
 
     /** @var array */
-    protected $optionsData;
+    protected $optionsData = array();
 
-    /**
-     * OptionsHandler constructor.
-     *
-     * @param $optionsKey
-     */
-    public function __construct( $optionsKey ) {
-
-        $this->optionsKey = $optionsKey;
-
-        $this->load();  //  Load options from database
-
-    }
+    /** @var array */
+    protected $defaultData = array();
 
     /**
      * Loads saved options from WP database.
@@ -82,7 +77,7 @@ class OptionsHandler {
     }
 
     /**
-     * Updates WP database option with given value.
+     * Updates WP database option with given value. Caution! It updates whole array!
      *
      * @param mixed $data
      *
@@ -90,7 +85,20 @@ class OptionsHandler {
      */
     public function update( $data ) {
 
+        $this->optionsData = $data;
+
         return update_option( $this->getOptionsKey(), $data );
+
+    }
+
+    /**
+     * Sets options key.
+     *
+     * @param string $key
+     */
+    public function setOptionsKey( $key ) {
+
+        $this->optionsKey = $key;
 
     }
 
@@ -102,6 +110,56 @@ class OptionsHandler {
     public function getOptionsKey() {
 
         return $this->optionsKey;
+
+    }
+
+    /**
+     * Gets default options.
+     *
+     * @return array
+     */
+    public function getDefaultOptions() {
+
+        return $this->defaultData;
+
+    }
+
+    /**
+     * Sets default options.
+     *
+     * @param $options
+     */
+    public function setDefaultOptions( $options ) {
+
+        $this->defaultData = $options;
+
+    }
+
+    /**
+     * Checks current saved options and fills them with defaults.
+     * If some key already exists, it will not be updated.
+     *
+     * @return void
+     */
+    public function fillDifferencies() {
+
+        $currentOptions =   $this->get( '', array() );
+        $defaultOptions =   $this->getDefaultOptions();
+
+        $updateOptions =    $this->sp->utility()->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
+
+        $this->update( $updateOptions );
+
+    }
+
+    /**
+     * Replaces all options with defaults.
+     *
+     * @return void
+     */
+    public function restoreDefaults() {
+
+        $this->update( $this->getDefaultOptions() );
 
     }
 

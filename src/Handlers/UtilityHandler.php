@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_0_9\src\Handlers;
+namespace shellpress\v1_1_0\src\Handlers;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_0_9\src\Handlers;
  * Time: 14:41
  */
 
-class UtilityHandler {
+class UtilityHandler extends Handler {
 
     /**
      * Merge two arrays without structure changing and overriding values

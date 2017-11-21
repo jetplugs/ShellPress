@@ -1,10 +1,12 @@
 <?php
-namespace shellpress\v1_0_9\src\Handlers;
+namespace shellpress\v1_1_0\src\Handlers;
 
-use shellpress\v1_0_9\lib\KLogger\KLogger;
-use shellpress\v1_0_9\lib\Psr\Log\LogLevel;
+use shellpress\v1_1_0\lib\KLogger\KLogger;
+use shellpress\v1_1_0\lib\Psr\Log\LogLevel;
 
 class LogHandler extends KLogger {
+
+    //  TODO - use Handler interface and ditch KLogger class.
 
     /**
      * LogHandler constructor.
