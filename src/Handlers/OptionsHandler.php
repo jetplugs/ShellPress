@@ -52,25 +52,9 @@ class OptionsHandler extends Handler {
 
         } else {
 
-            $pathPieces = explode('/', $arrayPath);
+            $keys = explode( '/', $arrayPath );
 
-            $option = $this->optionsData;
-
-            foreach( $pathPieces as $pathNode ){
-
-                if( isset( $option[$pathNode] ) ){
-
-                    $option = &$option[$pathNode];
-
-                } else {
-
-                    return $defaultValue;
-
-                }
-
-            }
-
-            return $option;
+            return $this->sp->utility()->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
 
         }
 
@@ -84,12 +68,18 @@ class OptionsHandler extends Handler {
      */
     public function set( $arrayPath = '', $value ) {
 
-        $options    = $this->get();
-        $keys       = explode( '/', $arrayPath );
+        if( empty( $arrayPath ) ){
 
-        $options    = $this->sp->utility()->injectValueToMultidimensionalArray( $options, $keys, $value );
+            $this->optionsData = $value;
 
-        $this->update( $options );
+        } else {
+
+            $keys       = explode( '/', $arrayPath );
+            $options    = $this->sp->utility()->setValueByKeysPath( $this->optionsData, $keys, $value );
+
+            $this->update( $options );
+
+        }
 
     }
 

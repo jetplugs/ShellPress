@@ -40,7 +40,27 @@ class UtilityHandler extends Handler {
     }
 
     /**
+     * Gets value of multidimensional array by given array of keys.
+     *
+     * @param array $array
+     * @param array $keys
+     * @param mixed|null $defaultValue
+     *
+     * @return mixed|null
+     */
+    public function getValueByKeysPath( $array, $keys, $defaultValue = null ) {
+
+        for( $i = $array; $key = array_shift( $keys ); $i = $i[$key] ){
+            if( ! isset( $i[$key] ) ) return $defaultValue;
+        }
+
+        return $i;
+
+    }
+
+    /**
      * Injects value to multidimensional array by given array of keys.
+     * Returns changed array.
      *
      * @param array $array
      * @param array $keys
@@ -48,12 +68,10 @@ class UtilityHandler extends Handler {
      *
      * @return array
      */
-    public function injectValueToMultidimensionalArray( &$array, $keys, $value ) {
+    public function setValueByKeysPath( $array, $keys, $value ) {
 
-        for( $i =& $array; $key = array_shift( $keys ); $i =& $i[$key] ) {
-
-            if( !isset( $i[$key] ) ) $i[$key] = array();
-
+        for( $i =& $array; $key = array_shift( $keys ); $i =& $i[$key] ){
+            if( ! isset( $i[$key] ) ) $i[$key] = array();
         }
 
         $i = $value;
