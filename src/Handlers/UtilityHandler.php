@@ -17,7 +17,7 @@ class UtilityHandler extends Handler {
      *
      * @return array - merged array
      */
-    public function arrayMergeRecursiveDistinctSafe( array &$array1, array &$array2 ){
+    public function arrayMergeRecursiveDistinctSafe( &$array1, &$array2 ){
 
         $merged = $array1;
 
@@ -37,6 +37,29 @@ class UtilityHandler extends Handler {
         }
 
         return $merged;
+    }
+
+    /**
+     * Injects value to multidimensional array by given array of keys.
+     *
+     * @param array $array
+     * @param array $keys
+     * @param mixed $value
+     *
+     * @return array
+     */
+    public function injectValueToMultidimensionalArray( &$array, $keys, $value ) {
+
+        for( $i =& $array; $key = array_shift( $keys ); $i =& $i[$key] ) {
+
+            if( !isset( $i[$key] ) ) $i[$key] = array();
+
+        }
+
+        $i = $value;
+
+        return $array;
+
     }
 
     /**

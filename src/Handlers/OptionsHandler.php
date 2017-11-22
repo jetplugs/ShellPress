@@ -77,6 +77,23 @@ class OptionsHandler extends Handler {
     }
 
     /**
+     * Sets value in options array by given path.
+     *
+     * @param string $arrayPath - Next array keys separated by `/`
+     * @param mixed $value
+     */
+    public function set( $arrayPath = '', $value ) {
+
+        $options    = $this->get();
+        $keys       = explode( '/', $arrayPath );
+
+        $options    = $this->sp->utility()->injectValueToMultidimensionalArray( $options, $keys, $value );
+
+        $this->update( $options );
+
+    }
+
+    /**
      * Updates WP database option with given value. Caution! It updates whole array!
      *
      * @param mixed $data
