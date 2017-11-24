@@ -1,8 +1,8 @@
 <?php
-namespace shellpress\v1_1_0\src\Handlers;
+namespace shellpress\v1_1_1\src\Handlers;
 
-use shellpress\v1_1_0\lib\KLogger\KLogger;
-use shellpress\v1_1_0\lib\Psr\Log\LogLevel;
+use shellpress\v1_1_1\lib\KLogger\KLogger;
+use shellpress\v1_1_1\lib\Psr\Log\LogLevel;
 
 class LogHandler extends KLogger {
 

@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_0\src\Shared\AjaxListTable\_Controllers;
+namespace shellpress\v1_1_1\src\Shared\AjaxListTable\_Controllers;
 
 /**
  * @author DualJack
@@ -16,7 +16,7 @@ use tmc\mailboo\src\App;
  * The code style is different in some parts of class, because it extends
  * the core class WP_List_Table - made by WordPress team.
  *
- * @package shellpress\v1_1_0\src\Shared
+ * @package shellpress\v1_1_1\src\Shared
  */
 class WP_Ajax_listTable_Wrapper {
 
