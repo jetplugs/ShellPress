@@ -6,6 +6,7 @@ use shellpress\v1_1_2\src\Handlers\UtilityHandler;
 use shellpress\v1_1_2\src\Handlers\LogHandler;
 use shellpress\v1_1_2\src\Handlers\OptionsHandler;
 
+if( class_exists( 'shellpress\v1_1_2\ShellPress' ) ) return;
 /**
  * Core class of plugin. To use it, simple extend it.
  */
