@@ -275,12 +275,10 @@
 
                 ajaxListTable.find( '.notice.is-dismissible' ).each( function() {
 
-                    var $el = $( this ),
-                        $button = $( '<button type="button" class="notice-dismiss"><span class="screen-reader-text"></span></button>' ),
-                        btnText = commonL10n.dismiss || '';
+                    var $el     = $( this );
+                    var $button = $( '<button type="button" class="notice-dismiss"><span class="screen-reader-text"></span></button>' );
 
                     // Ensure plain text
-                    $button.find( '.screen-reader-text' ).text( btnText );
                     $button.on( 'click.wp-dismiss-notice', function( event ) {
 
                         event.preventDefault();

@@ -6,7 +6,6 @@ namespace shellpress\v1_1_2\src\Shared\AjaxListTable\_Controllers;
  * Date: 2017-07-25
  * Time: 19:46
  */
-use tmc\mailboo\src\App;
 
 /**
  * Class AjaxListTable.
