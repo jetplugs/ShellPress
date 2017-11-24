@@ -243,7 +243,7 @@ class Shell {
     private function initOptionsHandler() {
 
         $this->options = new OptionsHandler( $this );
-        $this->options->setOptionsKey( $this->initArgs['options']['options'] );
+        $this->options->setOptionsKey( $this->initArgs['options']['key'] );
         $this->options->setDefaultOptions( $this->initArgs['options']['default'] );
         $this->options->load();
 
