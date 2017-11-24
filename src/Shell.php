@@ -20,16 +20,16 @@ class Shell {
     protected $initArgs;
 
     /** @var OptionsHandler */
-    public $optionsHandler;
+    public $options;
 
     /** @var UtilityHandler */
-    public $utilityHandler;
+    public $utility;
 
     /** @var Psr4AutoloaderClass */
-    public $autoloadingHandler;
+    public $autoloading;
 
     /** @var LogHandler */
-    public $logHandler;
+    public $log;
 
     public function __construct( $initArgs ) {
 
@@ -210,9 +210,9 @@ class Shell {
             require( dirname( __DIR__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
         }
 
-        $this->autoloadingHandler = new Psr4AutoloaderClass();
-        $this->autoloadingHandler->register();
-        $this->autoloadingHandler->addNamespace( 'shellpress\v1_1_2', dirname( __DIR__ ) );
+        $this->autoloading = new Psr4AutoloaderClass();
+        $this->autoloading->register();
+        $this->autoloading->addNamespace( 'shellpress\v1_1_2', dirname( __DIR__ ) );
 
     }
 
@@ -221,9 +221,9 @@ class Shell {
      */
     private function initLogHandler() {
 
-        $logHandlerArgs = $this->initArgs['logHandler'];
+        $logHandlerArgs = $this->initArgs['log'];
 
-        $this->logHandler = new LogHandler(
+        $this->log = new LogHandler(
             $logHandlerArgs['directory'],
             $logHandlerArgs['logLevel'],
             array(
@@ -242,10 +242,10 @@ class Shell {
      */
     private function initOptionsHandler() {
 
-        $this->optionsHandler = new OptionsHandler( $this );
-        $this->optionsHandler->setOptionsKey( $this->initArgs['optionsHandler']['optionsKey'] );
-        $this->optionsHandler->setDefaultOptions( $this->initArgs['optionsHandler']['defaultOptions'] );
-        $this->optionsHandler->load();
+        $this->options = new OptionsHandler( $this );
+        $this->options->setOptionsKey( $this->initArgs['options']['options'] );
+        $this->options->setDefaultOptions( $this->initArgs['options']['default'] );
+        $this->options->load();
 
     }
 
@@ -254,7 +254,7 @@ class Shell {
      */
     private function initUtilityHandler() {
 
-        $this->utilityHandler = new UtilityHandler( $this );
+        $this->utility = new UtilityHandler( $this );
 
     }
 

@@ -54,7 +54,7 @@ class OptionsHandler extends Handler {
 
             $keys = explode( '/', $arrayPath );
 
-            return $this->shell()->utilityHandler->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
+            return $this->shell()->utility->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
 
         }
 
@@ -75,7 +75,7 @@ class OptionsHandler extends Handler {
         } else {
 
             $keys               = explode( '/', $arrayPath );
-            $this->optionsData  = $this->shell()->utilityHandler->setValueByKeysPath( $this->optionsData, $keys, $value );
+            $this->optionsData  = $this->shell()->utility->setValueByKeysPath( $this->optionsData, $keys, $value );
 
         }
 
@@ -147,7 +147,7 @@ class OptionsHandler extends Handler {
         $currentOptions =   $this->get( '', array() );
         $defaultOptions =   $this->getDefaultOptions();
 
-        $updateOptions =    $this->shell()->utilityHandler->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
+        $updateOptions =    $this->shell()->utility->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
 
         $this->set( '', $updateOptions );
 

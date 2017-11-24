@@ -72,12 +72,11 @@ abstract class ShellPress {
                 'pluginPrefix'          =>  $pluginPrefix,
                 'pluginVersion'         =>  $pluginVersion
             ),
-			'optionsHandler'	    =>	array(
-			    'optionsKey'            =>  $pluginPrefix,
-                'defaultOptions'        =>  array()
+			'options'	            =>	array(
+			    'key'                   =>  $pluginPrefix,
+                'default'               =>  array()
             ),
-            'logHandler'            =>  array(
-                'object'                =>  null,
+            'log'                       =>  array(
                 'directory'             =>  dirname( $mainPluginFile ) . '/log',
                 'logLevel'              =>  'debug',
                 'dateFormat'            =>  'Y-m-d G:i:s.u',
