@@ -6,10 +6,8 @@
  * Time: 22:49
  */
 
-/**
- * Class RequirementChecker.
- *
- */
+if( class_exists( 'ShellPress_RequirementChecker' ) ) return;
+
 class ShellPress_RequirementChecker {
 
     protected $versionPHP;
