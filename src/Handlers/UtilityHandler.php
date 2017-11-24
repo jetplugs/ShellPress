@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_1\src\Handlers;
+namespace shellpress\v1_1_2\src\Handlers;
 
 /**
  * @author jakubkuranda@gmail.com

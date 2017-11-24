@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_1\src\Shared\AjaxListTable\_Controllers;
+namespace shellpress\v1_1_2\src\Shared\AjaxListTable\_Controllers;
 /**
  * Administration API: WP_List_Table class
  *

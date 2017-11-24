@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_1\src\Handlers;
+namespace shellpress\v1_1_2\src\Handlers;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_1_1\src\Handlers;
  * Time: 18:33
  */
 
-use shellpress\v1_1_1\ShellPress;
+use shellpress\v1_1_2\ShellPress;
 
 class OptionsHandler extends Handler {
 
@@ -74,27 +74,21 @@ class OptionsHandler extends Handler {
 
         } else {
 
-            $keys       = explode( '/', $arrayPath );
-            $options    = $this->sp->utility()->setValueByKeysPath( $this->optionsData, $keys, $value );
-
-            $this->update( $options );
+            $keys               = explode( '/', $arrayPath );
+            $this->optionsData  = $this->sp->utility()->setValueByKeysPath( $this->optionsData, $keys, $value );
 
         }
 
     }
 
     /**
-     * Updates WP database option with given value. Caution! It updates whole array!
-     *
-     * @param mixed $data
+     * Saves current options to database.
      *
      * @return bool
      */
-    public function update( $data ) {
+    public function flushOptions() {
 
-        $this->optionsData = $data;
-
-        return update_option( $this->getOptionsKey(), $data );
+        return update_option( $this->getOptionsKey(), $this->optionsData );
 
     }
 
