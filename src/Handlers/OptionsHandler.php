@@ -86,7 +86,7 @@ class OptionsHandler extends Handler {
      *
      * @return bool
      */
-    public function flushOptions() {
+    public function flush() {
 
         return update_option( $this->getOptionsKey(), $this->optionsData );
 
