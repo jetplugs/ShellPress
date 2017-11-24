@@ -7,32 +7,32 @@ namespace shellpress\v1_1_2\src\Handlers;
  * Time: 22:14
  */
 
-use shellpress\v1_1_2\ShellPress;
+use shellpress\v1_1_2\src\Shell;
 
 abstract class Handler {
 
-    /** @var ShellPress */
-    protected $sp;
+    /** @var Shell */
+    protected $shell;
 
     /**
      * Handler constructor.
      *
-     * @param $shellPress
+     * @param Shell $shell
      */
-    public function __construct( $shellPress ) {
+    public function __construct( $shell ) {
 
-        $this->sp = $shellPress;
+        $this->shell = $shell;
 
     }
 
     /**
-     * Returns ShellPress instance.
+     * Returns Shell instance.
      *
-     * @return ShellPress
+     * @return Shell
      */
-    protected function getShellPress() {
+    protected function shell() {
 
-        return $this->sp;
+        return $this->shell;
 
     }
 

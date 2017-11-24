@@ -12,7 +12,7 @@ use shellpress\v1_1_2\ShellPress;
 class OptionsHandler extends Handler {
 
     /** @var ShellPress */
-    protected $sp;
+    protected $shell;
 
     /** @var string */
     protected $optionsKey = '';
@@ -54,7 +54,7 @@ class OptionsHandler extends Handler {
 
             $keys = explode( '/', $arrayPath );
 
-            return $this->sp->utility()->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
+            return $this->shell()->utilityHandler->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
 
         }
 
@@ -75,7 +75,7 @@ class OptionsHandler extends Handler {
         } else {
 
             $keys               = explode( '/', $arrayPath );
-            $this->optionsData  = $this->sp->utility()->setValueByKeysPath( $this->optionsData, $keys, $value );
+            $this->optionsData  = $this->shell()->utilityHandler->setValueByKeysPath( $this->optionsData, $keys, $value );
 
         }
 
@@ -147,9 +147,9 @@ class OptionsHandler extends Handler {
         $currentOptions =   $this->get( '', array() );
         $defaultOptions =   $this->getDefaultOptions();
 
-        $updateOptions =    $this->sp->utility()->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
+        $updateOptions =    $this->shell()->utilityHandler->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
 
-        $this->update( $updateOptions );
+        $this->set( '', $updateOptions );
 
     }
 
@@ -160,7 +160,7 @@ class OptionsHandler extends Handler {
      */
     public function restoreDefaults() {
 
-        $this->update( $this->getDefaultOptions() );
+        $this->set( '', $this->getDefaultOptions() );
 
     }
 
