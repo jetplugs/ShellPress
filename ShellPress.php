@@ -240,6 +240,18 @@ abstract class ShellPress {
     }
 
     /**
+     * Gets full version of instance.
+     * It's like this: `prefix`_`version`.
+     *
+     * @return string
+     */
+    public function getFullPluginVersion() {
+
+        return static::getPrefix() . '_' . static::getPluginVersion();
+
+    }
+
+    /**
      * Checks if application is used inside a plugin.
      * It returns false, if directory is not equal ../wp-content/plugins
      *
