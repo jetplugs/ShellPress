@@ -33,7 +33,7 @@ abstract class ShellPress {
 
         if( ! isset( static::$_instances[ $calledClass ] ) ){
 
-            static::$_instances[ $calledClass ] = new static();
+            wp_die( sprintf( 'You need to call %1$s::initShellPress().', $calledClass ) );
 
         }
 
@@ -91,14 +91,16 @@ abstract class ShellPress {
 
         require_once( __DIR__ . '/src/Shell.php' );
 
-        $instance           = static::getInstance();
+        $instance           = new static();
 		$instance->_shell   = new Shell( $initArgs );
+
+		static::$_instances[ get_called_class() ] = $instance;
 
         //  ----------------------------------------
         //  Everything is ready. Call onSetUp()
         //  ----------------------------------------
 
-        $instance->onSetUp();
+        static::getInstance()->onSetUp();
 
 	}
 
