@@ -8,6 +8,7 @@ namespace shellpress\v1_1_2\src;
  */
 
 use shellpress\v1_1_2\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_1_2\src\Handlers\EventHandler;
 use shellpress\v1_1_2\src\Handlers\LogHandler;
 use shellpress\v1_1_2\src\Handlers\OptionsHandler;
 use shellpress\v1_1_2\src\Handlers\UtilityHandler;
@@ -31,6 +32,9 @@ class Shell {
     /** @var LogHandler */
     public $log;
 
+    /** @var EventHandler */
+    public $event;
+
     public function __construct( $initArgs ) {
 
         $this->initArgs = $initArgs;
@@ -40,9 +44,10 @@ class Shell {
         //  -----------------------------------
 
         $this->initAutoloadingHandler();
+        $this->initUtilityHandler();
         $this->initOptionsHandler();
         $this->initLogHandler();
-        $this->initUtilityHandler();
+        $this->initEventHandler();
 
     }
 
@@ -246,6 +251,15 @@ class Shell {
         $this->options->setOptionsKey( $this->initArgs['options']['key'] );
         $this->options->setDefaultOptions( $this->initArgs['options']['default'] );
         $this->options->load();
+
+    }
+
+    /**
+     * Initialize event handler.
+     */
+    private function initEventHandler() {
+
+        $this->event = new EventHandler( $this );
 
     }
 
