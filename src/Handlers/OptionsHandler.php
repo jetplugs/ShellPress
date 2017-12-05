@@ -7,12 +7,7 @@ namespace shellpress\v1_1_2\src\Handlers;
  * Time: 18:33
  */
 
-use shellpress\v1_1_2\ShellPress;
-
 class OptionsHandler extends Handler {
-
-    /** @var ShellPress */
-    protected $shell;
 
     /** @var string */
     protected $optionsKey = '';
