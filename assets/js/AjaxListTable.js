@@ -39,7 +39,7 @@
 
                     if( ! list.isLocked ){
 
-                        list.isLocked = true;   //  Lock callbacks
+                        list.lockTable();
 
                         // Simple way: use the URL to extract our needed variables
                         var query = this.search.substring( 1 );
@@ -63,7 +63,7 @@
 
                     if( ! list.isLocked ) {
 
-                        list.isLocked = true;       //  Lock callbacks
+                        list.lockTable();
 
                         list.updateSelectedRows();  //  Get selected rows
 
@@ -123,7 +123,7 @@
 
                     if( ! list.isLocked ) {
 
-                        list.isLocked = true;   //  Lock callbacks
+                        list.lockTable();
 
                         // Simple way: use the URL to extract our needed variables
                         var query = this.search.substring( 1 );
@@ -150,7 +150,7 @@
 
                         if( ! list.isLocked ) {
 
-                            list.isLocked = true;   //  Lock callbacks
+                            list.lockTable();
 
                             //  Wait `delay` before sending request.
                             window.clearTimeout(timer);
@@ -182,7 +182,7 @@
 
                         if( ! list.isLocked ) {
 
-                            list.isLocked = true;   //  Lock callbacks
+                            list.lockTable();
 
                             //  Wait `delay` before sending request.
                             window.clearTimeout(timer);
@@ -213,7 +213,7 @@
 
                     if( ! list.isLocked ) {
 
-                        list.isLocked = true;   //  Lock callbacks
+                        list.lockTable();
 
                         list.data.search    = ajaxListTable.find('input[name="search"]').val() || '';
                         list.data.paged     =  1;   //  Reset pagination
@@ -233,7 +233,7 @@
 
                     if( ! list.isLocked ) {
 
-                        list.isLocked = true;   //  Lock callbacks
+                        list.lockTable();
 
                         list.data.view      = $( this ).attr( 'data-value' ) || '';
                         list.data.paged     = 1;   //  Reset pagination
@@ -253,7 +253,7 @@
 
                     if( ! list.isLocked ) {
 
-                        list.isLocked = true;   //  Lock callbacks
+                        list.lockTable();
 
                         var actionSlug = $( this ).attr( 'data-action-id' )        || null;
                         var actionData = $( this ).attr( 'data-action-data' )   || null;
@@ -334,6 +334,18 @@
                 list.data.selectedItems = {}
 
             },
+            lockTable:          function() {
+
+                list.isLocked = true;
+                ajaxListTable.addClass( 'locked' ).css( { 'opacity': '0.5', 'pointer-events': 'none' } );
+
+            },
+            unlockTable:        function() {
+
+                list.isLocked = false;
+                ajaxListTable.removeClass( 'locked' ).css( { 'opacity': '', 'pointer-events': '' } );
+
+            },
             update:             function() {
 
                 ajaxListTable.find( '.tablenav .clear' ).before( '<div class="spinner is-active"></div>' );
@@ -381,7 +393,7 @@
                     },
                     complete:   function() {
 
-                        list.isLocked = false;          //  Unlock callbacks
+                        list.unlockTable();
 
                     }
                 } );
