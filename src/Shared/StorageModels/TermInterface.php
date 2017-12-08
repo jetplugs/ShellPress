@@ -177,11 +177,19 @@ class TermInterface {
      * @param string $value
      * @param string $prevValue
      *
-     * @return bool|int
+     * @return bool
      */
     public function setMeta( $metaKey, $value, $prevValue = '' ) {
 
-        return update_term_meta( $this->getId(), $metaKey, $value, $prevValue );
+        $result = update_term_meta( $this->getId(), $metaKey, $value, $prevValue );
+
+        if( is_wp_error( $result ) ){
+            return false;
+        } elseif( $result ) {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
