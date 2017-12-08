@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_2\src;
+namespace shellpress\v1_1_3\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,13 +7,13 @@ namespace shellpress\v1_1_2\src;
  * Time: 22:45
  */
 
-use shellpress\v1_1_2\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_1_2\src\Handlers\EventHandler;
-use shellpress\v1_1_2\src\Handlers\LogHandler;
-use shellpress\v1_1_2\src\Handlers\OptionsHandler;
-use shellpress\v1_1_2\src\Handlers\UtilityHandler;
+use shellpress\v1_1_3\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_1_3\src\Handlers\EventHandler;
+use shellpress\v1_1_3\src\Handlers\LogHandler;
+use shellpress\v1_1_3\src\Handlers\OptionsHandler;
+use shellpress\v1_1_3\src\Handlers\UtilityHandler;
 
-if( class_exists( 'shellpress\v1_1_2\src\Shell' ) ) return;
+if( class_exists( 'shellpress\v1_1_3\src\Shell' ) ) return;
 
 class Shell {
 
@@ -211,13 +211,13 @@ class Shell {
      */
     private function initAutoloadingHandler() {
 
-        if( ! class_exists( 'shellpress\v1_1_2\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_1_3\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
             require( dirname( __DIR__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
         }
 
         $this->autoloading = new Psr4AutoloaderClass();
         $this->autoloading->register();
-        $this->autoloading->addNamespace( 'shellpress\v1_1_2', dirname( __DIR__ ) );
+        $this->autoloading->addNamespace( 'shellpress\v1_1_3', dirname( __DIR__ ) );
 
     }
 
