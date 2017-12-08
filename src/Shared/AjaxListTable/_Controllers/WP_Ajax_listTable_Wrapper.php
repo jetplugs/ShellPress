@@ -858,17 +858,8 @@ class WP_Ajax_listTable_Wrapper {
         $current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
         $current_url = remove_query_arg( 'paged', $current_url );
 
-        if ( isset( $_REQUEST['orderBy'] ) && ! empty( $_REQUEST['orderBy'] ) ) {
-            $current_orderby = $_REQUEST['orderBy'];
-        } else {
-            $current_orderby = $this->params['orderBy'];
-        }
-
-        if ( isset( $_REQUEST['order'] ) && 'desc' === $_REQUEST['order'] ) {
-            $current_order = 'desc';
-        } else {
-            $current_order = $this->params['order'];
-        }
+        $current_orderby    = $this->getOrderBy();
+        $current_order      = $this->getOrder();
 
         if ( ! empty( $columns['cb'] ) ) {
             static $cb_counter = 1;
@@ -1050,7 +1041,8 @@ class WP_Ajax_listTable_Wrapper {
             'type'          =>  null,
             'attributes'    =>  array(),
             'select'        =>  array(),
-            'title'         =>  ''
+            'title'         =>  '',
+            'data'          =>  ''
         );
 
         $component = wp_parse_args( $component, $componentDefault );
