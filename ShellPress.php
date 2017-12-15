@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_1_3;
+namespace shellpress\v1_1_4;
 
-use shellpress\v1_1_3\src\Shell;
+use shellpress\v1_1_4\src\Shell;
 
-if( class_exists( 'shellpress\v1_1_3\ShellPress' ) ) return;
+if( class_exists( 'shellpress\v1_1_4\ShellPress' ) ) return;
 /**
  * Core class of plugin. To use it, simple extend it.
  */
@@ -38,6 +38,17 @@ abstract class ShellPress {
         }
 
         return static::$_instances[ $calledClass ];
+
+    }
+
+    /**
+     * Alias for getInstance();
+     *
+     * @return static
+     */
+    public final static function i() {
+
+        return static::getInstance();
 
     }
 
