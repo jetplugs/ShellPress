@@ -27,4 +27,15 @@ abstract class AdminPageTab extends AdminPage {
 
     }
 
+    /**
+     * Called on construction of object.
+     */
+    protected function registerActions() {
+
+        call_user_func( array( $this, 'setUp' ) );
+
+        add_action( 'load_' . $this->pageSlug . '_' . $this->tabSlug,      array( $this, 'load' ) );
+
+    }
+
 }
