@@ -1,4 +1,4 @@
-# Documentation
+# ShellPress TMC Documentation
 https://themastercut.co/docs/shellpress/
 
 # Requirements
