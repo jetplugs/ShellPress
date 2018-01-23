@@ -1,3 +1,6 @@
+# Documentation
+https://themastercut.co/docs/shellpress/
+
 # Requirements
 - PHP 5.3 ( namespacing of course )
 - Knwoledge about PSR-4 http://www.php-fig.org/psr/psr-4/
