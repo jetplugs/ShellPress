@@ -120,7 +120,7 @@ abstract class ShellPress {
 	//  ================================================================================
 
     /**
-     * Called automaticly after core is ready.
+     * Called automatically after core is ready.
      *
      * @return void
      */
