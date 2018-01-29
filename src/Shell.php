@@ -137,6 +137,27 @@ class Shell {
     }
 
     /**
+     * Requires file by given relative path.
+     * If class name is given as a second parameter, it will check, if class already exists.
+     *
+     * @param string $path              - Relative file path
+     * @param string|null $className    - Class name to check against.
+     *
+     * @return void
+     */
+    public function requireFile( $path, $className = null ) {
+
+        if( $className && class_exists( $className ) ){
+
+            return; //  End method. Do not load file.
+
+        }
+
+        require( $this->getPath( $path ) );
+
+    }
+
+    /**
      * It gets main plugin file path.
      *
      * @return string - full path to main plugin file (__FILE__)
