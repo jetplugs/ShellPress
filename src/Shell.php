@@ -10,6 +10,7 @@ namespace shellpress\v1_1_7\src;
 use shellpress\v1_1_7\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_1_7\src\Handlers\EventHandler;
 use shellpress\v1_1_7\src\Handlers\LogHandler;
+use shellpress\v1_1_7\src\Handlers\MessagesHandler;
 use shellpress\v1_1_7\src\Handlers\OptionsHandler;
 use shellpress\v1_1_7\src\Handlers\UtilityHandler;
 
@@ -35,6 +36,9 @@ class Shell {
     /** @var EventHandler */
     public $event;
 
+    /** @var MessagesHandler */
+    public $messages;
+
     public function __construct( $initArgs ) {
 
         $this->initArgs = $initArgs;
@@ -47,6 +51,7 @@ class Shell {
         $this->initUtilityHandler();
         $this->initOptionsHandler();
         $this->initLogHandler();
+        $this->initMessagesHandler();
         $this->initEventHandler();
 
     }
@@ -290,6 +295,15 @@ class Shell {
     private function initUtilityHandler() {
 
         $this->utility = new UtilityHandler( $this );
+
+    }
+
+    /**
+     * Initialize MessagesHandler.
+     */
+    private function initMessagesHandler() {
+
+        $this->messages = new MessagesHandler( $this );
 
     }
 
