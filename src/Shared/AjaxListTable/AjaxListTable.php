@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_6\src\Shared\AjaxListTable;
+namespace shellpress\v1_1_7\src\Shared\AjaxListTable;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_1_6\src\Shared\AjaxListTable;
  * Time: 12:18
  */
 
-use shellpress\v1_1_6\src\Shared\AjaxListTable\_Controllers\WP_Ajax_listTable_Wrapper;
+use shellpress\v1_1_7\src\Shared\AjaxListTable\_Controllers\WP_Ajax_listTable_Wrapper;
 
 abstract class AjaxListTable {
 
