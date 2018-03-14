@@ -28,6 +28,8 @@ abstract class LicenseManagerSLM {
 
         $this->shell = call_user_func( array( $shellPress, 'shell' ) );
 
+        $this->onSetUp();   //  Everything is ready.
+
     }
 
     /**
@@ -224,7 +226,9 @@ abstract class LicenseManagerSLM {
                         $this->setKeyStatus( __( 'Current domain is connected with key.', 'tmc_fbleads' ) );
                         $this->setActive( true );
 
-                        $this->onKeyActivationCallback();
+                        if( ! $this->isActive() ){
+                            $this->onKeyActivationCallback();
+                        }
 
                     } else {
 
@@ -240,7 +244,9 @@ abstract class LicenseManagerSLM {
                     $this->setKeyStatus( __( 'Key has expired.', 'tmc_fbleads' ) );
                     $this->setActive( false );
 
-                    $this->onKeyDeactivationCallback();
+                    if( $this->isActive() ){
+                        $this->onKeyDeactivationCallback();
+                    }
 
                 } elseif( $keyStatus === 'blocked' ){
 
@@ -248,7 +254,9 @@ abstract class LicenseManagerSLM {
                     $this->setKeyStatus( __( 'Key has been blocked.', 'tmc_fbleads' ) );
                     $this->setActive( false );
 
-                    $this->onKeyDeactivationCallback();
+                    if( $this->isActive() ){
+                        $this->onKeyDeactivationCallback();
+                    }
 
                 } else {
 
@@ -267,7 +275,9 @@ abstract class LicenseManagerSLM {
                 $this->setKeyStatus( $errorMessage );
                 $this->setActive( false );
 
-                $this->onKeyDeactivationCallback();
+                if( $this->isActive() ){
+                    $this->onKeyDeactivationCallback();
+                }
 
             }
 
@@ -299,14 +309,18 @@ abstract class LicenseManagerSLM {
             $this->setKeyStatus( __( 'Could not activate your key. Try in a few minutes.', 'tmc_fbleads' ) );
             $this->setActive( false );
 
-            $this->onKeyDeactivationCallback();
+            if( $this->isActive() ){
+                $this->onKeyDeactivationCallback();
+            }
 
         } elseif( $responseStatus != '200' ) {
 
             $this->setKeyStatus( __( 'Got unknown info. Please update your key in a few minutes.', 'tmc_fbleads' ) );
             $this->setActive( false );
 
-            $this->onKeyDeactivationCallback();
+            if( $this->isActive() ){
+                $this->onKeyDeactivationCallback();
+            }
 
         } else {
 
@@ -317,7 +331,9 @@ abstract class LicenseManagerSLM {
                 $this->setKeyStatus( __( 'Key has been activated for this domain.', 'tmc_fbleads' ) );
                 $this->setActive( true );
 
-                $this->onKeyActivationCallback();
+                if( $this->isActive() ){
+                    $this->onKeyActivationCallback();
+                }
 
             } else {
 
@@ -326,7 +342,9 @@ abstract class LicenseManagerSLM {
                 $this->setKeyStatus( $errorMessage );
                 $this->setActive( false );
 
-                $this->onKeyDeactivationCallback();
+                if( $this->isActive() ){
+                    $this->onKeyDeactivationCallback();
+                }
 
             }
 
@@ -356,6 +374,13 @@ abstract class LicenseManagerSLM {
         return false;
 
     }
+
+    /**
+     * Called on object creation.
+     *
+     * @return void
+     */
+    protected abstract function onSetUp();
 
     /**
      * Called when key has been activated.
