@@ -224,6 +224,8 @@ abstract class LicenseManagerSLM {
                         $this->setKeyStatus( __( 'Current domain is connected with key.', 'tmc_fbleads' ) );
                         $this->setActive( true );
 
+                        $this->onKeyActivationCallback();
+
                     } else {
 
                         $this->setKeyExpiryDatetime( $dateExpiry );
@@ -238,11 +240,15 @@ abstract class LicenseManagerSLM {
                     $this->setKeyStatus( __( 'Key has expired.', 'tmc_fbleads' ) );
                     $this->setActive( false );
 
+                    $this->onKeyDeactivationCallback();
+
                 } elseif( $keyStatus === 'blocked' ){
 
                     $this->setKeyExpiryDatetime( $dateExpiry );
                     $this->setKeyStatus( __( 'Key has been blocked.', 'tmc_fbleads' ) );
                     $this->setActive( false );
+
+                    $this->onKeyDeactivationCallback();
 
                 } else {
 
@@ -260,6 +266,8 @@ abstract class LicenseManagerSLM {
                 $this->setKeyExpiryDatetime( null );
                 $this->setKeyStatus( $errorMessage );
                 $this->setActive( false );
+
+                $this->onKeyDeactivationCallback();
 
             }
 
@@ -291,10 +299,14 @@ abstract class LicenseManagerSLM {
             $this->setKeyStatus( __( 'Could not activate your key. Try in a few minutes.', 'tmc_fbleads' ) );
             $this->setActive( false );
 
+            $this->onKeyDeactivationCallback();
+
         } elseif( $responseStatus != '200' ) {
 
             $this->setKeyStatus( __( 'Got unknown info. Please update your key in a few minutes.', 'tmc_fbleads' ) );
             $this->setActive( false );
+
+            $this->onKeyDeactivationCallback();
 
         } else {
 
@@ -305,12 +317,16 @@ abstract class LicenseManagerSLM {
                 $this->setKeyStatus( __( 'Key has been activated for this domain.', 'tmc_fbleads' ) );
                 $this->setActive( true );
 
+                $this->onKeyActivationCallback();
+
             } else {
 
                 $errorMessage = array_key_exists( 'message', $responseData ) ? $responseData['message'] : __( 'Could not activate your key.', 'tmc_fbleads' );
 
                 $this->setKeyStatus( $errorMessage );
                 $this->setActive( false );
+
+                $this->onKeyDeactivationCallback();
 
             }
 
