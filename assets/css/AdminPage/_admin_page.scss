@@ -1,0 +1,215 @@
+//  ================================================================================
+//  Admin Page Framework style
+//  --------------------------------------------------------------------------------
+//  Adds some simple spacing, etc.
+//  ================================================================================
+
+$frameworkPrefix: 	    "tmcapf";   //  It appears in some selectors
+$sectionsBorderColor:   #d9d9d9;
+
+.wp-core-ui {
+
+    .#{$frameworkPrefix}-container {
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        pre.dump-array {
+
+            margin: 0;
+            display: table-cell;
+            max-width: 100%;
+            word-break: break-all;
+            word-wrap: break-word;
+
+        }
+
+        .fieldrow-big-title {
+
+            .#{$frameworkPrefix}-field-td-no-title {
+
+                padding: 0;
+
+            }
+
+            .#{$frameworkPrefix}-field-text {
+
+                width: 100%;
+
+            }
+
+            .#{$frameworkPrefix}-input-label-container {
+
+                width: 100%;
+
+            }
+
+            input[type="text"] {
+
+                padding: 3px 8px;
+                font-size: 1.7em;
+                line-height: 100%;
+                height: 1.7em;
+                width: 100%;
+                outline: 0;
+                margin: 0 0 3px;
+                background-color: #fff;
+
+            }
+
+        }
+
+        &::after {
+
+            display: block;
+            content: "";
+            clear: both;
+
+        }
+
+		.#{$frameworkPrefix}-info {
+
+			display: none;
+
+		}
+
+        .#{$frameworkPrefix}-sctionsets,
+        .#{$frameworkPrefix}-sectionset,
+        .#{$frameworkPrefix}-section-tabs-contents,
+        .#{$frameworkPrefix}-section {
+
+            margin: 0;
+            display: block;
+
+        }
+
+        .#{$frameworkPrefix}-input-label-container {
+
+            display: block;
+
+        }
+
+        .#{$frameworkPrefix}-fields-description {
+
+            border: 1px dashed #16a085;
+            color: #16a085;
+            padding: 5px 10px;
+            display: inline-block;
+
+        }
+
+        //  ----------------------------------------
+        //  Fields
+        //  ----------------------------------------
+
+        .#{$frameworkPrefix}-field-textarea .#{$frameworkPrefix}-input-label-container {
+
+            float: none;
+
+        }
+
+        .#{$frameworkPrefix}-field {
+
+            input[type='number'] {
+                text-align: left;
+            }
+
+        }
+
+        .#{$frameworkPrefix}-field-inline_mixed {
+            width: 100%;
+        }
+
+        //  ----------------------------------------
+        //  Wordpress specific
+        //  ----------------------------------------
+
+        .tablenav-pages-navspan {
+            height: auto;
+        }
+
+        //  ----------------------------------------
+        //  Form tip
+        //  ----------------------------------------
+
+        .#{$frameworkPrefix}-form-tooltip {
+
+            position: relative;
+
+            > span {
+
+            }
+
+            .#{$frameworkPrefix}-form-tooltip-content {
+
+                margin: 0;
+                width: 320px;
+                top: -10px;
+                left: 25px;
+
+                &::before,
+                &::after {
+                    top: 18px !important;
+                }
+
+            }
+
+            .#{$frameworkPrefix}-form-tooltip-description {
+
+
+
+            }
+
+        }
+
+        //  ----------------------------------------
+        //  Metaboxes
+        //  ----------------------------------------
+
+        #poststuff .meta-box-sortables {
+
+            .#{$frameworkPrefix}-section-tab {
+
+                margin-right: 0.2em;
+
+                h4 {
+
+                    padding: 0.1em 0.2em;
+                    font-size: 0.9em;
+
+                }
+
+            }
+
+            .#{$frameworkPrefix}-field,
+            .#{$frameworkPrefix}-input-label-container {
+
+                width: 100%;
+
+            }
+
+            .#{$frameworkPrefix}-tab-content {
+
+                padding: 0.8em;
+
+            }
+
+            .#{$frameworkPrefix}-section .form-table {
+
+                > td,
+                > tbody > tr > th {
+
+                    margin: 0;
+
+                }
+
+            }
+
+        }
+
+	}
+
+}

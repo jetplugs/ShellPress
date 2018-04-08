@@ -1,0 +1,38 @@
+.#{$frameworkPrefix}-section.section-grid {
+
+    border-right: 1px solid $sectionsBorderColor;
+
+    .#{$frameworkPrefix}-section-caption {
+
+        border-top: 1px solid $sectionsBorderColor;
+        padding-left: 1rem;
+
+    }
+
+    .#{$frameworkPrefix}-fieldrow {
+
+        border-top: 1px solid $sectionsBorderColor;
+
+        > th {
+
+            border-right: 1px solid $sectionsBorderColor;
+            padding-left: 1rem;
+            padding-right: 1rem;
+
+        }
+
+        .#{$frameworkPrefix}-field-td-no-title {
+
+            padding-left: 1rem;
+            padding-right: 1rem;
+
+        }
+
+        .#{$frameworkPrefix}-fields-description {
+
+
+        }
+
+    }
+
+}
