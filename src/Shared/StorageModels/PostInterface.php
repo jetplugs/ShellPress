@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_7\src\Shared\StorageModels;
+namespace shellpress\v1_1_8\src\Shared\StorageModels;
 
 /**
  * @author jakubkuranda@gmail.com
