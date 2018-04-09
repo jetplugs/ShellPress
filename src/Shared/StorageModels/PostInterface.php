@@ -21,11 +21,19 @@ class PostInterface {
     /**
      * PostInterface constructor.
      *
-     * @param WP_Post $post
+     * @param WP_Post|int $post
      */
     public function __construct( $post ) {
 
-        $this->post = $post;
+        if( is_object( $post ) ){
+
+            $this->post = $post;
+
+        } else {
+
+            $post = get_post( $post );
+
+        }
 
     }
 
