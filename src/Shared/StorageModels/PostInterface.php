@@ -25,15 +25,7 @@ class PostInterface {
      */
     public function __construct( $post ) {
 
-        if( is_object( $post ) ){
-
-            $this->post = $post;
-
-        } else {
-
-            $post = get_post( $post );
-
-        }
+        $this->post = $post;
 
     }
 
