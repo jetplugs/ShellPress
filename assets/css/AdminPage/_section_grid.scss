@@ -1,35 +1,39 @@
-.#{$frameworkPrefix}-section.section-grid {
+.#{$frameworkPrefix}-content {
 
-    border-right: 1px solid $sectionsBorderColor;
+    .#{$frameworkPrefix}-section {
 
-    .#{$frameworkPrefix}-section-caption {
+        border-right: 1px solid $sectionsBorderColor;
 
-        border-top: 1px solid $sectionsBorderColor;
-        padding-left: 1rem;
+        .#{$frameworkPrefix}-section-caption {
 
-    }
-
-    .#{$frameworkPrefix}-fieldrow {
-
-        border-top: 1px solid $sectionsBorderColor;
-
-        > th {
-
-            border-right: 1px solid $sectionsBorderColor;
+            border-top: 1px solid $sectionsBorderColor;
             padding-left: 1rem;
-            padding-right: 1rem;
 
         }
 
-        .#{$frameworkPrefix}-field-td-no-title {
+        .#{$frameworkPrefix}-fieldrow {
 
-            padding-left: 1rem;
-            padding-right: 1rem;
+            border-top: 1px solid $sectionsBorderColor;
 
-        }
+            > th {
 
-        .#{$frameworkPrefix}-fields-description {
+                border-right: 1px solid $sectionsBorderColor;
+                padding-left: 1rem;
+                padding-right: 1rem;
 
+            }
+
+            .#{$frameworkPrefix}-field-td-no-title {
+
+                padding-left: 1rem;
+                padding-right: 1rem;
+
+            }
+
+            .#{$frameworkPrefix}-fields-description {
+
+
+            }
 
         }
 
