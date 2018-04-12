@@ -76,18 +76,16 @@ class ExtractorHandler extends Handler {
 	 */
 	public function _a_downloadPluginCallback() {
 
-		if( array_key_exists( 'sp_download', $_GET ) && $_GET['sp_download'] === $this->getCurrentPluginFileName() ){
+		if( is_admin() && array_key_exists( 'sp_download', $_GET ) && $_GET['sp_download'] === $this->getCurrentPluginFileName() ){
 
 			if( array_key_exists( '_wpnonce', $_GET ) && wp_verify_nonce( $_GET['_wpnonce'], 'sp_download' ) ) {
-
-				$uploadDirData = wp_upload_dir();
 
 				//  ----------------------------------------
 				//  Prepare Names
 				//  ----------------------------------------
 
-				$newFileName = str_replace( '.php', '.zip', $this->getCurrentPluginFileName() );
-				$newFileFullPath = $uploadDirData['basedir'] . '/' . $newFileName ;
+				$newFileName        = str_replace( '.php', '.zip', $this->getCurrentPluginFileName() );
+				$newFileFullPath    = rtrim( sys_get_temp_dir(), '/' ) . '/' . $newFileName ;
 
 				//  ----------------------------------------
 				//  Pack plugin
@@ -110,6 +108,10 @@ class ExtractorHandler extends Handler {
 				header( "Expires: 0" );
 
 				readfile( $newFileFullPath );
+
+			} else {
+
+				wp_die( 'Please try again.' );
 
 			}
 
