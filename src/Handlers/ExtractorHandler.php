@@ -34,10 +34,9 @@ class ExtractorHandler extends Handler {
 	 */
 	protected function getCurrentPluginFileName() {
 
-		$pluginName = $this->shell()->getMainPluginFile();
+		$pluginFile = $this->shell()->getMainPluginFile();
 
-		$pos = strrpos( $pluginName, '/');
-		return $pos === false ? $pluginName : substr( $pluginName, $pos + 1 );
+		return pathinfo( $pluginFile, PATHINFO_BASENAME );
 
 	}
 
@@ -85,7 +84,7 @@ class ExtractorHandler extends Handler {
 				//  ----------------------------------------
 
 				$newFileName        = str_replace( '.php', '.zip', $this->getCurrentPluginFileName() );
-				$newFileFullPath    = rtrim( sys_get_temp_dir(), '/' ) . '/' . $newFileName ;
+				$newFileFullPath    = rtrim( sys_get_temp_dir(), '/' ) . '/' . $newFileName;
 
 				//  ----------------------------------------
 				//  Pack plugin
