@@ -142,8 +142,8 @@ class UtilityHandler extends Handler {
     }
 
 	/**
-	 * @param string $srcPath
-	 * @param string $newFilePath - should contain name of the file with .ip extension
+	 * @param string    $srcPath
+	 * @param string    $newFilePath - should contain name of the file with .ip extension
 	 *
 	 * @return bool
 	 */
