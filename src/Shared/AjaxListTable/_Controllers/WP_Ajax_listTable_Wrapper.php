@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_8\src\Shared\AjaxListTable\_Controllers;
+namespace shellpress\v1_1_9\src\Shared\AjaxListTable\_Controllers;
 
 /**
  * @author DualJack
@@ -15,7 +15,7 @@ namespace shellpress\v1_1_8\src\Shared\AjaxListTable\_Controllers;
  * The code style is different in some parts of class, because it extends
  * the core class WP_List_Table - made by WordPress team.
  *
- * @package shellpress\v1_1_8\src\Shared
+ * @package shellpress\v1_1_9\src\Shared
  */
 class WP_Ajax_listTable_Wrapper {
 

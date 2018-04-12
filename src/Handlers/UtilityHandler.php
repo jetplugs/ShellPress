@@ -1,5 +1,8 @@
 <?php
-namespace shellpress\v1_1_8\src\Handlers;
+namespace shellpress\v1_1_9\src\Handlers;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ZipArchive;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -137,5 +140,51 @@ class UtilityHandler extends Handler {
         return sprintf( '<pre>%1$s</pre>', var_export( $var, true ) );
 
     }
+
+	/**
+	 * @param string $srcPath
+	 * @param string $newFilePath - should contain name of the file with .ip extension
+	 *
+	 * @return bool
+	 */
+	public function zipData( $srcPath, $newFilePath ) {
+
+		if( ! extension_loaded( 'zip' ) || ! file_exists( $srcPath ) ) return false;
+
+		$zip = new ZipArchive();
+
+		if( $zip->open( $newFilePath, ZIPARCHIVE::CREATE ) ){
+
+			$srcPath = realpath( $srcPath );
+
+			if( is_dir( $srcPath ) ){
+
+				$iterator = new RecursiveDirectoryIterator( $srcPath );
+
+				// skip dot files while iterating
+				$iterator->setFlags( RecursiveDirectoryIterator::SKIP_DOTS );
+
+				$files = new RecursiveIteratorIterator( $iterator, RecursiveIteratorIterator::SELF_FIRST );
+
+				foreach( $files as $file ){
+
+					$file = realpath( $file );
+
+					if( is_dir( $file ) ){
+						$zip->addEmptyDir( str_replace( $srcPath . '/', '', $file . '/' ) );
+					} else if( is_file( $file ) ){
+						$zip->addFile( $file, str_replace( $srcPath . '/', '', $file ) );
+					}
+
+				}
+
+			} else if( is_file( $srcPath ) ){
+				$zip->addFromString( basename( $srcPath ), file_get_contents( $srcPath ) );
+			}
+		}
+
+		return $zip->close();
+
+	}
 
 }

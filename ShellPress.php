@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_1_8;
+namespace shellpress\v1_1_9;
 
-use shellpress\v1_1_8\src\Shell;
+use shellpress\v1_1_9\src\Shell;
 
-if( class_exists( 'shellpress\v1_1_8\ShellPress' ) ) return;
+if( class_exists( 'shellpress\v1_1_9\ShellPress' ) ) return;
 /**
  * Core class of plugin. To use it, simple extend it.
  */
@@ -95,7 +95,10 @@ abstract class ShellPress {
                 'flushFrequency'        =>  false,
                 'logFormat'             =>  false,
                 'appendContext'         =>  true
-            )
+            ),
+			'extractor'             =>  array(
+				'label'                 =>  __( 'Download' )
+			)
 		);
 
         $initArgs = array_replace_recursive( $defaultInitArgs, $initArgs );   // replace default init arguments with specified by developer

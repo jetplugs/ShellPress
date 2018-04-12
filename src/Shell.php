@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_8\src;
+namespace shellpress\v1_1_9\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,14 +7,15 @@ namespace shellpress\v1_1_8\src;
  * Time: 22:45
  */
 
-use shellpress\v1_1_8\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_1_8\src\Handlers\EventHandler;
-use shellpress\v1_1_8\src\Handlers\LogHandler;
-use shellpress\v1_1_8\src\Handlers\MessagesHandler;
-use shellpress\v1_1_8\src\Handlers\OptionsHandler;
-use shellpress\v1_1_8\src\Handlers\UtilityHandler;
+use shellpress\v1_1_9\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_1_9\src\Handlers\EventHandler;
+use shellpress\v1_1_9\src\Handlers\ExtractorHandler;
+use shellpress\v1_1_9\src\Handlers\LogHandler;
+use shellpress\v1_1_9\src\Handlers\MessagesHandler;
+use shellpress\v1_1_9\src\Handlers\OptionsHandler;
+use shellpress\v1_1_9\src\Handlers\UtilityHandler;
 
-if( class_exists( 'shellpress\v1_1_8\src\Shell' ) ) return;
+if( class_exists( 'shellpress\v1_1_9\src\Shell' ) ) return;
 
 class Shell {
 
@@ -39,6 +40,9 @@ class Shell {
     /** @var MessagesHandler */
     public $messages;
 
+    /** @var ExtractorHandler */
+    protected $extractor;
+
     public function __construct( $initArgs ) {
 
         $this->initArgs = $initArgs;
@@ -53,6 +57,7 @@ class Shell {
         $this->initLogHandler();
         $this->initMessagesHandler();
         $this->initEventHandler();
+        $this->initExtractorHandler();
 
     }
 
@@ -237,13 +242,13 @@ class Shell {
      */
     private function initAutoloadingHandler() {
 
-        if( ! class_exists( 'shellpress\v1_1_8\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
+        if( ! class_exists( 'shellpress\v1_1_9\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
             require( dirname( __DIR__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
         }
 
         $this->autoloading = new Psr4AutoloaderClass();
         $this->autoloading->register();
-        $this->autoloading->addNamespace( 'shellpress\v1_1_8', dirname( __DIR__ ) );
+        $this->autoloading->addNamespace( 'shellpress\v1_1_9', dirname( __DIR__ ) );
 
     }
 
@@ -304,6 +309,17 @@ class Shell {
     private function initMessagesHandler() {
 
         $this->messages = new MessagesHandler( $this );
+
+    }
+
+	/**
+	 * Initialize ExtractorHandler.
+	 */
+    private function initExtractorHandler() {
+
+    	$this->extractor = new ExtractorHandler( $this );
+    	$this->extractor->label = $this->initArgs['extractor']['label'];
+    	$this->extractor->registerDownloadButton();
 
     }
 
