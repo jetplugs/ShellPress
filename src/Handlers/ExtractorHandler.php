@@ -106,7 +106,9 @@ class ExtractorHandler extends Handler {
 				header( "Pragma: no-cache" );
 				header( "Expires: 0" );
 
-				readfile( $newFileFullPath );
+                readfile( $newFileFullPath );
+
+                exit;
 
 			} else {
 
