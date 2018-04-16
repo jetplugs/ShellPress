@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_9\src\Shared\Components;
+namespace shellpress\v1_2_0\src\Shared\Components;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,8 +7,8 @@ namespace shellpress\v1_1_9\src\Shared\Components;
  * Time: 11:22
  */
 
-use shellpress\v1_1_9\ShellPress;
-use shellpress\v1_1_9\src\Shell;
+use shellpress\v1_2_0\ShellPress;
+use shellpress\v1_2_0\src\Shell;
 
 abstract class LicenseManagerSLM {
 

@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_9\src\Handlers;
+namespace shellpress\v1_2_0\src\Handlers;
 
 /**
  * Date: 12.04.2018

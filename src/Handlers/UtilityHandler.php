@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_9\src\Handlers;
+namespace shellpress\v1_2_0\src\Handlers;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ZipArchive;
