@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers;
+namespace shellpress\v1_2_0\src\Handlers\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,9 @@ namespace shellpress\v1_2_0\src\Handlers;
  * Time: 02:29
  */
 
-class EventHandler extends Handler {
+use shellpress\v1_2_0\src\Handlers\IHandler;
+
+class EventHandler extends IHandler {
 
     public function addOnActivate( $callable ) {
 

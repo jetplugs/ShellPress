@@ -1,8 +1,5 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use ZipArchive;
+namespace shellpress\v1_2_0\src\Handlers\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -10,7 +7,12 @@ use ZipArchive;
  * Time: 14:41
  */
 
-class UtilityHandler extends Handler {
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use shellpress\v1_2_0\src\Handlers\IHandler;
+use ZipArchive;
+
+class UtilityHandler extends IHandler {
 
     /**
      * Merge two arrays without structure changing and overriding values

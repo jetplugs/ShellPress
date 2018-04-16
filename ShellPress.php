@@ -63,50 +63,30 @@ abstract class ShellPress {
 
     }
 
+	/**
+	 * Alias for shell();
+	 *
+	 * @return shell
+	 */
+	public final static function s() {
+
+		return static::shell();
+
+	}
+
     /**
      * Call this method as soon as possible!
      *
      * @param string $mainPluginFile    - absolute path to main plugin file (__FILE__).
      * @param string $pluginPrefix      - will be used to prefix everything in plugin
      * @param string $pluginVersion     - set your plugin version. It will be used in scripts suffixing etc.
-     * @param array $initArgs           - additional components arguments
      */
-	public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $initArgs = array() ) {
-
-	    //  ----------------------------------------
-	    //  Prepare arguments
-	    //  ----------------------------------------
-
-		$defaultInitArgs = array(
-		    'app'                   =>  array(
-		        'mainPluginFile'        =>  $mainPluginFile,
-                'pluginPrefix'          =>  $pluginPrefix,
-                'pluginVersion'         =>  $pluginVersion
-            ),
-			'options'	            =>	array(
-			    'key'                   =>  $pluginPrefix,
-                'default'               =>  array()
-            ),
-            'log'                       =>  array(
-                'directory'             =>  dirname( $mainPluginFile ) . '/log',
-                'logLevel'              =>  'debug',
-                'dateFormat'            =>  'Y-m-d G:i:s.u',
-                'filename'              =>  'log_' . date( 'd-m-Y' ) . '.log',
-                'flushFrequency'        =>  false,
-                'logFormat'             =>  false,
-                'appendContext'         =>  true
-            ),
-			'extractor'             =>  array(
-				'label'                 =>  __( 'Download' )
-			)
-		);
-
-        $initArgs = array_replace_recursive( $defaultInitArgs, $initArgs );   // replace default init arguments with specified by developer
+	public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
 
         require_once( __DIR__ . '/src/Shell.php' );
 
         $instance           = new static();
-		$instance->_shell   = new Shell( $initArgs );
+		$instance->_shell   = new Shell( $mainPluginFile, $pluginPrefix, $pluginVersion );
 
 		static::$_instances[ get_called_class() ] = $instance;
 
@@ -114,7 +94,7 @@ abstract class ShellPress {
         //  Everything is ready. Call onSetUp()
         //  ----------------------------------------
 
-        static::getInstance()->onSetUp();
+        static::i()->onSetUp();
 
 	}
 

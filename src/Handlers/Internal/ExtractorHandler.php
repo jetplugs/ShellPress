@@ -1,15 +1,14 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers;
+namespace shellpress\v1_2_0\src\Handlers\Internal;
 
 /**
  * Date: 12.04.2018
  * Time: 21:39
  */
 
-class ExtractorHandler extends Handler {
+use shellpress\v1_2_0\src\Handlers\IHandler;
 
-	/** @var string */
-	public $label = '';
+class ExtractorHandler extends IHandler {
 
 	public function registerDownloadButton() {
 
@@ -51,7 +50,7 @@ class ExtractorHandler extends Handler {
 	 */
 	public function _f_addPluginDownloadToTable( $pluginMeta, $pluginName ) {
 
-		if( $this->label ){
+		if( true ){ //  TODO
 
 			$currentPluginFile = $this->shell()->getMainPluginFile();
 
@@ -60,7 +59,7 @@ class ExtractorHandler extends Handler {
 				$downloadUrl = add_query_arg( 'sp_download', $this->getCurrentPluginFileName() );
 				$downloadUrl = wp_nonce_url( $downloadUrl, 'sp_download' );
 
-				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, $this->label );
+				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, __( 'Download' ) );
 
 			}
 

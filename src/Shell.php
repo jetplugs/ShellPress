@@ -8,19 +8,27 @@ namespace shellpress\v1_2_0\src;
  */
 
 use shellpress\v1_2_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_2_0\src\Handlers\EventHandler;
-use shellpress\v1_2_0\src\Handlers\ExtractorHandler;
-use shellpress\v1_2_0\src\Handlers\LogHandler;
-use shellpress\v1_2_0\src\Handlers\MessagesHandler;
-use shellpress\v1_2_0\src\Handlers\OptionsHandler;
-use shellpress\v1_2_0\src\Handlers\UtilityHandler;
+use shellpress\v1_2_0\src\Handlers\External\EventHandler;
+use shellpress\v1_2_0\src\Handlers\Internal\ExtractorHandler;
+use shellpress\v1_2_0\src\Handlers\External\LogHandler;
+use shellpress\v1_2_0\src\Handlers\External\MessagesHandler;
+use shellpress\v1_2_0\src\Handlers\External\OptionsHandler;
+use shellpress\v1_2_0\src\Handlers\External\UtilityHandler;
 
 if( class_exists( 'shellpress\v1_2_0\src\Shell' ) ) return;
 
 class Shell {
 
-    /** @var array */
-    protected $initArgs;
+    /** @var string */
+    protected $mainPluginFile;
+
+    /** @var string */
+    protected $pluginPrefix;
+
+    /** @var string */
+    protected $pluginVersion;
+
+    //  ---
 
     /** @var OptionsHandler */
     public $options;
@@ -43,9 +51,11 @@ class Shell {
     /** @var ExtractorHandler */
     protected $extractor;
 
-    public function __construct( $initArgs ) {
+    public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
 
-        $this->initArgs = $initArgs;
+        $this->mainPluginFile   = $mainPluginFile;
+        $this->pluginPrefix     = $pluginPrefix;
+        $this->pluginVersion    = $pluginVersion;
 
         //  -----------------------------------
         //  Initialize components
@@ -67,7 +77,7 @@ class Shell {
 
     /**
      * Simple function to get prefix or
-     * to prepand given string with prefix.
+     * to prepend given string with prefix.
      *
      * @param string $stringToPrefix
      * @return string
@@ -76,11 +86,11 @@ class Shell {
 
         if( $stringToPrefix === null ){
 
-            return $this->initArgs['app']['pluginPrefix'];
+            return $this->pluginPrefix;
 
         } else {
 
-            return $this->initArgs['app']['pluginPrefix'] . $stringToPrefix;
+            return $this->pluginVersion . $stringToPrefix;
 
         }
 
@@ -174,7 +184,7 @@ class Shell {
      */
     public function getMainPluginFile() {
 
-        return $this->initArgs['app']['mainPluginFile'];
+        return $this->mainPluginFile;
 
     }
 
@@ -185,7 +195,7 @@ class Shell {
      */
     public function getPluginVersion() {
 
-        return $this->initArgs['app']['pluginVersion'];
+        return $this->pluginVersion;
 
     }
 
@@ -257,17 +267,15 @@ class Shell {
      */
     private function initLogHandler() {
 
-        $logHandlerArgs = $this->initArgs['log'];
-
         $this->log = new LogHandler(
-            $logHandlerArgs['directory'],
-            $logHandlerArgs['logLevel'],
+	        dirname( $this->getMainPluginFile() ) . '/log',
+	        'debug',
             array(
-                $logHandlerArgs['dateFormat'],
-                $logHandlerArgs['filename'],
-                $logHandlerArgs['flushFrequency'],
-                $logHandlerArgs['logFormat'],
-                $logHandlerArgs['appendContext']
+	            'Y-m-d G:i:s.u',
+	            'log_' . date( 'd-m-Y' ) . '.log',
+	            false,
+	            false,
+	            true
             )
         );
 
@@ -279,8 +287,7 @@ class Shell {
     private function initOptionsHandler() {
 
         $this->options = new OptionsHandler( $this );
-        $this->options->setOptionsKey( $this->initArgs['options']['key'] );
-        $this->options->setDefaultOptions( $this->initArgs['options']['default'] );
+        $this->options->setOptionsKey( $this->getPrefix() );
         $this->options->load();
 
     }
@@ -318,7 +325,6 @@ class Shell {
     private function initExtractorHandler() {
 
     	$this->extractor = new ExtractorHandler( $this );
-    	$this->extractor->label = $this->initArgs['extractor']['label'];
     	$this->extractor->registerDownloadButton();
 
     }

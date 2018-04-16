@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers;
+namespace shellpress\v1_2_0\src\Handlers\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,9 @@ namespace shellpress\v1_2_0\src\Handlers;
  * Time: 18:33
  */
 
-class OptionsHandler extends Handler {
+use shellpress\v1_2_0\src\Handlers\IHandler;
+
+class OptionsHandler extends IHandler {
 
     /** @var string */
     protected $optionsKey = '';

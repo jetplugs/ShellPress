@@ -9,7 +9,7 @@ namespace shellpress\v1_2_0\src\Handlers;
 
 use shellpress\v1_2_0\src\Shell;
 
-abstract class Handler {
+abstract class IHandler {
 
     /** @var Shell */
     protected $shell;
