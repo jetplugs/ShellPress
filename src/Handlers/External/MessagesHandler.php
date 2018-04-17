@@ -12,6 +12,15 @@ use WP_Error;
 
 class MessagesHandler extends IHandler {
 
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
+		// TODO: Implement onSetUp() method.
+	}
+
     /**
      * Simple email sending method.
      * It logs native phpmailer errors in ShellPress error log.

@@ -3,24 +3,32 @@ namespace shellpress\v1_2_0\src\Handlers\External;
 
 use shellpress\v1_2_0\lib\KLogger\KLogger;
 use shellpress\v1_2_0\lib\Psr\Log\LogLevel;
+use shellpress\v1_2_0\src\Handlers\IHandler;
 
-class LogHandler extends KLogger {
+class LogHandler extends IHandler {
 
-    //  TODO - use Handler interface and ditch KLogger class.
+	/** @var KLogger */
+	protected $kLogger;
 
-    /**
-     * LogHandler constructor.
-     * Call parent constructor too.
-     *
-     * @param string $logDirectory
-     * @param string $logLevelThreshold
-     * @param array $options
-     */
-    function __construct( $logDirectory, $logLevelThreshold = LogLevel::DEBUG, array $options = array() ) {
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
 
-        parent::__construct( $logDirectory, $logLevelThreshold, $options );
+		$this->kLogger = new KLogger( dirname( $this->shell()->getMainPluginFile() ) . '/log',
+			'debug',
+			array(
+				'Y-m-d G:i:s.u',
+				'log_' . date( 'd-m-Y' ) . '.log',
+				false,
+				false,
+				true
+			)
+		);
 
-    }
+	}
 
     /**
      * Returns HTML string log of current day.
@@ -34,7 +42,7 @@ class LogHandler extends KLogger {
 
         if( $filePath === null ){
 
-            $filePath = $this->getLogFilePath();
+            $filePath = $this->kLogger->getLogFilePath();
 
         }
 
@@ -59,5 +67,123 @@ class LogHandler extends KLogger {
         }
 
     }
+
+	/**
+	 * Sets minimal log level for saving messages in file.
+	 *
+	 * @param string $logLevel
+	 *
+	 * @return void
+	 */
+    public function setLogLevel( $logLevel ) {
+    	$this->kLogger->setLogLevelThreshold( $logLevel );
+    }
+
+	/**
+	 * System is unusable.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function emergency( $message, array $context = array() ) {
+		$this->kLogger->log( LogLevel::EMERGENCY, $message, $context );
+	}
+
+	/**
+	 * Action must be taken immediately.
+	 *
+	 * Example: Entire website down, database unavailable, etc. This should
+	 * trigger the SMS alerts and wake you up.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function alert( $message, array $context = array() )  {
+		$this->kLogger->log( LogLevel::ALERT, $message, $context );
+	}
+
+	/**
+	 * Critical conditions.
+	 *
+	 * Example: Application component unavailable, unexpected exception.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function critical( $message, array $context = array() ) {
+		$this->kLogger->log( LogLevel::CRITICAL, $message, $context );
+	}
+
+	/**
+	 * Runtime errors that do not require immediate action but should typically
+	 * be logged and monitored.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function error( $message, array $context = array() ) {
+		$this->kLogger->log( LogLevel::ERROR, $message, $context );
+	}
+
+	/**
+	 * Exceptional occurrences that are not errors.
+	 *
+	 * Example: Use of deprecated APIs, poor use of an API, undesirable things
+	 * that are not necessarily wrong.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function warning( $message, array $context = array() ) {
+		$this->kLogger->log( LogLevel::WARNING, $message, $context );
+	}
+
+	/**
+	 * Normal but significant events.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function notice( $message, array $context = array() ) {
+		$this->kLogger->log( LogLevel::NOTICE, $message, $context );
+	}
+
+	/**
+	 * Interesting events.
+	 *
+	 * Example: User logs in, SQL logs.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function info( $message, array $context = array() ) {
+		$this->kLogger->log( LogLevel::INFO, $message, $context );
+	}
+
+	/**
+	 * Detailed debug information.
+	 *
+	 * @param string $message
+	 * @param array  $context
+	 *
+	 * @return void
+	 */
+	public function debug( $message, array $context = array() ) {
+		$this->kLogger->log( LogLevel::DEBUG, $message, $context );
+	}
 
 }

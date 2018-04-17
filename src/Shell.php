@@ -8,6 +8,7 @@ namespace shellpress\v1_2_0\src;
  */
 
 use shellpress\v1_2_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler;
 use shellpress\v1_2_0\src\Handlers\External\EventHandler;
 use shellpress\v1_2_0\src\Handlers\Internal\ExtractorHandler;
 use shellpress\v1_2_0\src\Handlers\External\LogHandler;
@@ -51,23 +52,42 @@ class Shell {
     /** @var ExtractorHandler */
     protected $extractor;
 
+	/**
+	 * Shell constructor.
+	 *
+	 * @param string $mainPluginFile
+	 * @param string $pluginPrefix
+	 * @param string $pluginVersion
+	 */
     public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
 
         $this->mainPluginFile   = $mainPluginFile;
         $this->pluginPrefix     = $pluginPrefix;
         $this->pluginVersion    = $pluginVersion;
 
+        //  ----------------------------------------
+        //  Before auto loading
+        //  ----------------------------------------
+
+	    if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\IHandler' ) ){
+		    require( __DIR__ . '/Handlers/IHandler.php' );
+	    }
+
+	    if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler' ) ){
+		    require( __DIR__ . '/Handlers/External/AutoloadingHandler.php' );
+	    }
+
         //  -----------------------------------
-        //  Initialize components
+        //  Initialize handlers
         //  -----------------------------------
 
-        $this->initAutoloadingHandler();
-        $this->initUtilityHandler();
-        $this->initOptionsHandler();
-        $this->initLogHandler();
-        $this->initMessagesHandler();
-        $this->initEventHandler();
-        $this->initExtractorHandler();
+	    $this->autoloading  = new AutoloadingHandler( $this );
+	    $this->utility      = new UtilityHandler( $this );
+	    $this->options      = new OptionsHandler( $this );
+	    $this->log          = new LogHandler( $this );
+	    $this->messages     = new MessagesHandler( $this );
+	    $this->event        = new EventHandler( $this );
+	    $this->extractor    = new ExtractorHandler( $this );
 
     }
 
@@ -136,6 +156,7 @@ class Shell {
      * Example usage: getPath( '/dir/another/file.php' );
      *
      * @param string $relativePath
+     *
      * @return string - absolute path
      */
     public function getPath( $relativePath = null ) {
@@ -188,6 +209,17 @@ class Shell {
 
     }
 
+	/**
+	 * Returns absolute directory path of currently used ShellPress directory.
+	 *
+	 * @return string
+	 */
+    public function getShellPressDir() {
+
+    	return dirname( __DIR__ );
+
+    }
+
     /**
      * Gets version of instance.
      *
@@ -233,99 +265,13 @@ class Shell {
      *
      * @return bool
      */
-    public static function isInsideTheme() {
+    public function isInsideTheme() {
 
         if( strpos( __DIR__, 'wp-content/themes' ) !== false ){
             return true;
         } else {
             return false;
         }
-
-    }
-
-    //  ================================================================================
-    //  INITIALIZATION
-    //  ================================================================================
-
-    /**
-     * Initialize PSR4 Autoloader.
-     */
-    private function initAutoloadingHandler() {
-
-        if( ! class_exists( 'shellpress\v1_2_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
-            require( dirname( __DIR__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
-        }
-
-        $this->autoloading = new Psr4AutoloaderClass();
-        $this->autoloading->register();
-        $this->autoloading->addNamespace( 'shellpress\v1_2_0', dirname( __DIR__ ) );
-
-    }
-
-    /**
-     * Initialize Logging handler.
-     */
-    private function initLogHandler() {
-
-        $this->log = new LogHandler(
-	        dirname( $this->getMainPluginFile() ) . '/log',
-	        'debug',
-            array(
-	            'Y-m-d G:i:s.u',
-	            'log_' . date( 'd-m-Y' ) . '.log',
-	            false,
-	            false,
-	            true
-            )
-        );
-
-    }
-
-    /**
-     * Initialize options handler.
-     */
-    private function initOptionsHandler() {
-
-        $this->options = new OptionsHandler( $this );
-        $this->options->setOptionsKey( $this->getPrefix() );
-        $this->options->load();
-
-    }
-
-    /**
-     * Initialize event handler.
-     */
-    private function initEventHandler() {
-
-        $this->event = new EventHandler( $this );
-
-    }
-
-    /**
-     * Initialize UtilityHandler.
-     */
-    private function initUtilityHandler() {
-
-        $this->utility = new UtilityHandler( $this );
-
-    }
-
-    /**
-     * Initialize MessagesHandler.
-     */
-    private function initMessagesHandler() {
-
-        $this->messages = new MessagesHandler( $this );
-
-    }
-
-	/**
-	 * Initialize ExtractorHandler.
-	 */
-    private function initExtractorHandler() {
-
-    	$this->extractor = new ExtractorHandler( $this );
-    	$this->extractor->registerDownloadButton();
 
     }
 

@@ -12,7 +12,7 @@ use shellpress\v1_2_0\src\Shell;
 abstract class IHandler {
 
     /** @var Shell */
-    protected $shell;
+    private $shell;
 
     /**
      * Handler constructor.
@@ -22,6 +22,8 @@ abstract class IHandler {
     public function __construct( $shell ) {
 
         $this->shell = $shell;
+
+        $this->onSetUp();
 
     }
 
@@ -35,5 +37,12 @@ abstract class IHandler {
         return $this->shell;
 
     }
+
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+    protected abstract function onSetUp();
 
 }

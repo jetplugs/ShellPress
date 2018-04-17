@@ -11,6 +11,15 @@ use shellpress\v1_2_0\src\Handlers\IHandler;
 
 class EventHandler extends IHandler {
 
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
+		// TODO: Implement onSetUp() method.
+	}
+
     public function addOnActivate( $callable ) {
 
         register_activation_hook( $this->shell()->getMainPluginFile(), $callable );

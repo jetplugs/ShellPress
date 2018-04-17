@@ -14,6 +14,15 @@ use ZipArchive;
 
 class UtilityHandler extends IHandler {
 
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
+		// TODO: Implement onSetUp() method.
+	}
+
     /**
      * Merge two arrays without structure changing and overriding values
      *

@@ -20,6 +20,15 @@ class OptionsHandler extends IHandler {
     /** @var array */
     protected $defaultData = array();
 
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
+		// TODO: Implement onSetUp() method.
+	}
+
     /**
      * Loads saved options from WP database.
      *
@@ -27,7 +36,7 @@ class OptionsHandler extends IHandler {
      */
     public function load() {
 
-        $options = get_option( $this->optionsKey, array() );
+        $options = get_option( $this->getOptionsKey(), array() );
 
         $this->optionsData = $options;
 
@@ -107,7 +116,7 @@ class OptionsHandler extends IHandler {
      */
     public function getOptionsKey() {
 
-        return $this->optionsKey;
+        return $this->optionsKey ? $this->optionsKey : $this->shell()->getPrefix();
 
     }
 
@@ -137,12 +146,14 @@ class OptionsHandler extends IHandler {
      * Checks current saved options and fills them with defaults.
      * If some key already exists, it will not be updated.
      *
+     * @param array $options - If not set, they will be filled with default options.
+     *
      * @return void
      */
-    public function fillDifferencies() {
+    public function fillDifferencies( $options = array() ) {
 
         $currentOptions =   $this->get( '', array() );
-        $defaultOptions =   $this->getDefaultOptions();
+        $defaultOptions =   $options ? $options : $this->getDefaultOptions();
 
         $updateOptions =    $this->shell()->utility->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
 

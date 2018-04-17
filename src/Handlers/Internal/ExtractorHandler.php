@@ -10,7 +10,12 @@ use shellpress\v1_2_0\src\Handlers\IHandler;
 
 class ExtractorHandler extends IHandler {
 
-	public function registerDownloadButton() {
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
 
 		//  ----------------------------------------
 		//  Filters
