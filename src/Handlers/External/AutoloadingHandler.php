@@ -9,6 +9,8 @@ namespace shellpress\v1_2_0\src\Handlers\External;
 use shellpress\v1_2_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_2_0\src\Handlers\IHandler;
 
+if( class_exists( 'shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler' ) ) return;
+
 class AutoloadingHandler extends IHandler {
 
 	/** @var Psr4AutoloaderClass */

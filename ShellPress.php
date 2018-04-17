@@ -25,19 +25,13 @@ abstract class ShellPress {
     /**
      * Gets singleton instance.
      *
+     * @deprecated
+     *
      * @return static
      */
     public final static function getInstance() {
 
-        $calledClass = get_called_class();
-
-        if( ! isset( static::$_instances[ $calledClass ] ) ){
-
-            wp_die( sprintf( 'You need to call %1$s::initShellPress().', $calledClass ) );
-
-        }
-
-        return static::$_instances[ $calledClass ];
+	    return static::i();
 
     }
 
@@ -48,18 +42,28 @@ abstract class ShellPress {
      */
     public final static function i() {
 
-        return static::getInstance();
+	    $calledClass = get_called_class();
+
+	    if( ! isset( static::$_instances[ $calledClass ] ) ){
+
+		    wp_die( sprintf( 'You need to call %1$s::initShellPress().', $calledClass ) );
+
+	    }
+
+	    return static::$_instances[ $calledClass ];
 
     }
 
     /**
      * Gets Shell object.
      *
+     * @deprecated
+     *
      * @return Shell
      */
     public final static function shell() {
 
-        return static::getInstance()->_shell;
+	    return static::s();
 
     }
 
@@ -70,7 +74,7 @@ abstract class ShellPress {
 	 */
 	public final static function s() {
 
-		return static::shell();
+		return static::i()->_shell;
 
 	}
 

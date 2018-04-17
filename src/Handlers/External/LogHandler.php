@@ -33,6 +33,8 @@ class LogHandler extends IHandler {
     /**
      * Returns HTML string log of current day.
      *
+     * @deprecated
+     *
      * @param bool $isAscending - if true, reverse rows
      * @param null $filePath
      *

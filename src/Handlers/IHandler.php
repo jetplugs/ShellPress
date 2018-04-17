@@ -9,6 +9,8 @@ namespace shellpress\v1_2_0\src\Handlers;
 
 use shellpress\v1_2_0\src\Shell;
 
+if( class_exists( 'shellpress\v1_2_0\src\Handlers\IHandler' ) ) return;
+
 abstract class IHandler {
 
     /** @var Shell */

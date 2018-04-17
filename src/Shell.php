@@ -69,13 +69,8 @@ class Shell {
         //  Before auto loading
         //  ----------------------------------------
 
-	    if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\IHandler' ) ){
-		    require( __DIR__ . '/Handlers/IHandler.php' );
-	    }
-
-	    if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler' ) ){
-		    require( __DIR__ . '/Handlers/External/AutoloadingHandler.php' );
-	    }
+	    require( __DIR__ . '/Handlers/IHandler.php' );
+	    require( __DIR__ . '/Handlers/External/AutoloadingHandler.php' );
 
         //  -----------------------------------
         //  Initialize handlers
