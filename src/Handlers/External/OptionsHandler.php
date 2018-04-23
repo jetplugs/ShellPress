@@ -20,6 +20,9 @@ class OptionsHandler extends IHandler {
     /** @var array */
     protected $defaultData = array();
 
+    /** @var bool */
+    protected $areOptionsLoaded = false;
+
 	/**
 	 * Called on handler construction.
 	 *
@@ -51,6 +54,12 @@ class OptionsHandler extends IHandler {
      * @return mixed
      */
     public function get( $arrayPath = '', $defaultValue = null ) {
+
+    	//  Make sure options are loaded
+	    if( ! $this->areOptionsLoaded() ){
+	    	$this->load();
+		    $this->areOptionsLoaded( true );
+	    }
 
         if( empty( $arrayPath ) ){
 
@@ -169,6 +178,23 @@ class OptionsHandler extends IHandler {
     public function restoreDefaults() {
 
         $this->set( '', $this->getDefaultOptions() );
+
+    }
+
+	/**
+	 * Setter/ Getter for loading flag.
+	 *
+	 * @param bool $bool
+	 *
+	 * @return bool
+	 */
+    protected function areOptionsLoaded( $bool = null ) {
+
+    	if( $bool === null ){
+    		return (bool) $this->areOptionsLoaded;
+	    } else {
+    		return $this->areOptionsLoaded = (bool) $bool;
+	    }
 
     }
 
