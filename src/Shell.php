@@ -105,7 +105,7 @@ class Shell {
 
         } else {
 
-            return $this->pluginVersion . $stringToPrefix;
+            return $this->pluginPrefix . $stringToPrefix;
 
         }
 
