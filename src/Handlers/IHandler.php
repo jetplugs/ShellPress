@@ -9,44 +9,40 @@ namespace shellpress\v1_2_0\src\Handlers;
 
 use shellpress\v1_2_0\src\Shell;
 
-if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\IHandler', false ) ) {
+abstract class IHandler {
 
-    abstract class IHandler {
+	/** @var Shell */
+	private $shell;
 
-        /** @var Shell */
-        private $shell;
+	/**
+	 * Handler constructor.
+	 *
+	 * @param Shell $shell
+	 */
+	public function __construct( $shell ) {
 
-        /**
-         * Handler constructor.
-         *
-         * @param Shell $shell
-         */
-        public function __construct( $shell ) {
+		$this->shell = $shell;
 
-            $this->shell = $shell;
+		$this->onSetUp();
 
-            $this->onSetUp();
+	}
 
-        }
+	/**
+	 * Returns Shell instance.
+	 *
+	 * @return Shell
+	 */
+	protected function shell() {
 
-        /**
-         * Returns Shell instance.
-         *
-         * @return Shell
-         */
-        protected function shell() {
+		return $this->shell;
 
-            return $this->shell;
+	}
 
-        }
-
-        /**
-         * Called on handler construction.
-         *
-         * @return void
-         */
-        protected abstract function onSetUp();
-
-    }
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected abstract function onSetUp();
 
 }

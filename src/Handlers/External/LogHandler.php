@@ -17,8 +17,7 @@ class LogHandler extends IHandler {
 	 */
 	protected function onSetUp() {
 
-		$this->kLogger = new KLogger( dirname( $this->shell()->getMainPluginFile() ) . '/log',
-			'debug',
+		$this->kLogger = new KLogger( dirname( $this->shell()->getMainPluginFile() ) . '/log', 'debug',
 			array(
 				'Y-m-d G:i:s.u',
 				'log_' . date( 'd-m-Y' ) . '.log',

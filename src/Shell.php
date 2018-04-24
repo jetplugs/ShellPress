@@ -69,8 +69,10 @@ if( ! class_exists( 'shellpress\v1_2_0\src\Shell', false ) ) {
             //  Before auto loading
             //  ----------------------------------------
 
-            require( __DIR__ . '/Handlers/IHandler.php' );
-            require( __DIR__ . '/Handlers/External/AutoloadingHandler.php' );
+            if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\IHandler', false ) )
+            	require( __DIR__ . '/Handlers/IHandler.php' );
+            if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler', false ) )
+            	require( __DIR__ . '/Handlers/External/AutoloadingHandler.php' );
 
             //  -----------------------------------
             //  Initialize handlers
@@ -184,7 +186,7 @@ if( ! class_exists( 'shellpress\v1_2_0\src\Shell', false ) ) {
          */
         public function requireFile( $path, $className = null ) {
 
-            if ( $className && class_exists( $className ) ) {
+            if ( $className && class_exists( $className, false ) ) {
 
                 return; //  End method. Do not load file.
 
