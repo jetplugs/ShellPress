@@ -9,6 +9,7 @@ namespace shellpress\v1_2_0\src;
 
 use shellpress\v1_2_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler;
+use shellpress\v1_2_0\src\Handlers\External\CustomizerHandler;
 use shellpress\v1_2_0\src\Handlers\External\EventHandler;
 use shellpress\v1_2_0\src\Handlers\Internal\ExtractorHandler;
 use shellpress\v1_2_0\src\Handlers\External\LogHandler;
@@ -52,6 +53,9 @@ if( ! class_exists( 'shellpress\v1_2_0\src\Shell', false ) ) {
         /** @var ExtractorHandler */
         protected $extractor;
 
+        /** @var CustomizerHandler */
+        public $customizer;
+
         /**
          * Shell constructor.
          *
@@ -78,13 +82,14 @@ if( ! class_exists( 'shellpress\v1_2_0\src\Shell', false ) ) {
             //  Initialize handlers
             //  -----------------------------------
 
-            $this->autoloading = new AutoloadingHandler( $this );
-            $this->utility     = new UtilityHandler( $this );
-            $this->options     = new OptionsHandler( $this );
-            $this->log         = new LogHandler( $this );
-            $this->messages    = new MessagesHandler( $this );
-            $this->event       = new EventHandler( $this );
-            $this->extractor   = new ExtractorHandler( $this );
+            $this->autoloading  = new AutoloadingHandler( $this );
+            $this->utility      = new UtilityHandler( $this );
+            $this->options      = new OptionsHandler( $this );
+            $this->log          = new LogHandler( $this );
+            $this->messages     = new MessagesHandler( $this );
+            $this->event        = new EventHandler( $this );
+            $this->extractor    = new ExtractorHandler( $this );
+            $this->customizer   = new CustomizerHandler( $this);
 
         }
 
