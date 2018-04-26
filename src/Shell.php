@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_0\src;
+namespace shellpress\v1_2_1\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,17 +7,17 @@ namespace shellpress\v1_2_0\src;
  * Time: 22:45
  */
 
-use shellpress\v1_2_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler;
-use shellpress\v1_2_0\src\Handlers\External\CustomizerHandler;
-use shellpress\v1_2_0\src\Handlers\External\EventHandler;
-use shellpress\v1_2_0\src\Handlers\Internal\ExtractorHandler;
-use shellpress\v1_2_0\src\Handlers\External\LogHandler;
-use shellpress\v1_2_0\src\Handlers\External\MessagesHandler;
-use shellpress\v1_2_0\src\Handlers\External\OptionsHandler;
-use shellpress\v1_2_0\src\Handlers\External\UtilityHandler;
+use shellpress\v1_2_1\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_2_1\src\Handlers\External\AutoloadingHandler;
+use shellpress\v1_2_1\src\Handlers\External\CustomizerHandler;
+use shellpress\v1_2_1\src\Handlers\External\EventHandler;
+use shellpress\v1_2_1\src\Handlers\Internal\ExtractorHandler;
+use shellpress\v1_2_1\src\Handlers\External\LogHandler;
+use shellpress\v1_2_1\src\Handlers\External\MessagesHandler;
+use shellpress\v1_2_1\src\Handlers\External\OptionsHandler;
+use shellpress\v1_2_1\src\Handlers\External\UtilityHandler;
 
-if( ! class_exists( 'shellpress\v1_2_0\src\Shell', false ) ) {
+if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 
     class Shell {
 
@@ -73,9 +73,9 @@ if( ! class_exists( 'shellpress\v1_2_0\src\Shell', false ) ) {
             //  Before auto loading
             //  ----------------------------------------
 
-            if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\IHandler', false ) )
+            if( ! class_exists( 'shellpress\v1_2_1\src\Handlers\IHandler', false ) )
             	require( __DIR__ . '/Handlers/IHandler.php' );
-            if( ! class_exists( 'shellpress\v1_2_0\src\Handlers\External\AutoloadingHandler', false ) )
+            if( ! class_exists( 'shellpress\v1_2_1\src\Handlers\External\AutoloadingHandler', false ) )
             	require( __DIR__ . '/Handlers/External/AutoloadingHandler.php' );
 
             //  -----------------------------------

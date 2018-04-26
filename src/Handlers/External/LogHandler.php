@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers\External;
+namespace shellpress\v1_2_1\src\Handlers\External;
 
-use shellpress\v1_2_0\lib\KLogger\KLogger;
-use shellpress\v1_2_0\lib\Psr\Log\LogLevel;
-use shellpress\v1_2_0\src\Handlers\IHandler;
+use shellpress\v1_2_1\lib\KLogger\KLogger;
+use shellpress\v1_2_1\lib\Psr\Log\LogLevel;
+use shellpress\v1_2_1\src\Handlers\IHandler;
 
 class LogHandler extends IHandler {
 

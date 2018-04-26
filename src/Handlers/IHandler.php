@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers;
+namespace shellpress\v1_2_1\src\Handlers;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_2_0\src\Handlers;
  * Time: 22:14
  */
 
-use shellpress\v1_2_0\src\Shell;
+use shellpress\v1_2_1\src\Shell;
 
 abstract class IHandler {
 
@@ -30,9 +30,22 @@ abstract class IHandler {
 	/**
 	 * Returns Shell instance.
 	 *
+	 * @deprecated
+	 *
 	 * @return Shell
 	 */
 	protected function shell() {
+
+		return $this->s();
+
+	}
+
+	/**
+	 * Returns Shell instance.
+	 *
+	 * @return Shell
+	 */
+	protected function s() {
 
 		return $this->shell;
 

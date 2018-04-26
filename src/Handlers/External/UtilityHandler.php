@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers\External;
+namespace shellpress\v1_2_1\src\Handlers\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -9,7 +9,7 @@ namespace shellpress\v1_2_0\src\Handlers\External;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use shellpress\v1_2_0\src\Handlers\IHandler;
+use shellpress\v1_2_1\src\Handlers\IHandler;
 use ZipArchive;
 
 class UtilityHandler extends IHandler {

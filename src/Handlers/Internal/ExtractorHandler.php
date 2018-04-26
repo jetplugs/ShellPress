@@ -1,12 +1,12 @@
 <?php
-namespace shellpress\v1_2_0\src\Handlers\Internal;
+namespace shellpress\v1_2_1\src\Handlers\Internal;
 
 /**
  * Date: 12.04.2018
  * Time: 21:39
  */
 
-use shellpress\v1_2_0\src\Handlers\IHandler;
+use shellpress\v1_2_1\src\Handlers\IHandler;
 
 class ExtractorHandler extends IHandler {
 
