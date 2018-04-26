@@ -8,6 +8,7 @@ namespace shellpress\v1_2_1\src\Handlers\External;
 
 use shellpress\v1_2_1\src\Handlers\IHandler;
 use shellpress\v1_2_1\src\Handlers\Models\CustomizerSection;
+use WP_Customize_Color_Control;
 use WP_Customize_Manager;
 
 class CustomizerHandler extends IHandler {
@@ -47,7 +48,21 @@ class CustomizerHandler extends IHandler {
 	 */
 	public function _a_customizerCallback( $wpCustomize ) {
 
+		foreach( $this->sections as $section ){
+			$section->register( $wpCustomize );
+		}
 
+		//  TODO - clean this shit up.
+
+		$wpCustomize->add_setting( 'tttest' , array(
+			'default'   => '#000000',
+			'transport' => 'refresh',
+		) );
+
+		$wpCustomize->add_control( new WP_Customize_Color_Control( $wpCustomize, 'tttest', array(
+			'label'      => __( 'Header Color', 'mytheme' ),
+			'section'    => 'test'
+		) ) );
 
 	}
 

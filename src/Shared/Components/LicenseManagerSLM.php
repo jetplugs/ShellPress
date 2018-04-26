@@ -7,30 +7,10 @@ namespace shellpress\v1_2_1\src\Shared\Components;
  * Time: 11:22
  */
 
-use shellpress\v1_2_1\ShellPress;
-use shellpress\v1_2_1\src\Shell;
-
-abstract class LicenseManagerSLM {
+abstract class LicenseManagerSLM extends IComponent {
 
     const API_URL       = 'https://themastercut.co';
     const API_SECRET    = '58ba00b52427f3.50566835';
-
-    /** @var Shell */
-    protected $shell;
-
-    /**
-     * LicenseManagerSLM constructor.
-     * Pass your ShellPress instance as reference.
-     *
-     * @param ShellPress $shellPress
-     */
-    public function __construct( &$shellPress ) {
-
-        $this->shell = call_user_func( array( $shellPress, 'shell' ) );
-
-        $this->onSetUp();   //  Everything is ready.
-
-    }
 
     /**
      * Checks SAVED license status.
@@ -41,7 +21,7 @@ abstract class LicenseManagerSLM {
     public function isActive() {
 
         $key            = $this->getKey();
-        $isKeyCorrect   = $this->shell->options->get( 'license/isKeyCorrect', '0' );
+        $isKeyCorrect   = $this->s()->options->get( 'license/isKeyCorrect', '0' );
 
         if( ! empty( $key ) && $isKeyCorrect === '1' ){
             return true;
@@ -62,7 +42,7 @@ abstract class LicenseManagerSLM {
 
         $value = $isKeyActive ? '1' : '0';
 
-        $this->shell->options->set( 'license/isKeyCorrect', $value );
+        $this->s()->options->set( 'license/isKeyCorrect', $value );
 
     }
 
@@ -75,7 +55,7 @@ abstract class LicenseManagerSLM {
      */
     public function setKey( $key ) {
 
-        $this->shell->options->set( 'license/key', $key );
+        $this->s()->options->set( 'license/key', $key );
 
     }
 
@@ -86,7 +66,7 @@ abstract class LicenseManagerSLM {
      */
     public function getKey() {
 
-        return $this->shell->options->get( 'license/key' );
+        return $this->s()->options->get( 'license/key' );
 
     }
 
@@ -97,7 +77,7 @@ abstract class LicenseManagerSLM {
      */
     public function getLastCheckDatetime() {
 
-        return $this->shell->options->get( 'license/lastCheckDatetime' );
+        return $this->s()->options->get( 'license/lastCheckDatetime' );
 
     }
 
@@ -110,7 +90,7 @@ abstract class LicenseManagerSLM {
      */
     public function setLastCheckDatetime( $datetime ) {
 
-        $this->shell->options->set( 'license/lastCheckDatetime', $datetime );
+        $this->s()->options->set( 'license/lastCheckDatetime', $datetime );
 
     }
 
@@ -121,7 +101,7 @@ abstract class LicenseManagerSLM {
      */
     public function getKeyExpiryDatetime() {
 
-        return $this->shell->options->get( 'license/keyExpiryDatetime' );
+        return $this->s()->options->get( 'license/keyExpiryDatetime' );
 
     }
 
@@ -136,7 +116,7 @@ abstract class LicenseManagerSLM {
      */
     public function setKeyStatus( $status ) {
 
-        $this->shell->options->set( 'license/keyStatus', $status );
+        $this->s()->options->set( 'license/keyStatus', $status );
 
     }
 
@@ -148,7 +128,7 @@ abstract class LicenseManagerSLM {
      */
     public function getKeyStatus() {
 
-        return $this->shell->options->get( 'license/keyStatus' );
+        return $this->s()->options->get( 'license/keyStatus' );
 
     }
 
@@ -161,7 +141,7 @@ abstract class LicenseManagerSLM {
      */
     public function setKeyExpiryDatetime( $datetime ) {
 
-        $this->shell->options->set( 'license/keyExpiryDatetime', $datetime );
+        $this->s()->options->set( 'license/keyExpiryDatetime', $datetime );
 
     }
 
@@ -380,7 +360,7 @@ abstract class LicenseManagerSLM {
      *
      * @return void
      */
-    protected abstract function onSetUp();
+    protected function onSetUp() {}
 
     /**
      * Called when key has been activated.
