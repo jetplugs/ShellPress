@@ -22,6 +22,11 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 
     class Shell {
 
+    	/** @var bool */
+    	protected $isInitialized = false;
+
+    	//  ---
+
         /** @var string */
         protected $mainPluginFile;
 
@@ -65,33 +70,47 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
          * @param string        $pluginVersion
          * @param ShellPress    $shellPress
          */
-        public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion, $shellPress ) {
+        public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
 
             $this->mainPluginFile = $mainPluginFile;
             $this->pluginPrefix   = $pluginPrefix;
             $this->pluginVersion  = $pluginVersion;
 
-            //  ----------------------------------------
-            //  Before auto loading
-            //  ----------------------------------------
+        }
 
-            if( ! class_exists( 'shellpress\v1_2_1\src\Shared\Components\IComponent', false ) )
-            	require( __DIR__ . '/Shared/Components/IComponent.php' );
-            if( ! class_exists( 'shellpress\v1_2_1\src\Components\External\AutoloadingHandler', false ) )
-            	require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
+	    /**
+	     * Initializes built in components.
+	     * Called on ShellPress::initShellPress();
+	     *
+	     * @param ShellPress $shellPress
+	     *
+	     * @return void
+	     */
+        public function init( &$shellPress ) {
 
-            //  -----------------------------------
-            //  Initialize handlers
-            //  -----------------------------------
+        	if( $this->isInitialized ) return;
 
-            $this->autoloading  = new AutoloadingHandler( $shellPress );
-            $this->utility      = new UtilityHandler( $shellPress );
-            $this->options      = new OptionsHandler( $shellPress );
-            $this->log          = new LogHandler( $shellPress );
-            $this->messages     = new MessagesHandler( $shellPress );
-            $this->event        = new EventHandler( $shellPress );
-            $this->extractor    = new ExtractorHandler( $shellPress );
-            $this->customizer   = new CustomizerHandler( $shellPress );
+	        //  ----------------------------------------
+	        //  Before auto loading
+	        //  ----------------------------------------
+
+	        if( ! class_exists( 'shellpress\v1_2_1\src\Shared\Components\IComponent', false ) )
+		        require( __DIR__ . '/Shared/Components/IComponent.php' );
+	        if( ! class_exists( 'shellpress\v1_2_1\src\Components\External\AutoloadingHandler', false ) )
+		        require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
+
+	        //  -----------------------------------
+	        //  Initialize handlers
+	        //  -----------------------------------
+
+	        $this->autoloading  = new AutoloadingHandler( $shellPress );
+	        $this->utility      = new UtilityHandler( $shellPress );
+	        $this->options      = new OptionsHandler( $shellPress );
+	        $this->log          = new LogHandler( $shellPress );
+	        $this->messages     = new MessagesHandler( $shellPress );
+	        $this->event        = new EventHandler( $shellPress );
+	        $this->extractor    = new ExtractorHandler( $shellPress );
+	        $this->customizer   = new CustomizerHandler( $shellPress );
 
         }
 
