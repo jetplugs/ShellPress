@@ -91,7 +91,7 @@ if( ! class_exists( 'shellpress\v1_2_1\ShellPress', false ) ){
             require_once( __DIR__ . '/src/Shell.php' );
 
             $instance           = new static();
-            $instance->_shell   = new Shell( $mainPluginFile, $pluginPrefix, $pluginVersion );
+            $instance->_shell   = new Shell( $mainPluginFile, $pluginPrefix, $pluginVersion, $instance );
 
             static::$_instances[ get_called_class() ] = $instance;
 

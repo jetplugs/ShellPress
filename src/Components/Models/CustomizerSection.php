@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_1\src\Handlers\Models;
+namespace shellpress\v1_2_1\src\Components\Models;
 use WP_Customize_Manager;
 
 /**

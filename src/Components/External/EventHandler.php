@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_1\src\Handlers\External;
+namespace shellpress\v1_2_1\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,9 +7,9 @@ namespace shellpress\v1_2_1\src\Handlers\External;
  * Time: 02:29
  */
 
-use shellpress\v1_2_1\src\Handlers\IHandler;
+use shellpress\v1_2_1\src\Shared\Components\IComponent;
 
-class EventHandler extends IHandler {
+class EventHandler extends IComponent {
 
 	/**
 	 * Called on handler construction.
@@ -22,13 +22,13 @@ class EventHandler extends IHandler {
 
     public function addOnActivate( $callable ) {
 
-        register_activation_hook( $this->shell()->getMainPluginFile(), $callable );
+        register_activation_hook( $this->s()->getMainPluginFile(), $callable );
 
     }
 
     public function addOnDeactivate( $callable ) {
 
-        register_deactivation_hook( $this->shell()->getMainPluginFile(), $callable );
+        register_deactivation_hook( $this->s()->getMainPluginFile(), $callable );
 
     }
 

@@ -12,21 +12,29 @@ use shellpress\v1_2_1\src\Shell;
 
 abstract class IComponent {
 
-	/** @var Shell */
-	private $shell;
+	private $shellPressClassName;
 
 	/**
 	 * Component constructors.
-	 * You must pass Shell object from your ShellPress instance.
+	 * You must pass ShellPress Object or class name.
 	 *
-	 * @param Shell $shell
+	 * @param ShellPress|string $shellPress
 	 */
-	public function __construct( &$shell ) {
+	public function __construct( $shellPress ) {
 
-		$this->shell = $shell;
+		$this->shellPressClassName = is_object( $shellPress ) ? get_class( $shellPress ) : $shellPress;
 
 		$this->onSetUp();
 
+	}
+
+	/**
+	 * Returns ShellPress instance.
+	 *
+	 * @return ShellPress
+	 */
+	public function i() {
+		return call_user_func( array( $this->shellPressClassName, 'i' ) );
 	}
 
 	/**
@@ -34,10 +42,8 @@ abstract class IComponent {
 	 *
 	 * @return Shell
 	 */
-	protected function s() {
-
-		return $this->shell;
-
+	public function s() {
+		return call_user_func( array( $this->shellPressClassName, 's' ) );
 	}
 
 	/**

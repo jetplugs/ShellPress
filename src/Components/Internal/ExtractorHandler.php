@@ -1,14 +1,14 @@
 <?php
-namespace shellpress\v1_2_1\src\Handlers\Internal;
+namespace shellpress\v1_2_1\src\Components\Internal;
 
 /**
  * Date: 12.04.2018
  * Time: 21:39
  */
 
-use shellpress\v1_2_1\src\Handlers\IHandler;
+use shellpress\v1_2_1\src\Shared\Components\IComponent;
 
-class ExtractorHandler extends IHandler {
+class ExtractorHandler extends IComponent {
 
 	/**
 	 * Called on handler construction.
@@ -38,7 +38,7 @@ class ExtractorHandler extends IHandler {
 	 */
 	protected function getCurrentPluginFileName() {
 
-		$pluginFile = $this->shell()->getMainPluginFile();
+		$pluginFile = $this->s()->getMainPluginFile();
 
 		return pathinfo( $pluginFile, PATHINFO_BASENAME );
 
@@ -55,9 +55,9 @@ class ExtractorHandler extends IHandler {
 	 */
 	public function _f_addPluginDownloadToTable( $pluginMeta, $pluginName ) {
 
-		if( true ){ //  TODO
+		if( $this->s()->isInsidePlugin() ){
 
-			$currentPluginFile = $this->shell()->getMainPluginFile();
+			$currentPluginFile = $this->s()->getMainPluginFile();
 
 			if( $pluginName === plugin_basename( $currentPluginFile ) ){
 
@@ -79,7 +79,11 @@ class ExtractorHandler extends IHandler {
 	 */
 	public function _a_downloadPluginCallback() {
 
-		if( is_admin() && array_key_exists( 'sp_download', $_GET ) && $_GET['sp_download'] === $this->getCurrentPluginFileName() ){
+		if( is_admin()
+		    && array_key_exists( 'sp_download', $_GET )
+		    && $this->s()->isInsidePlugin()
+		    && $_GET['sp_download'] === $this->getCurrentPluginFileName()
+		){
 
 			if( array_key_exists( '_wpnonce', $_GET ) && wp_verify_nonce( $_GET['_wpnonce'], 'sp_download' ) ) {
 
@@ -94,9 +98,9 @@ class ExtractorHandler extends IHandler {
 				//  Pack plugin
 				//  ----------------------------------------
 
-				$currentPluginDir = dirname( $this->shell()->getMainPluginFile() );
+				$currentPluginDir = dirname( $this->s()->getMainPluginFile() );
 
-				$result = $this->shell()->utility->zipData( $currentPluginDir, $newFileFullPath );
+				$result = $this->s()->utility->zipData( $currentPluginDir, $newFileFullPath );
 
 				if( ! $result ) return; //  Something went wrong.
 

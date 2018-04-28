@@ -8,14 +8,15 @@ namespace shellpress\v1_2_1\src;
  */
 
 use shellpress\v1_2_1\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_2_1\src\Handlers\External\AutoloadingHandler;
-use shellpress\v1_2_1\src\Handlers\External\CustomizerHandler;
-use shellpress\v1_2_1\src\Handlers\External\EventHandler;
-use shellpress\v1_2_1\src\Handlers\Internal\ExtractorHandler;
-use shellpress\v1_2_1\src\Handlers\External\LogHandler;
-use shellpress\v1_2_1\src\Handlers\External\MessagesHandler;
-use shellpress\v1_2_1\src\Handlers\External\OptionsHandler;
-use shellpress\v1_2_1\src\Handlers\External\UtilityHandler;
+use shellpress\v1_2_1\ShellPress;
+use shellpress\v1_2_1\src\Components\External\AutoloadingHandler;
+use shellpress\v1_2_1\src\Components\External\CustomizerHandler;
+use shellpress\v1_2_1\src\Components\External\EventHandler;
+use shellpress\v1_2_1\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_2_1\src\Components\External\LogHandler;
+use shellpress\v1_2_1\src\Components\External\MessagesHandler;
+use shellpress\v1_2_1\src\Components\External\OptionsHandler;
+use shellpress\v1_2_1\src\Components\External\UtilityHandler;
 
 if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 
@@ -59,11 +60,12 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
         /**
          * Shell constructor.
          *
-         * @param string $mainPluginFile
-         * @param string $pluginPrefix
-         * @param string $pluginVersion
+         * @param string        $mainPluginFile
+         * @param string        $pluginPrefix
+         * @param string        $pluginVersion
+         * @param ShellPress    $shellPress
          */
-        public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
+        public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion, $shellPress ) {
 
             $this->mainPluginFile = $mainPluginFile;
             $this->pluginPrefix   = $pluginPrefix;
@@ -73,23 +75,23 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
             //  Before auto loading
             //  ----------------------------------------
 
-            if( ! class_exists( 'shellpress\v1_2_1\src\Handlers\IHandler', false ) )
-            	require( __DIR__ . '/Handlers/IHandler.php' );
-            if( ! class_exists( 'shellpress\v1_2_1\src\Handlers\External\AutoloadingHandler', false ) )
-            	require( __DIR__ . '/Handlers/External/AutoloadingHandler.php' );
+            if( ! class_exists( 'shellpress\v1_2_1\src\Shared\Components\IComponent', false ) )
+            	require( __DIR__ . '/Shared/Components/IComponent.php' );
+            if( ! class_exists( 'shellpress\v1_2_1\src\Components\External\AutoloadingHandler', false ) )
+            	require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
 
             //  -----------------------------------
             //  Initialize handlers
             //  -----------------------------------
 
-            $this->autoloading  = new AutoloadingHandler( $this );
-            $this->utility      = new UtilityHandler( $this );
-            $this->options      = new OptionsHandler( $this );
-            $this->log          = new LogHandler( $this );
-            $this->messages     = new MessagesHandler( $this );
-            $this->event        = new EventHandler( $this );
-            $this->extractor    = new ExtractorHandler( $this );
-            $this->customizer   = new CustomizerHandler( $this);
+            $this->autoloading  = new AutoloadingHandler( $shellPress );
+            $this->utility      = new UtilityHandler( $shellPress );
+            $this->options      = new OptionsHandler( $shellPress );
+            $this->log          = new LogHandler( $shellPress );
+            $this->messages     = new MessagesHandler( $shellPress );
+            $this->event        = new EventHandler( $shellPress );
+            $this->extractor    = new ExtractorHandler( $shellPress );
+            $this->customizer   = new CustomizerHandler( $shellPress );
 
         }
 

@@ -1,17 +1,17 @@
 <?php
-namespace shellpress\v1_2_1\src\Handlers\External;
+namespace shellpress\v1_2_1\src\Components\External;
 
 /**
  * Date: 26.04.2018
  * Time: 20:13
  */
 
-use shellpress\v1_2_1\src\Handlers\IHandler;
-use shellpress\v1_2_1\src\Handlers\Models\CustomizerSection;
+use shellpress\v1_2_1\src\Components\Models\CustomizerSection;
+use shellpress\v1_2_1\src\Shared\Components\IComponent;
 use WP_Customize_Color_Control;
 use WP_Customize_Manager;
 
-class CustomizerHandler extends IHandler {
+class CustomizerHandler extends IComponent {
 
 	/** @var CustomizerSection[] */
 	public $sections = array();

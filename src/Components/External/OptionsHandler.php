@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_1\src\Handlers\External;
+namespace shellpress\v1_2_1\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,9 +7,9 @@ namespace shellpress\v1_2_1\src\Handlers\External;
  * Time: 18:33
  */
 
-use shellpress\v1_2_1\src\Handlers\IHandler;
+use shellpress\v1_2_1\src\Shared\Components\IComponent;
 
-class OptionsHandler extends IHandler {
+class OptionsHandler extends IComponent {
 
     /** @var string */
     protected $optionsKey = '';
@@ -69,7 +69,7 @@ class OptionsHandler extends IHandler {
 
             $keys = explode( '/', $arrayPath );
 
-            return $this->shell()->utility->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
+            return $this->s()->utility->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
 
         }
 
@@ -90,7 +90,7 @@ class OptionsHandler extends IHandler {
         } else {
 
             $keys               = explode( '/', $arrayPath );
-            $this->optionsData  = $this->shell()->utility->setValueByKeysPath( $this->optionsData, $keys, $value );
+            $this->optionsData  = $this->s()->utility->setValueByKeysPath( $this->optionsData, $keys, $value );
 
         }
 
@@ -125,7 +125,7 @@ class OptionsHandler extends IHandler {
      */
     public function getOptionsKey() {
 
-        return $this->optionsKey ? $this->optionsKey : $this->shell()->getPrefix();
+        return $this->optionsKey ? $this->optionsKey : $this->s()->getPrefix();
 
     }
 
@@ -164,7 +164,7 @@ class OptionsHandler extends IHandler {
         $currentOptions =   $this->get( '', array() );
         $defaultOptions =   $options ? $options : $this->getDefaultOptions();
 
-        $updateOptions =    $this->shell()->utility->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
+        $updateOptions =    $this->s()->utility->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
 
         $this->set( '', $updateOptions );
 
