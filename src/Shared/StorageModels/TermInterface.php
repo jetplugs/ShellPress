@@ -10,6 +10,11 @@ namespace shellpress\v1_2_1\src\Shared\StorageModels;
 use WP_Error;
 use WP_Term;
 
+/**
+ * Class TermInterface
+ *
+ * @deprecated
+ */
 class TermInterface {
 
     /** @var string */

@@ -10,6 +10,11 @@ namespace shellpress\v1_2_1\src\Shared\StorageModels;
 use WP_Error;
 use WP_Post;
 
+/**
+ * Class PostInterface
+ *
+ * @deprecated
+ */
 class PostInterface {
 
     /** @var string */
