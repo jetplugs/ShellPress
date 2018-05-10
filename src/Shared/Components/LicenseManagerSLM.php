@@ -414,13 +414,14 @@ abstract class LicenseManagerSLM extends IComponent {
     /**
      * Adds ready-to-use form in defined AdminPageFramework instance.
      *
+     * @param string $apfClassName
      * @param string $pageSlug
      * @param string $pageTab
      * @param string $sectionId
      *
      * @return void
      */
-    public function registerAPFForm( $pageSlug = '', $pageTab = '', $sectionId = 'license' ) {
+    public function registerAPFForm( $apfClassName, $pageSlug = '', $pageTab = '', $sectionId = 'license' ) {
 
         $this->_apfSectionId    = $sectionId;
         $this->_apfPageSlug     = $pageSlug;
@@ -428,6 +429,8 @@ abstract class LicenseManagerSLM extends IComponent {
 
         add_filter( 'load_' . $pageSlug . '_' . $pageTab,   array( $this, '_a_addSectionToAPF' ) );
         add_filter( 'load_' . $pageSlug . '_' . $pageTab,   array( $this, '_a_addFieldsToAPF' ) );
+
+        add_filter( 'validation_' . $apfClassName,          array( $this, '_f_updateKeyButtonCallbackAPF' ), 10, 3 );
 
     }
 
