@@ -1,6 +1,7 @@
 <?php
 namespace shellpress\v1_2_1\src\Shared\Components;
 use TMC_v1_0_3_AdminPageFramework;
+use WP_Upgrader;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -8,13 +9,19 @@ use TMC_v1_0_3_AdminPageFramework;
  * Time: 11:22
  */
 
+/**
+ * This little fucker is a ready-to-use component, you can extend
+ * and register some predefined helpers.
+ *
+ * Checkout registerAPFForm(), registerAutomaticChecker() and registerNotices().
+ * It's all designed to work with remote SLM host and AdminPageFramework.
+ *
+ * This class will be deprecated in the future.
+ */
 abstract class LicenseManagerSLM extends IComponent {
 
     const API_URL       = 'https://themastercut.co';
     const API_SECRET    = '58ba00b52427f3.50566835';
-
-    /** @var string */
-    private $_apfClassName;
 
     /** @var string */
     private $_apfSectionId;
@@ -25,6 +32,9 @@ abstract class LicenseManagerSLM extends IComponent {
     /** @var string */
     private $_apfPageTab;
 
+    /** @var string */
+    private $_licenseCheckCronJobName;
+
     /**
      * Checks SAVED license status.
      * Caution! I does not check status remotely.
@@ -34,7 +44,7 @@ abstract class LicenseManagerSLM extends IComponent {
     public function isActive() {
 
         $key            = $this->getKey();
-        $isKeyCorrect   = $this->s()->options->get( 'license/isKeyCorrect', '0' );
+        $isKeyCorrect   = $this->s()->options->get( $this->_apfSectionId . '/isKeyCorrect', '0' );
 
         if( ! empty( $key ) && $isKeyCorrect === '1' ){
             return true;
@@ -55,7 +65,7 @@ abstract class LicenseManagerSLM extends IComponent {
 
         $value = $isKeyActive ? '1' : '0';
 
-        $this->s()->options->set( 'license/isKeyCorrect', $value );
+        $this->s()->options->set( $this->_apfSectionId . '/isKeyCorrect', $value );
 
     }
 
@@ -68,7 +78,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function setKey( $key ) {
 
-        $this->s()->options->set( 'license/key', $key );
+        $this->s()->options->set( $this->_apfSectionId . '/key', $key );
 
     }
 
@@ -79,7 +89,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function getKey() {
 
-        return $this->s()->options->get( 'license/key' );
+        return $this->s()->options->get( $this->_apfSectionId . '/key' );
 
     }
 
@@ -90,7 +100,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function getLastCheckDatetime() {
 
-        return $this->s()->options->get( 'license/lastCheckDatetime' );
+        return $this->s()->options->get( $this->_apfSectionId . '/lastCheckDatetime' );
 
     }
 
@@ -103,7 +113,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function setLastCheckDatetime( $datetime ) {
 
-        $this->s()->options->set( 'license/lastCheckDatetime', $datetime );
+        $this->s()->options->set( $this->_apfSectionId . '/lastCheckDatetime', $datetime );
 
     }
 
@@ -114,7 +124,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function getKeyExpiryDatetime() {
 
-        return $this->s()->options->get( 'license/keyExpiryDatetime' );
+        return $this->s()->options->get( $this->_apfSectionId . '/keyExpiryDatetime' );
 
     }
 
@@ -129,7 +139,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function setKeyStatus( $status ) {
 
-        $this->s()->options->set( 'license/keyStatus', $status );
+        $this->s()->options->set( $this->_apfSectionId . '/keyStatus', $status );
 
     }
 
@@ -141,7 +151,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function getKeyStatus() {
 
-        return $this->s()->options->get( 'license/keyStatus' );
+        return $this->s()->options->get( $this->_apfSectionId . '/keyStatus' );
 
     }
 
@@ -154,7 +164,7 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function setKeyExpiryDatetime( $datetime ) {
 
-        $this->s()->options->set( 'license/keyExpiryDatetime', $datetime );
+        $this->s()->options->set( $this->_apfSectionId . '/keyExpiryDatetime', $datetime );
 
     }
 
@@ -402,24 +412,62 @@ abstract class LicenseManagerSLM extends IComponent {
     }
 
     /**
-     * Adds ready-to-use form in defined AdminPageFramework.
+     * Adds ready-to-use form in defined AdminPageFramework instance.
      *
-     * @param string $apfClassName
-     * @param string $apfSectionId
-     * @param string $apfPageSlug
-     * @param string $apfPageTab
+     * @param string $pageSlug
+     * @param string $pageTab
+     * @param string $sectionId
      *
      * @return void
      */
-    public function addFormToAPF( $apfClassName, $apfSectionId = 'license', $apfPageSlug = '', $apfPageTab = '' ) {
+    public function registerAPFForm( $pageSlug = '', $pageTab = '', $sectionId = 'license' ) {
 
-        $this->_apfClassName = $apfClassName;
-        $this->_apfSectionId = $apfSectionId;
-        $this->_apfPageSlug = $apfPageSlug;
-        $this->_apfPageTab = $apfPageTab;
+        $this->_apfSectionId    = $sectionId;
+        $this->_apfPageSlug     = $pageSlug;
+        $this->_apfPageTab      = $pageTab;
 
-        add_filter( 'sections_' . $apfClassName,        array( $this, '_f_addSectionToAPF' ) );
-        add_filter( 'fields_' . $apfClassName,          array( $this, '_f_addFieldsToAPF' ) );
+        add_filter( 'load_' . $pageSlug . '_' . $pageTab,   array( $this, '_a_addSectionToAPF' ) );
+        add_filter( 'load_' . $pageSlug . '_' . $pageTab,   array( $this, '_a_addFieldsToAPF' ) );
+
+    }
+
+	/**
+	 * Adds new cron job for checking license.
+	 * Supports plugin activation, deactivation and upgrade.
+	 *
+	 * @param string $cronJobName
+	 * @param string $cronScheduleName
+	 *
+	 * @return void
+	 */
+    public function registerAutomaticChecker( $cronJobName = '', $cronScheduleName = 'daily' ) {
+
+    	//  Prepare cron job name.
+
+	    $this->_licenseCheckCronJobName = $cronJobName ? $cronJobName : $this::s()->getPrefix( '_slm_license_check' );
+
+	    //  Add cron job callback.
+
+	    add_action( $this->_licenseCheckCronJobName,            array( $this, '_a_doCheckLicenseCronCallback' ) );
+
+	    //  Register cron job on plugin activation, deactivation and upgrade.
+
+	    $this::s()->event->addOnActivate(                       array( $this, '_a_registerCronJob' ) );
+	    $this::s()->event->addOnDeactivate(                     array( $this, '_a_unregisterCronJob' ) );
+
+	    add_action( 'upgrader_process_complete',                array( $this, '_a_handlePluginUpdateCronJobs' ), 10, 2 );
+
+    }
+
+	/**
+	 * Just adds some notices if key has been set by user and
+	 * there is something wrong with license.
+	 *
+	 * @return void
+	 */
+    public function registerNotices() {
+
+	    add_action( 'admin_notices',                            array( $this, '_a_displayLicenseNotification' ) );
 
     }
 
@@ -476,79 +524,185 @@ abstract class LicenseManagerSLM extends IComponent {
 
     }
 
-    /**
-     * @param array $sections
-     *
-     * @return array
-     */
-    public function _f_addSectionToAPF( $sections ) {
+	//  ================================================================================
+	//  Actions
+	//  ================================================================================
 
-        $sections[$this->_apfSectionId] = array(
-            'section_id'            =>  $this->_apfSectionId,
-            'page_slug'             =>  $this->_apfPageSlug,
-            'tab_slug'              =>  $this->_apfPageTab,
-            'order'                 =>  20,
-            'title'                 =>  __( 'License' )
-        );
+	/**
+	 * Adds setting section on load of apf page and tab.
+	 *
+	 * @param TMC_v1_0_3_AdminPageFramework $pageFactory
+	 */
+	public function _a_addSectionToAPF( $pageFactory ) {
 
-        return $sections;
+		$pageFactory->addSettingSection(
+			array(
+				'section_id'            =>  $this->_apfSectionId,
+				'page_slug'             =>  $this->_apfPageSlug,
+				'tab_slug'              =>  $this->_apfPageTab,
+				'order'                 =>  20,
+				'title'                 =>  __( 'License' )
+			)
+		);
 
-    }
+	}
 
-    public function _f_addFieldsToAPF( $fields ) {
+	/**
+	 * Adds setting fields on load of apf page and tab.
+	 *
+	 * @param TMC_v1_0_3_AdminPageFramework $pageFactory
+	 */
+	public function _a_addFieldsToAPF( $pageFactory ) {
 
-        $fields[$this->_apfSectionId] = array(
-            'key'               =>  array(
-                'field_id'          =>  'key',
-                'type'              =>  'text',
-                'title'             =>  __( 'Key' ),
-                'attributes'            =>  array(
-                    'class'                 =>  'regular-text',
-                ),
-                'after_input'       =>  sprintf( ' <input type="submit" class="button" name="updateKeySubmit" value="%1$s">', __( 'Update key' ) ),
-                'after_field'       =>  $this->getLicenseStatusHtml()
-            ),
-            'keyExpiryDatetime' =>  array(
-                'field_id'          =>  'keyExpiryDatetime',
-                'type'              =>  'text',
-                'title'             =>  'keyExpiryDatetime',
-                'hidden'            =>  true,
-                'attributes'        =>  array(
-                    'disabled'          =>  'disabled'
-                )
-            ),
-            'lastCheckDatetime' =>  array(
-                'field_id'          =>  'lastCheckDatetime',
-                'type'              =>  'text',
-                'title'             =>  'lastCheckDatetime',
-                'hidden'            =>  true,
-                'attributes'        =>  array(
-                    'disabled'          =>  'disabled'
-                )
-            ),
-            'keyStatus'         =>  array(
-                'field_id'          =>  'keyStatus',
-                'type'              =>  'text',
-                'title'             =>  'keyStatus',
-                'hidden'            =>  true,
-                'attributes'        =>  array(
-                    'disabled'          =>  'disabled'
-                )
-            ),
-            'isKeyCorrect'      =>  array(
-                'field_id'          =>  'isKeyCorrect',
-                'type'              =>  'radio',
-                'title'             =>  'isKeyCorrect',
-                'label'             =>  array(
-                    '1'                 =>  'yes',
-                    '0'                 =>  'no'
-                ),
-                'hidden'            =>  true
-            )
-        );
+		$pageFactory->addSettingFields(
+			array(
+				'field_id'          =>  'key',
+				'section_id'        =>  $this->_apfSectionId,
+				'type'              =>  'text',
+				'title'             =>  __( 'Key' ),
+				'attributes'            =>  array(
+					'class'                 =>  'regular-text',
+				),
+				'after_input'       =>  sprintf( ' <input type="submit" class="button" name="updateKeySubmit" value="%1$s">', __( 'Update key' ) ),
+				'after_field'       =>  $this->getLicenseStatusHtml()
+			),
+			array(
+				'field_id'          =>  'keyExpiryDatetime',
+				'section_id'        =>  $this->_apfSectionId,
+				'type'              =>  'text',
+				'title'             =>  'keyExpiryDatetime',
+				'hidden'            =>  true,
+				'attributes'        =>  array(
+					'disabled'          =>  'disabled'
+				)
+			),
+			array(
+				'field_id'          =>  'lastCheckDatetime',
+				'section_id'        =>  $this->_apfSectionId,
+				'type'              =>  'text',
+				'title'             =>  'lastCheckDatetime',
+				'hidden'            =>  true,
+				'attributes'        =>  array(
+					'disabled'          =>  'disabled'
+				)
+			),
+			array(
+				'field_id'          =>  'keyStatus',
+				'section_id'        =>  $this->_apfSectionId,
+				'type'              =>  'text',
+				'title'             =>  'keyStatus',
+				'hidden'            =>  true,
+				'attributes'        =>  array(
+					'disabled'          =>  'disabled'
+				)
+			),
+			array(
+				'field_id'          =>  'isKeyCorrect',
+				'section_id'        =>  $this->_apfSectionId,
+				'type'              =>  'radio',
+				'title'             =>  'isKeyCorrect',
+				'label'             =>  array(
+					'1'                 =>  'yes',
+					'0'                 =>  'no'
+				),
+				'hidden'            =>  true
+			)
+		);
 
-        return $fields;
+	}
 
-    }
+	/**
+	 * Display error notice if passed license is inactive.
+	 * Called on admin_notices hook.
+	 *
+	 * @return void
+	 */
+	public function _a_displayLicenseNotification() {
+
+		if( $this->getKey() && ! $this->isActive() ){    //  If key is set and is inactive.
+
+			$adminPageUrl = admin_url( 'options-general.php?page=tmc_mm_settings&tab=tools' );
+
+			printf( '<div class="notice notice-error"><p>%1$s %2$s</p></div>',
+				__( 'Your license for The Real Maintenance Mode TMC is inactive.', 'rm_tmc' ),
+				sprintf( '<a href="%1$s">%2$s</a>', $adminPageUrl, __( 'Please remove license to dismiss this message.', 'rm_tmc' ) )
+			);
+
+		}
+
+	}
+
+	/**
+	 * If plugin was updated, plugin activation hook is not called.
+	 * This method fixes it!
+	 *
+	 * Called on upgrader_process_complete.
+	 *
+	 * @param WP_Upgrader $upgrader
+	 * @param array $options
+	 *
+	 * @return void
+	 */
+	public function _a_handlePluginUpdateCronJobs( $upgrader, $options ) {
+
+		if( $options['action'] == 'update' && $options['type'] == 'plugin' ){   //  Updating plugin.
+
+			$pluginName = plugin_basename( $this::s()->getMainPluginFile() );
+
+			if( is_array( $options['plugins'] ) && in_array( $pluginName, $options['plugins'] ) ){  //  Updating THIS plugin
+
+				add_action( 'init', array( $this, '_a_registerCronJob' ) );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Called on plugin activation.
+	 *
+	 * @return void
+	 */
+	public function _a_registerCronJob() {
+
+		if( ! wp_next_scheduled( $this->_licenseCheckCronJobName ) ){
+
+			wp_schedule_event( time(), 'daily', $this->_licenseCheckCronJobName );
+
+			$this::s()->log->info( 'Added cron job: ' . $this->_licenseCheckCronJobName );
+
+		}
+
+	}
+
+	/**
+	 * Called on plugin deactivation.
+	 *
+	 * @return void
+	 */
+	public function _a_unregisterCronJob() {
+
+		wp_clear_scheduled_hook( $this->_licenseCheckCronJobName );
+
+	}
+
+	/**
+	 * Does remote requests and checks given license key.
+	 *
+	 * @return void
+	 */
+	public function _a_doCheckLicenseCronCallback() {
+
+		$this::s()->log->info( 'START LICENSE CHECK CRON JOB' );
+
+		$key = $this->getKey();
+
+		if( $key ){
+			$this->performRemoteKeyUpdate();
+			$this::s()->options->flush();
+		}
+
+	}
 
 }
