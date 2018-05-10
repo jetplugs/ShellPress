@@ -1,5 +1,6 @@
 <?php
 namespace shellpress\v1_2_1\src\Shared\Components;
+use TMC_v1_0_3_AdminPageFramework;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -11,6 +12,18 @@ abstract class LicenseManagerSLM extends IComponent {
 
     const API_URL       = 'https://themastercut.co';
     const API_SECRET    = '58ba00b52427f3.50566835';
+
+    /** @var string */
+    private $_apfClassName;
+
+    /** @var string */
+    private $_apfSectionId;
+
+    /** @var string */
+    private $_apfPageSlug;
+
+    /** @var string */
+    private $_apfPageTab;
 
     /**
      * Checks SAVED license status.
@@ -171,12 +184,12 @@ abstract class LicenseManagerSLM extends IComponent {
         if( is_wp_error( $response ) ){
 
             $this->setKeyExpiryDatetime( null );
-            $this->setKeyStatus( __( 'Could not retrieve data from server.', 'tmc_fbleads' ) );
+            $this->setKeyStatus( __( 'Could not retrieve data from server.' ) );
 
         } elseif( $responseStatus != '200' ) {
 
             $this->setKeyExpiryDatetime( null );
-            $this->setKeyStatus( __( 'Got unknown info. Please update your key.', 'tmc_fbleads' ) );
+            $this->setKeyStatus( __( 'Got unknown info. Please update your key.' ) );
 
         } else {
 
@@ -203,7 +216,7 @@ abstract class LicenseManagerSLM extends IComponent {
                     if( $this->isCurrentDomainConnected( $registeredDomains ) ){
 
                         $this->setKeyExpiryDatetime( $dateExpiry );
-                        $this->setKeyStatus( __( 'Current domain is connected with key.', 'tmc_fbleads' ) );
+                        $this->setKeyStatus( __( 'Current domain is connected with key.' ) );
                         $this->setActive( true );
 
                         if( ! $this->isActive() ){
@@ -221,7 +234,7 @@ abstract class LicenseManagerSLM extends IComponent {
                 } elseif( $keyStatus === 'expired' ){
 
                     $this->setKeyExpiryDatetime( $dateExpiry );
-                    $this->setKeyStatus( __( 'Key has expired.', 'tmc_fbleads' ) );
+                    $this->setKeyStatus( __( 'Key has expired.' ) );
                     $this->setActive( false );
 
                     if( $this->isActive() ){
@@ -231,7 +244,7 @@ abstract class LicenseManagerSLM extends IComponent {
                 } elseif( $keyStatus === 'blocked' ){
 
                     $this->setKeyExpiryDatetime( $dateExpiry );
-                    $this->setKeyStatus( __( 'Key has been blocked.', 'tmc_fbleads' ) );
+                    $this->setKeyStatus( __( 'Key has been blocked.' ) );
                     $this->setActive( false );
 
                     if( $this->isActive() ){
@@ -243,13 +256,13 @@ abstract class LicenseManagerSLM extends IComponent {
                     //  Active state is not set here, because we don't know what is happening.
 
                     $this->setKeyExpiryDatetime( $dateExpiry );
-                    $this->setKeyStatus( __( 'Got unknown info. Please update your key.', 'tmc_fbleads' ) );
+                    $this->setKeyStatus( __( 'Got unknown info. Please update your key.' ) );
 
                 }
 
             } else {
 
-                $errorMessage = array_key_exists( 'message', $responseData ) ? $responseData['message'] : __( 'Got wrong response from server', 'tmc_fbleads' );
+                $errorMessage = array_key_exists( 'message', $responseData ) ? $responseData['message'] : __( 'Got wrong response from server' );
 
                 $this->setKeyExpiryDatetime( null );
                 $this->setKeyStatus( $errorMessage );
@@ -286,7 +299,7 @@ abstract class LicenseManagerSLM extends IComponent {
 
         if( is_wp_error( $response ) ){
 
-            $this->setKeyStatus( __( 'Could not activate your key. Try in a few minutes.', 'tmc_fbleads' ) );
+            $this->setKeyStatus( __( 'Could not activate your key. Try in a few minutes.' ) );
             $this->setActive( false );
 
             if( $this->isActive() ){
@@ -295,7 +308,7 @@ abstract class LicenseManagerSLM extends IComponent {
 
         } elseif( $responseStatus != '200' ) {
 
-            $this->setKeyStatus( __( 'Got unknown info. Please update your key in a few minutes.', 'tmc_fbleads' ) );
+            $this->setKeyStatus( __( 'Got unknown info. Please update your key in a few minutes.' ) );
             $this->setActive( false );
 
             if( $this->isActive() ){
@@ -308,7 +321,7 @@ abstract class LicenseManagerSLM extends IComponent {
 
             if( array_key_exists( 'result', $responseData ) && $responseData['result'] === 'success' ){
 
-                $this->setKeyStatus( __( 'Key has been activated for this domain.', 'tmc_fbleads' ) );
+                $this->setKeyStatus( __( 'Key has been activated for this domain.' ) );
                 $this->setActive( true );
 
                 if( $this->isActive() ){
@@ -317,7 +330,7 @@ abstract class LicenseManagerSLM extends IComponent {
 
             } else {
 
-                $errorMessage = array_key_exists( 'message', $responseData ) ? $responseData['message'] : __( 'Could not activate your key.', 'tmc_fbleads' );
+                $errorMessage = array_key_exists( 'message', $responseData ) ? $responseData['message'] : __( 'Could not activate your key.' );
 
                 $this->setKeyStatus( $errorMessage );
                 $this->setActive( false );
@@ -356,11 +369,59 @@ abstract class LicenseManagerSLM extends IComponent {
     }
 
     /**
-     * Called on object creation.
+     * Returns HTML of license status.
+     *
+     * @return string
+     */
+    public function getLicenseStatusHtml() {
+
+        $html = '';
+
+        if( $this->getKey() ){
+
+            $keyStatus          = $this->getKeyStatus();
+            $keyExpiryDatetime  = $this->getKeyExpiryDatetime();
+            $keyIsActive        = $this->isActive();
+
+            if( $keyStatus ){
+                if( $keyIsActive ){
+                    $html .= sprintf( '<div style="clear: both; color: #16a085;">%1$s</div>', $keyStatus );
+                } else {
+                    $html .= sprintf( '<div style="clear: both; color: #e74c3c;">%1$s</div>', $keyStatus );
+                }
+            }
+
+            if( $keyExpiryDatetime && $keyIsActive ){
+                $html .= sprintf( '<div style="clear: both; color: #16a085;">%1$s %2$s</div>', __( 'Valid until:', 'tmc_fbleads' ), $keyExpiryDatetime );
+            }
+
+        }
+
+        return $html;
+
+    }
+
+    /**
+     * Adds ready-to-use form in defined AdminPageFramework.
+     *
+     * @param string $apfClassName
+     * @param string $apfSectionId
+     * @param string $apfPageSlug
+     * @param string $apfPageTab
      *
      * @return void
      */
-    protected function onSetUp() {}
+    public function addFormToAPF( $apfClassName, $apfSectionId = 'license', $apfPageSlug = '', $apfPageTab = '' ) {
+
+        $this->_apfClassName = $apfClassName;
+        $this->_apfSectionId = $apfSectionId;
+        $this->_apfPageSlug = $apfPageSlug;
+        $this->_apfPageTab = $apfPageTab;
+
+        add_filter( 'sections_' . $apfClassName,        array( $this, '_f_addSectionToAPF' ) );
+        add_filter( 'fields_' . $apfClassName,          array( $this, '_f_addFieldsToAPF' ) );
+
+    }
 
     /**
      * Called when key has been activated.
@@ -375,5 +436,119 @@ abstract class LicenseManagerSLM extends IComponent {
      * @return void
      */
     protected abstract function onKeyDeactivationCallback();
+
+    //  ================================================================================
+    //  FILTERS
+    //  ================================================================================
+
+    /**
+     * Called on form validation.
+     * Performs key update if there is change in key value.
+     *
+     * @param array $newOptions
+     * @param array $oldOptions
+     * @param TMC_v1_0_3_AdminPageFramework $pageFactory
+     *
+     * @return array
+     */
+    public function _f_updateKeyButtonCallbackAPF( $newOptions, $oldOptions, $pageFactory ) {
+
+        if(
+            $newOptions[$this->_apfSectionId]['key'] != $oldOptions[$this->_apfSectionId]['key']
+            || isset( $_POST['updateKeySubmit'] ) && ! empty( $_POST['updateKeySubmit'] )
+        ){
+
+            $key = $newOptions[$this->_apfSectionId]['key'];
+
+            $this->setKey( $key );
+            $this->performRemoteKeyUpdate();
+
+            $pageFactory->setSettingNotice( __( 'License key has been updated.' ), 'updated' );
+
+            //  ShellPress options are older than this fresh submitted data.
+            //  Actions are performed on ShellPress internal storage, so we return it here for update.
+
+            return $this::s()->options->get();
+
+        }
+
+        return $newOptions;
+
+    }
+
+    /**
+     * @param array $sections
+     *
+     * @return array
+     */
+    public function _f_addSectionToAPF( $sections ) {
+
+        $sections[$this->_apfSectionId] = array(
+            'section_id'            =>  $this->_apfSectionId,
+            'page_slug'             =>  $this->_apfPageSlug,
+            'tab_slug'              =>  $this->_apfPageTab,
+            'order'                 =>  20,
+            'title'                 =>  __( 'License' )
+        );
+
+        return $sections;
+
+    }
+
+    public function _f_addFieldsToAPF( $fields ) {
+
+        $fields[$this->_apfSectionId] = array(
+            'key'               =>  array(
+                'field_id'          =>  'key',
+                'type'              =>  'text',
+                'title'             =>  __( 'Key' ),
+                'attributes'            =>  array(
+                    'class'                 =>  'regular-text',
+                ),
+                'after_input'       =>  sprintf( ' <input type="submit" class="button" name="updateKeySubmit" value="%1$s">', __( 'Update key' ) ),
+                'after_field'       =>  $this->getLicenseStatusHtml()
+            ),
+            'keyExpiryDatetime' =>  array(
+                'field_id'          =>  'keyExpiryDatetime',
+                'type'              =>  'text',
+                'title'             =>  'keyExpiryDatetime',
+                'hidden'            =>  true,
+                'attributes'        =>  array(
+                    'disabled'          =>  'disabled'
+                )
+            ),
+            'lastCheckDatetime' =>  array(
+                'field_id'          =>  'lastCheckDatetime',
+                'type'              =>  'text',
+                'title'             =>  'lastCheckDatetime',
+                'hidden'            =>  true,
+                'attributes'        =>  array(
+                    'disabled'          =>  'disabled'
+                )
+            ),
+            'keyStatus'         =>  array(
+                'field_id'          =>  'keyStatus',
+                'type'              =>  'text',
+                'title'             =>  'keyStatus',
+                'hidden'            =>  true,
+                'attributes'        =>  array(
+                    'disabled'          =>  'disabled'
+                )
+            ),
+            'isKeyCorrect'      =>  array(
+                'field_id'          =>  'isKeyCorrect',
+                'type'              =>  'radio',
+                'title'             =>  'isKeyCorrect',
+                'label'             =>  array(
+                    '1'                 =>  'yes',
+                    '0'                 =>  'no'
+                ),
+                'hidden'            =>  true
+            )
+        );
+
+        return $fields;
+
+    }
 
 }
