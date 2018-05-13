@@ -9,7 +9,7 @@ namespace shellpress\v1_2_1\src\Shared\StorageModels;
 
 use WP_Term;
 
-class ITermModel {
+abstract class ITermModel {
 
 	/** @var string */
 	const TAXONOMY = '';
