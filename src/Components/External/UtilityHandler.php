@@ -153,14 +153,18 @@ class UtilityHandler extends IComponent {
     }
 
 	/**
-	 * @param string    $srcPath
-	 * @param string    $newFilePath - should contain name of the file with .ip extension
+	 * @param string    $srcPath - path to file or dir
+	 * @param string    $newFilePath - should contain name of the file with .zip extension
+	 * @param bool      $withContainer - should zipped directory contain itself?
 	 *
 	 * @return bool
 	 */
-	public function zipData( $srcPath, $newFilePath ) {
+	public function zipData( $srcPath, $newFilePath, $withContainer = false ) {
 
 		if( ! extension_loaded( 'zip' ) || ! file_exists( $srcPath ) ) return false;
+
+		//  Delete file, if already exists.
+		if( file_exists( $newFilePath ) ) unlink( $newFilePath );
 
 		$zip = new ZipArchive();
 
@@ -169,6 +173,13 @@ class UtilityHandler extends IComponent {
 			$srcPath = realpath( $srcPath );
 
 			if( is_dir( $srcPath ) ){
+
+				//  This will be cut off from all relative paths.
+				$cutOffPath = $withContainer ? dirname( $srcPath ) : $srcPath;
+
+				if( $withContainer ){
+					$zip->addEmptyDir( basename( $srcPath ) );
+				}
 
 				$iterator = new RecursiveDirectoryIterator( $srcPath );
 
@@ -182,9 +193,9 @@ class UtilityHandler extends IComponent {
 					$file = realpath( $file );
 
 					if( is_dir( $file ) ){
-						$zip->addEmptyDir( str_replace( $srcPath . '/', '', $file . '/' ) );
+						$zip->addEmptyDir( str_replace( $cutOffPath . '/', '', $file . '/' ) );
 					} else if( is_file( $file ) ){
-						$zip->addFile( $file, str_replace( $srcPath . '/', '', $file ) );
+						$zip->addFile( $file, str_replace( $cutOffPath . '/', '', $file ) );
 					}
 
 				}

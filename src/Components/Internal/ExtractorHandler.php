@@ -27,7 +27,7 @@ class ExtractorHandler extends IComponent {
 		//  Actions
 		//  ----------------------------------------
 
-		add_action( 'init',                 array( $this, '_a_downloadPluginCallback' ) );
+		add_action( 'admin_init',           array( $this, '_a_downloadPluginCallback' ) );
 
 	}
 
@@ -100,7 +100,7 @@ class ExtractorHandler extends IComponent {
 
 				$currentPluginDir = dirname( $this->s()->getMainPluginFile() );
 
-				$result = $this->s()->utility->zipData( $currentPluginDir, $newFileFullPath );
+				$result = $this->s()->utility->zipData( $currentPluginDir, $newFileFullPath, true );
 
 				if( ! $result ) return; //  Something went wrong.
 
