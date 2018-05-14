@@ -8,7 +8,20 @@ namespace shellpress\v1_2_1\src\Shared\Components;
 
 abstract class CustomUpdater extends IComponent {
 
-	public function setUpdateSource( $url ) {
+    /** @var string */
+    protected $serverUrl;
+
+    /** @var array */
+    protected $requestArgs;
+
+    /**
+     * @param string $serverUrl     - URL to server which we will ask for updates.
+     * @param array $requestArgs    - arguments passed when making request for updates.
+     */
+    public function setUpdateSource( $serverUrl, $requestArgs = array() ) {
+
+	    $this->serverUrl = $serverUrl;
+	    $this->requestArgs = $requestArgs;
 
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, '_f_modifyUpdatePluginsTransient' ) );
 
@@ -21,32 +34,52 @@ abstract class CustomUpdater extends IComponent {
 	/**
 	 * @param object $transient
 	 *
+     * @internal
+     *
 	 * @return object
 	 */
 	public function _f_modifyUpdatePluginsTransient( $transient ) {
 
-//		wp_die( $this::s()->utility->getFormattedVarExport( $transient ) );
+        if( ! isset( $transient->response ) ) return $transient;    //  Check, if we have an array set. Sometimes there are errors.
 
-		//  Check, if we have an array set. Sometimes there are errors.
-		if( ! isset( $transient->response ) ) return $transient;
+        //  ----------------------------------------
+        //  Prepare data for request
+        //  ----------------------------------------
 
 		$basename = plugin_basename( $this::s()->getMainPluginFile() );
 
-		$responseForPlugin = new \stdClass();   //  TODO
+		$requestArgs    = array(
+		    'plugin_basename'   =>  $basename
+        );
+		$requestArgs    = wp_parse_args( (array) $this->requestArgs, $requestArgs );
+		$requestUrl     = add_query_arg( $requestArgs, $this->serverUrl );
 
-		//  TODO - downloading update info
+		//  ----------------------------------------
+		//  Make request
+		//  ----------------------------------------
 
-		if( $responseForPlugin ){
+		$response       = wp_remote_request( $requestUrl, array() );
+		$responseBody   = wp_remote_retrieve_body( $response );
+		$responseCode   = wp_remote_retrieve_response_code( $response );
 
-			$transient->response[ $basename ] = $responseForPlugin;
+		if( ! is_wp_error( $response ) && $responseCode === 200 ){
 
-		} else {
+            $encoded = json_decode( $responseBody );
 
-			unset( $transient->response[ $basename ]);
+            if( $encoded && isset( $encoded->new_version ) && version_compare( $encoded->new_version, $this::s()->getPluginVersion(), '>' ) ){
 
-		}
+                $transient->response[ $basename ] = (object) $encoded;
 
-		return $transient;
+            } else {
+
+                unset( $transient->response[ $basename ]);
+                return $transient;
+
+            }
+
+        }
+
+        return $transient;
 
 	}
 
