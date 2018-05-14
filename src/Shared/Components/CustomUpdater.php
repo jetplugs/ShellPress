@@ -12,20 +12,37 @@ abstract class CustomUpdater extends IComponent {
     protected $serverUrl;
 
     /** @var array */
-    protected $requestArgs;
+    protected $requestBodyArgs;
 
     /**
-     * @param string $serverUrl     - URL to server which we will ask for updates.
-     * @param array $requestArgs    - arguments passed when making request for updates.
+     * Registers update_plugins transient filter.
+     *
+     * @param string $serverUrl       - URL to server which we will ask for updates.
+     * @param array  $requestBodyArgs - POST arguments passed when making request for updates.
+     *
+     * @return void
      */
-    public function setUpdateSource( $serverUrl, $requestArgs = array() ) {
+    public function setUpdateSource( $serverUrl, $requestBodyArgs = array() ) {
 
-	    $this->serverUrl = $serverUrl;
-	    $this->requestArgs = $requestArgs;
+	    $this->serverUrl       = $serverUrl;
+	    $this->requestBodyArgs = $requestBodyArgs;
 
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, '_f_modifyUpdatePluginsTransient' ) );
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, '_f_addUpdateInfoToPluginsTransient' ) );
 
 	}
+
+    /**
+     * Hides package information from update_plugins transient.
+     *
+     * @param string $info
+     *
+     * @return void
+     */
+    public function disableUpdatePackage() {
+
+        add_filter( 'site_transient_update_plugins', array( $this, '_f_removeUpdatePackageForThisPlugin' ) );
+
+    }
 
 	//  ================================================================================
 	//  FILTERS
@@ -38,7 +55,7 @@ abstract class CustomUpdater extends IComponent {
      *
 	 * @return object
 	 */
-	public function _f_modifyUpdatePluginsTransient( $transient ) {
+	public function _f_addUpdateInfoToPluginsTransient( $transient ) {
 
         if( ! isset( $transient->response ) ) return $transient;    //  Check, if we have an array set. Sometimes there are errors.
 
@@ -46,19 +63,21 @@ abstract class CustomUpdater extends IComponent {
         //  Prepare data for request
         //  ----------------------------------------
 
-		$basename = plugin_basename( $this::s()->getMainPluginFile() );
+		$basename = $this::s()->getPluginBasename();
 
-		$requestArgs    = array(
+		$requestBodyArgs    = array(
 		    'plugin_basename'   =>  $basename
         );
-		$requestArgs    = wp_parse_args( (array) $this->requestArgs, $requestArgs );
-		$requestUrl     = add_query_arg( $requestArgs, $this->serverUrl );
+		$requestBodyArgs    = wp_parse_args( (array) $this->requestBodyArgs, $requestBodyArgs );
 
 		//  ----------------------------------------
 		//  Make request
 		//  ----------------------------------------
 
-		$response       = wp_remote_request( $requestUrl, array() );
+		$response       = wp_remote_post( $this->serverUrl, array(
+		    'body'      =>  $requestBodyArgs,
+            'timeout'   =>  10,
+        ) );
 		$responseBody   = wp_remote_retrieve_body( $response );
 		$responseCode   = wp_remote_retrieve_response_code( $response );
 
@@ -82,5 +101,25 @@ abstract class CustomUpdater extends IComponent {
         return $transient;
 
 	}
+
+    /**
+     * @param (object) $transient
+     *
+     * @return (object)
+     */
+	public function _f_removeUpdatePackageForThisPlugin( $transient ) {
+
+        if( ! isset( $transient->response ) ) return $transient;
+
+        $basename = $this::s()->getPluginBasename();
+
+        if( isset( $transient->response[ $basename ] ) ){
+            $response =& $transient->response[ $basename ];
+            $response->package = '';
+        }
+
+        return $transient;
+
+    }
 
 }
