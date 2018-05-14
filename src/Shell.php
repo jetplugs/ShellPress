@@ -268,6 +268,23 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
         }
 
         /**
+         * Returns main plugin file basename.
+         *
+         * @since 1.2.1
+         *
+         * @return string
+         */
+        public function getPluginBasename() {
+
+            if( function_exists( 'plugin_basename' ) ){
+                return plugin_basename( $this->getMainPluginFile() );
+            } else {
+                return '';
+            }
+
+        }
+
+        /**
          * Checks if application is used inside a plugin.
          * It returns false, if directory is not equal ../wp-content/plugins
          *
