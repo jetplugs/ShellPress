@@ -10,7 +10,6 @@ namespace shellpress\v1_2_1\src;
 use shellpress\v1_2_1\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_2_1\ShellPress;
 use shellpress\v1_2_1\src\Components\External\AutoloadingHandler;
-use shellpress\v1_2_1\src\Components\External\CustomizerHandler;
 use shellpress\v1_2_1\src\Components\External\EventHandler;
 use shellpress\v1_2_1\src\Components\Internal\ExtractorHandler;
 use shellpress\v1_2_1\src\Components\External\LogHandler;
@@ -58,9 +57,6 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 
         /** @var ExtractorHandler */
         protected $extractor;
-
-        /** @var CustomizerHandler */
-        public $customizer;
 
         /**
          * Shell constructor.
@@ -110,7 +106,6 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 	        $this->messages     = new MessagesHandler( $shellPress );
 	        $this->event        = new EventHandler( $shellPress );
 	        $this->extractor    = new ExtractorHandler( $shellPress );
-	        $this->customizer   = new CustomizerHandler( $shellPress );
 
         }
 
