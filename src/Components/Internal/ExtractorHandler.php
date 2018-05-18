@@ -1,17 +1,21 @@
 <?php
-namespace shellpress\v1_1_9\src\Handlers;
+namespace shellpress\v1_2_1\src\Components\Internal;
 
 /**
  * Date: 12.04.2018
  * Time: 21:39
  */
 
-class ExtractorHandler extends Handler {
+use shellpress\v1_2_1\src\Shared\Components\IComponent;
 
-	/** @var string */
-	public $label = '';
+class ExtractorHandler extends IComponent {
 
-	public function registerDownloadButton() {
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
 
 		//  ----------------------------------------
 		//  Filters
@@ -23,7 +27,7 @@ class ExtractorHandler extends Handler {
 		//  Actions
 		//  ----------------------------------------
 
-		add_action( 'init',                 array( $this, '_a_downloadPluginCallback' ) );
+		add_action( 'admin_init',           array( $this, '_a_downloadPluginCallback' ) );
 
 	}
 
@@ -34,7 +38,7 @@ class ExtractorHandler extends Handler {
 	 */
 	protected function getCurrentPluginFileName() {
 
-		$pluginFile = $this->shell()->getMainPluginFile();
+		$pluginFile = $this->s()->getMainPluginFile();
 
 		return pathinfo( $pluginFile, PATHINFO_BASENAME );
 
@@ -51,16 +55,16 @@ class ExtractorHandler extends Handler {
 	 */
 	public function _f_addPluginDownloadToTable( $pluginMeta, $pluginName ) {
 
-		if( $this->label ){
+		if( $this->s()->isInsidePlugin() ){
 
-			$currentPluginFile = $this->shell()->getMainPluginFile();
+			$currentPluginFile = $this->s()->getMainPluginFile();
 
 			if( $pluginName === plugin_basename( $currentPluginFile ) ){
 
 				$downloadUrl = add_query_arg( 'sp_download', $this->getCurrentPluginFileName() );
 				$downloadUrl = wp_nonce_url( $downloadUrl, 'sp_download' );
 
-				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, $this->label );
+				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, __( 'Download' ) );
 
 			}
 
@@ -75,7 +79,11 @@ class ExtractorHandler extends Handler {
 	 */
 	public function _a_downloadPluginCallback() {
 
-		if( is_admin() && array_key_exists( 'sp_download', $_GET ) && $_GET['sp_download'] === $this->getCurrentPluginFileName() ){
+		if( is_admin()
+		    && array_key_exists( 'sp_download', $_GET )
+		    && $this->s()->isInsidePlugin()
+		    && $_GET['sp_download'] === $this->getCurrentPluginFileName()
+		){
 
 			if( array_key_exists( '_wpnonce', $_GET ) && wp_verify_nonce( $_GET['_wpnonce'], 'sp_download' ) ) {
 
@@ -90,9 +98,9 @@ class ExtractorHandler extends Handler {
 				//  Pack plugin
 				//  ----------------------------------------
 
-				$currentPluginDir = dirname( $this->shell()->getMainPluginFile() );
+				$currentPluginDir = dirname( $this->s()->getMainPluginFile() );
 
-				$result = $this->shell()->utility->zipData( $currentPluginDir, $newFileFullPath );
+				$result = $this->s()->utility->zipData( $currentPluginDir, $newFileFullPath, true );
 
 				if( ! $result ) return; //  Something went wrong.
 

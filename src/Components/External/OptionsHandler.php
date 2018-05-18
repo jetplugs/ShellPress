@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_9\src\Handlers;
+namespace shellpress\v1_2_1\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,9 @@ namespace shellpress\v1_1_9\src\Handlers;
  * Time: 18:33
  */
 
-class OptionsHandler extends Handler {
+use shellpress\v1_2_1\src\Shared\Components\IComponent;
+
+class OptionsHandler extends IComponent {
 
     /** @var string */
     protected $optionsKey = '';
@@ -18,6 +20,18 @@ class OptionsHandler extends Handler {
     /** @var array */
     protected $defaultData = array();
 
+    /** @var bool */
+    protected $areOptionsLoaded = false;
+
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
+		// TODO: Implement onSetUp() method.
+	}
+
     /**
      * Loads saved options from WP database.
      *
@@ -25,7 +39,7 @@ class OptionsHandler extends Handler {
      */
     public function load() {
 
-        $options = get_option( $this->optionsKey, array() );
+        $options = get_option( $this->getOptionsKey(), array() );
 
         $this->optionsData = $options;
 
@@ -41,6 +55,12 @@ class OptionsHandler extends Handler {
      */
     public function get( $arrayPath = '', $defaultValue = null ) {
 
+    	//  Make sure options are loaded
+	    if( ! $this->areOptionsLoaded() ){
+	    	$this->load();
+		    $this->areOptionsLoaded( true );
+	    }
+
         if( empty( $arrayPath ) ){
 
             return $this->optionsData;
@@ -49,7 +69,7 @@ class OptionsHandler extends Handler {
 
             $keys = explode( '/', $arrayPath );
 
-            return $this->shell()->utility->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
+            return $this->s()->utility->getValueByKeysPath( $this->optionsData, $keys, $defaultValue );
 
         }
 
@@ -70,7 +90,7 @@ class OptionsHandler extends Handler {
         } else {
 
             $keys               = explode( '/', $arrayPath );
-            $this->optionsData  = $this->shell()->utility->setValueByKeysPath( $this->optionsData, $keys, $value );
+            $this->optionsData  = $this->s()->utility->setValueByKeysPath( $this->optionsData, $keys, $value );
 
         }
 
@@ -105,7 +125,7 @@ class OptionsHandler extends Handler {
      */
     public function getOptionsKey() {
 
-        return $this->optionsKey;
+        return $this->optionsKey ? $this->optionsKey : $this->s()->getPrefix();
 
     }
 
@@ -135,14 +155,16 @@ class OptionsHandler extends Handler {
      * Checks current saved options and fills them with defaults.
      * If some key already exists, it will not be updated.
      *
+     * @param array $options - If not set, they will be filled with default options.
+     *
      * @return void
      */
-    public function fillDifferencies() {
+    public function fillDifferencies( $options = array() ) {
 
         $currentOptions =   $this->get( '', array() );
-        $defaultOptions =   $this->getDefaultOptions();
+        $defaultOptions =   $options ? $options : $this->getDefaultOptions();
 
-        $updateOptions =    $this->shell()->utility->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
+        $updateOptions =    $this->s()->utility->arrayMergeRecursiveDistinctSafe( $currentOptions, $defaultOptions );
 
         $this->set( '', $updateOptions );
 
@@ -156,6 +178,23 @@ class OptionsHandler extends Handler {
     public function restoreDefaults() {
 
         $this->set( '', $this->getDefaultOptions() );
+
+    }
+
+	/**
+	 * Setter/ Getter for loading flag.
+	 *
+	 * @param bool $bool
+	 *
+	 * @return bool
+	 */
+    protected function areOptionsLoaded( $bool = null ) {
+
+    	if( $bool === null ){
+    		return (bool) $this->areOptionsLoaded;
+	    } else {
+    		return $this->areOptionsLoaded = (bool) $bool;
+	    }
 
     }
 

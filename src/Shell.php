@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_9\src;
+namespace shellpress\v1_2_1\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,319 +7,309 @@ namespace shellpress\v1_1_9\src;
  * Time: 22:45
  */
 
-use shellpress\v1_1_9\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_1_9\src\Handlers\EventHandler;
-use shellpress\v1_1_9\src\Handlers\ExtractorHandler;
-use shellpress\v1_1_9\src\Handlers\LogHandler;
-use shellpress\v1_1_9\src\Handlers\MessagesHandler;
-use shellpress\v1_1_9\src\Handlers\OptionsHandler;
-use shellpress\v1_1_9\src\Handlers\UtilityHandler;
+use shellpress\v1_2_1\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_2_1\ShellPress;
+use shellpress\v1_2_1\src\Components\External\AutoloadingHandler;
+use shellpress\v1_2_1\src\Components\External\EventHandler;
+use shellpress\v1_2_1\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_2_1\src\Components\External\LogHandler;
+use shellpress\v1_2_1\src\Components\External\MessagesHandler;
+use shellpress\v1_2_1\src\Components\External\OptionsHandler;
+use shellpress\v1_2_1\src\Components\External\UtilityHandler;
 
-if( class_exists( 'shellpress\v1_1_9\src\Shell' ) ) return;
+if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 
-class Shell {
+    class Shell {
 
-    /** @var array */
-    protected $initArgs;
+    	/** @var bool */
+    	protected $isInitialized = false;
 
-    /** @var OptionsHandler */
-    public $options;
+    	//  ---
 
-    /** @var UtilityHandler */
-    public $utility;
+        /** @var string */
+        protected $mainPluginFile;
 
-    /** @var Psr4AutoloaderClass */
-    public $autoloading;
+        /** @var string */
+        protected $pluginPrefix;
 
-    /** @var LogHandler */
-    public $log;
+        /** @var string */
+        protected $pluginVersion;
 
-    /** @var EventHandler */
-    public $event;
+        //  ---
 
-    /** @var MessagesHandler */
-    public $messages;
+        /** @var OptionsHandler */
+        public $options;
 
-    /** @var ExtractorHandler */
-    protected $extractor;
+        /** @var UtilityHandler */
+        public $utility;
 
-    public function __construct( $initArgs ) {
+        /** @var Psr4AutoloaderClass */
+        public $autoloading;
 
-        $this->initArgs = $initArgs;
+        /** @var LogHandler */
+        public $log;
 
-        //  -----------------------------------
-        //  Initialize components
-        //  -----------------------------------
+        /** @var EventHandler */
+        public $event;
 
-        $this->initAutoloadingHandler();
-        $this->initUtilityHandler();
-        $this->initOptionsHandler();
-        $this->initLogHandler();
-        $this->initMessagesHandler();
-        $this->initEventHandler();
-        $this->initExtractorHandler();
+        /** @var MessagesHandler */
+        public $messages;
 
-    }
+        /** @var ExtractorHandler */
+        protected $extractor;
 
-    //  ================================================================================
-    //  GETTERS
-    //  ================================================================================
+        /**
+         * Shell constructor.
+         *
+         * @param string        $mainPluginFile
+         * @param string        $pluginPrefix
+         * @param string        $pluginVersion
+         * @param ShellPress    $shellPress
+         */
+        public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
 
-    /**
-     * Simple function to get prefix or
-     * to prepand given string with prefix.
-     *
-     * @param string $stringToPrefix
-     * @return string
-     */
-    public function getPrefix( $stringToPrefix = null ) {
-
-        if( $stringToPrefix === null ){
-
-            return $this->initArgs['app']['pluginPrefix'];
-
-        } else {
-
-            return $this->initArgs['app']['pluginPrefix'] . $stringToPrefix;
+            $this->mainPluginFile = $mainPluginFile;
+            $this->pluginPrefix   = $pluginPrefix;
+            $this->pluginVersion  = $pluginVersion;
 
         }
 
-    }
+	    /**
+	     * Initializes built in components.
+	     * Called on ShellPress::initShellPress();
+	     *
+	     * @param ShellPress $shellPress
+	     *
+	     * @return void
+	     */
+        public function init( &$shellPress ) {
 
-    /**
-     * Prepands given string with plugin directory url.
-     * Example usage: getUrl( '/assets/style.css' );
-     *
-     * @param string $relativePath
-     *
-     * @return string - URL
-     */
-    public function getUrl( $relativePath = null ) {
+        	if( $this->isInitialized ) return;
 
-        $delimeter = 'wp-content';
-        $pluginDir = dirname( $this->getMainPluginFile() );
+	        //  ----------------------------------------
+	        //  Before auto loading
+	        //  ----------------------------------------
 
-        $pathParts = explode( $delimeter , $pluginDir, 2 );     //  slice path by delimeter string
+	        if( ! class_exists( 'shellpress\v1_2_1\src\Shared\Components\IComponent', false ) )
+		        require( __DIR__ . '/Shared/Components/IComponent.php' );
+	        if( ! class_exists( 'shellpress\v1_2_1\src\Components\External\AutoloadingHandler', false ) )
+		        require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
 
-        $wpContentDirUrl = content_url();                       //  `wp-content` directory url
+	        //  -----------------------------------
+	        //  Initialize handlers
+	        //  -----------------------------------
 
-        $url = $wpContentDirUrl . $pathParts[1];                //  sum of wp-content url + relative path to plugin dir
-        $url = rtrim( $url, '/' );                              //  remove trailing slash
-
-        if( $relativePath === null ){
-
-            return $url;
-
-        } else {
-
-            $relativePath = ltrim( $relativePath, '/' );
-
-            return $url . '/' . $relativePath;
-
-        }
-
-    }
-
-    /**
-     * Prefixes given string with directory path.
-     * Your path must have slash on start.
-     * Example usage: getPath( '/dir/another/file.php' );
-     *
-     * @param string $relativePath
-     * @return string - absolute path
-     */
-    public function getPath( $relativePath = null ) {
-
-        $path = dirname( $this->getMainPluginFile() );  // plugin directory path
-
-        if( $relativePath === null ){
-
-            return $path;
-
-        } else {
-
-            $relativePath = ltrim( $relativePath, '/' );
-
-            return $path . '/' . $relativePath;
+	        $this->autoloading  = new AutoloadingHandler( $shellPress );
+	        $this->utility      = new UtilityHandler( $shellPress );
+	        $this->options      = new OptionsHandler( $shellPress );
+	        $this->log          = new LogHandler( $shellPress );
+	        $this->messages     = new MessagesHandler( $shellPress );
+	        $this->event        = new EventHandler( $shellPress );
+	        $this->extractor    = new ExtractorHandler( $shellPress );
 
         }
 
-    }
+        //  ================================================================================
+        //  GETTERS
+        //  ================================================================================
 
-    /**
-     * Requires file by given relative path.
-     * If class name is given as a second parameter, it will check, if class already exists.
-     *
-     * @param string $path              - Relative file path
-     * @param string|null $className    - Class name to check against.
-     *
-     * @return void
-     */
-    public function requireFile( $path, $className = null ) {
+        /**
+         * Simple function to get prefix or
+         * to prepend given string with prefix.
+         *
+         * @param string $stringToPrefix
+         *
+         * @return string
+         */
+        public function getPrefix( $stringToPrefix = null ) {
 
-        if( $className && class_exists( $className ) ){
+            if ( $stringToPrefix === null ) {
 
-            return; //  End method. Do not load file.
+                return $this->pluginPrefix;
+
+            } else {
+
+                return $this->pluginPrefix . $stringToPrefix;
+
+            }
 
         }
 
-        require( $this->getPath( $path ) );
+        /**
+         * Prepands given string with plugin directory url.
+         * Example usage: getUrl( '/assets/style.css' );
+         *
+         * @param string $relativePath
+         *
+         * @return string - URL
+         */
+        public function getUrl( $relativePath = null ) {
 
-    }
+            $delimeter = 'wp-content';
+            $pluginDir = dirname( $this->getMainPluginFile() );
 
-    /**
-     * It gets main plugin file path.
-     *
-     * @return string - full path to main plugin file (__FILE__)
-     */
-    public function getMainPluginFile() {
+            $pathParts = explode( $delimeter, $pluginDir, 2 );     //  slice path by delimeter string
 
-        return $this->initArgs['app']['mainPluginFile'];
+            $wpContentDirUrl = content_url();                       //  `wp-content` directory url
 
-    }
+            $url = $wpContentDirUrl . $pathParts[ 1 ];                //  sum of wp-content url + relative path to plugin dir
+            $url = rtrim( $url, '/' );                              //  remove trailing slash
 
-    /**
-     * Gets version of instance.
-     *
-     * @return string
-     */
-    public function getPluginVersion() {
+            if ( $relativePath === null ) {
 
-        return $this->initArgs['app']['pluginVersion'];
+                return $url;
 
-    }
+            } else {
 
-    /**
-     * Gets full version of instance.
-     * It's like this: `prefix`_`version`.
-     *
-     * @return string
-     */
-    public function getFullPluginVersion() {
+                $relativePath = ltrim( $relativePath, '/' );
 
-        return $this->getPrefix() . '_' . $this->getPluginVersion();
+                return $url . '/' . $relativePath;
 
-    }
+            }
 
-    /**
-     * Checks if application is used inside a plugin.
-     * It returns false, if directory is not equal ../wp-content/plugins
-     *
-     * @return bool
-     */
-    public function isInsidePlugin() {
-
-        if( strpos( __DIR__, 'wp-content/plugins' ) !== false ){
-            return true;
-        } else {
-            return false;
         }
 
-    }
+        /**
+         * Prefixes given string with directory path.
+         * Your path must have slash on start.
+         * Example usage: getPath( '/dir/another/file.php' );
+         *
+         * @param string $relativePath
+         *
+         * @return string - absolute path
+         */
+        public function getPath( $relativePath = null ) {
 
-    /**
-     * Checks if application is used inside a theme.
-     * It returns false, if directory is not equal ../wp-content/themes
-     *
-     * @return bool
-     */
-    public static function isInsideTheme() {
+            $path = dirname( $this->getMainPluginFile() );  // plugin directory path
 
-        if( strpos( __DIR__, 'wp-content/themes' ) !== false ){
-            return true;
-        } else {
-            return false;
+            if ( $relativePath === null ) {
+
+                return $path;
+
+            } else {
+
+                $relativePath = ltrim( $relativePath, '/' );
+
+                return $path . '/' . $relativePath;
+
+            }
+
         }
 
-    }
+        /**
+         * Requires file by given relative path.
+         * If class name is given as a second parameter, it will check, if class already exists.
+         *
+         * @param string      $path      - Relative file path
+         * @param string|null $className - Class name to check against.
+         *
+         * @return void
+         */
+        public function requireFile( $path, $className = null ) {
 
-    //  ================================================================================
-    //  INITIALIZATION
-    //  ================================================================================
+            if ( $className && class_exists( $className, false ) ) {
 
-    /**
-     * Initialize PSR4 Autoloader.
-     */
-    private function initAutoloadingHandler() {
+                return; //  End method. Do not load file.
 
-        if( ! class_exists( 'shellpress\v1_1_9\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ){
-            require( dirname( __DIR__ ) . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
+            }
+
+            require( $this->getPath( $path ) );
+
         }
 
-        $this->autoloading = new Psr4AutoloaderClass();
-        $this->autoloading->register();
-        $this->autoloading->addNamespace( 'shellpress\v1_1_9', dirname( __DIR__ ) );
+        /**
+         * It gets main plugin file path.
+         *
+         * @return string - full path to main plugin file (__FILE__)
+         */
+        public function getMainPluginFile() {
 
-    }
+            return $this->mainPluginFile;
 
-    /**
-     * Initialize Logging handler.
-     */
-    private function initLogHandler() {
+        }
 
-        $logHandlerArgs = $this->initArgs['log'];
+        /**
+         * Returns absolute directory path of currently used ShellPress directory.
+         *
+         * @return string
+         */
+        public function getShellPressDir() {
 
-        $this->log = new LogHandler(
-            $logHandlerArgs['directory'],
-            $logHandlerArgs['logLevel'],
-            array(
-                $logHandlerArgs['dateFormat'],
-                $logHandlerArgs['filename'],
-                $logHandlerArgs['flushFrequency'],
-                $logHandlerArgs['logFormat'],
-                $logHandlerArgs['appendContext']
-            )
-        );
+            return dirname( __DIR__ );
 
-    }
+        }
 
-    /**
-     * Initialize options handler.
-     */
-    private function initOptionsHandler() {
+        /**
+         * Gets version of instance.
+         *
+         * @return string
+         */
+        public function getPluginVersion() {
 
-        $this->options = new OptionsHandler( $this );
-        $this->options->setOptionsKey( $this->initArgs['options']['key'] );
-        $this->options->setDefaultOptions( $this->initArgs['options']['default'] );
-        $this->options->load();
+            return $this->pluginVersion;
 
-    }
+        }
 
-    /**
-     * Initialize event handler.
-     */
-    private function initEventHandler() {
+        /**
+         * Gets full version of instance.
+         * It's like this: `prefix`_`version`.
+         *
+         * @return string
+         */
+        public function getFullPluginVersion() {
 
-        $this->event = new EventHandler( $this );
+            return $this->getPrefix() . '_' . $this->getPluginVersion();
 
-    }
+        }
 
-    /**
-     * Initialize UtilityHandler.
-     */
-    private function initUtilityHandler() {
+        /**
+         * Returns main plugin file basename.
+         *
+         * @since 1.2.1
+         *
+         * @return string
+         */
+        public function getPluginBasename() {
 
-        $this->utility = new UtilityHandler( $this );
+            if( function_exists( 'plugin_basename' ) ){
+                return plugin_basename( $this->getMainPluginFile() );
+            } else {
+                return '';
+            }
 
-    }
+        }
 
-    /**
-     * Initialize MessagesHandler.
-     */
-    private function initMessagesHandler() {
+        /**
+         * Checks if application is used inside a plugin.
+         * It returns false, if directory is not equal ../wp-content/plugins
+         *
+         * @return bool
+         */
+        public function isInsidePlugin() {
 
-        $this->messages = new MessagesHandler( $this );
+            if ( strpos( __DIR__, 'wp-content/plugins' ) !== false ) {
+                return true;
+            } else {
+                return false;
+            }
 
-    }
+        }
 
-	/**
-	 * Initialize ExtractorHandler.
-	 */
-    private function initExtractorHandler() {
+        /**
+         * Checks if application is used inside a theme.
+         * It returns false, if directory is not equal ../wp-content/themes
+         *
+         * @return bool
+         */
+        public function isInsideTheme() {
 
-    	$this->extractor = new ExtractorHandler( $this );
-    	$this->extractor->label = $this->initArgs['extractor']['label'];
-    	$this->extractor->registerDownloadButton();
+            if ( strpos( __DIR__, 'wp-content/themes' ) !== false ) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
 
     }
 

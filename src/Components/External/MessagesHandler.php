@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_9\src\Handlers;
+namespace shellpress\v1_2_1\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,9 +7,19 @@ namespace shellpress\v1_1_9\src\Handlers;
  * Time: 12:39
  */
 
+use shellpress\v1_2_1\src\Shared\Components\IComponent;
 use WP_Error;
 
-class MessagesHandler extends Handler {
+class MessagesHandler extends IComponent {
+
+	/**
+	 * Called on handler construction.
+	 *
+	 * @return void
+	 */
+	protected function onSetUp() {
+		// TODO: Implement onSetUp() method.
+	}
 
     /**
      * Simple email sending method.
@@ -70,7 +80,7 @@ class MessagesHandler extends Handler {
         $errors = $wp_error->get_error_messages();
 
         foreach( $errors as $error ){   /** @var string $error */
-           $this->shell()->log->error( $error );
+           $this->s()->log->error( $error );
         }
 
     }

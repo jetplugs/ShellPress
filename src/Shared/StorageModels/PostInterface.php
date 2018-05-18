@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_1_9\src\Shared\StorageModels;
+namespace shellpress\v1_2_1\src\Shared\StorageModels;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -10,6 +10,11 @@ namespace shellpress\v1_1_9\src\Shared\StorageModels;
 use WP_Error;
 use WP_Post;
 
+/**
+ * Class PostInterface
+ *
+ * @deprecated
+ */
 class PostInterface {
 
     /** @var string */

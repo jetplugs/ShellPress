@@ -6,7 +6,7 @@
  * Time: 22:49
  */
 
-if( class_exists( 'ShellPress_RequirementChecker' ) ) return;
+if( ! class_exists( 'ShellPress_RequirementChecker' ) ) :
 
 class ShellPress_RequirementChecker {
 
@@ -141,3 +141,5 @@ class ShellPress_RequirementChecker {
     }
 
 }
+
+endif;
