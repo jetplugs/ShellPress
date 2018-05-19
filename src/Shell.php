@@ -264,6 +264,7 @@ if( ! class_exists( 'shellpress\v1_2_2\src\Shell', false ) ) {
 
         /**
          * Returns main plugin file basename.
+         * Supports plugin and theme.
          *
          * @since 1.2.1
          *
@@ -271,11 +272,19 @@ if( ! class_exists( 'shellpress\v1_2_2\src\Shell', false ) ) {
          */
         public function getPluginBasename() {
 
-            if( function_exists( 'plugin_basename' ) ){
-                return plugin_basename( $this->getMainPluginFile() );
-            } else {
-                return '';
+	        $pluginExt = pathinfo( $this->getMainPluginFile(), PATHINFO_EXTENSION );
+
+            if( $this->isInsidePlugin() ){
+            	$typeDir = trailingslashit( ABSPATH ) . 'wp-content/plugins/';
+            } else if( $this->isInsideTheme() ){
+	            $typeDir = trailingslashit( ABSPATH ) . 'wp-content/themes/';
+	        } else {
+            	return '';
             }
+
+	        $withoutExt  = str_replace( $pluginExt, '', $this->getMainPluginFile() );
+
+            return str_replace( $typeDir, '', $withoutExt );
 
         }
 
