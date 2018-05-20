@@ -35,6 +35,9 @@ if( ! class_exists( 'shellpress\v1_2_2\src\Shell', false ) ) {
         /** @var string */
         protected $pluginVersion;
 
+        /** @var string */
+        protected $pluginBasename;
+
         //  ---
 
         /** @var OptionsHandler */
@@ -265,6 +268,7 @@ if( ! class_exists( 'shellpress\v1_2_2\src\Shell', false ) ) {
         /**
          * Returns main plugin file basename.
          * Supports plugin and theme.
+         * First run of this method caches value.
          *
          * @since 1.2.1
          *
@@ -272,19 +276,33 @@ if( ! class_exists( 'shellpress\v1_2_2\src\Shell', false ) ) {
          */
         public function getPluginBasename() {
 
-	        $pluginExt = pathinfo( $this->getMainPluginFile(), PATHINFO_EXTENSION );
+        	//  Check if value is already set.
 
-            if( $this->isInsidePlugin() ){
-            	$typeDir = trailingslashit( ABSPATH ) . 'wp-content/plugins/';
-            } else if( $this->isInsideTheme() ){
-	            $typeDir = trailingslashit( ABSPATH ) . 'wp-content/themes/';
+        	if( $this->pluginBasename ){
+
+        		return $this->pluginBasename;
+
 	        } else {
-            	return '';
-            }
 
-	        $withoutExt  = str_replace( $pluginExt, '', $this->getMainPluginFile() );
+		        $pluginExt = pathinfo( $this->getMainPluginFile(), PATHINFO_EXTENSION );
 
-            return str_replace( $typeDir, '', $withoutExt );
+		        if( $this->isInsidePlugin() ){
+			        $typeDir = trailingslashit( ABSPATH ) . 'wp-content/plugins/';
+		        } else if( $this->isInsideTheme() ){
+			        $typeDir = trailingslashit( ABSPATH ) . 'wp-content/themes/';
+		        } else {
+			        return '';
+		        }
+
+		        $withoutExt  = str_replace( $pluginExt, '', $this->getMainPluginFile() );
+
+		        //  Cache value and return it.
+
+		        $this->pluginBasename = str_replace( $typeDir, '', $withoutExt );
+
+		        return $this->pluginBasename;
+
+	        }
 
         }
 
