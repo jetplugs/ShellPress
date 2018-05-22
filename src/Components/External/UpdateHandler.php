@@ -159,7 +159,7 @@ class UpdateHandler extends IComponent {
 		//  Make request
 		//  ----------------------------------------
 
-		$response = wp_remote_post( $this->serverUrl, array(
+		$response = wp_remote_get( $this->serverUrl, array(
 			'body'      =>  $requestBodyArgs
 		) );
 
