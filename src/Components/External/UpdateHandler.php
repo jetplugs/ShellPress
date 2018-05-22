@@ -31,7 +31,7 @@ class UpdateHandler extends IComponent {
 	 *
 	 * @return void
 	 */
-	public function setUpdateSource( $serverUrl, $requestBodyArgs = array() ) {
+	public function setFeedSource( $serverUrl, $requestBodyArgs = array() ) {
 
 		$this->serverUrl       = $serverUrl;
 		$this->requestBodyArgs = $requestBodyArgs;
@@ -56,7 +56,7 @@ class UpdateHandler extends IComponent {
 	 *
 	 * @return void
 	 */
-	public function disableUpdatePackage() {
+	public function disableUpdateOfPackage() {
 
 		if( $this::s()->isInsidePlugin() ){
 			add_filter( 'site_transient_update_plugins', array( $this, '_f_removeUpdatePackageForThisApp' ) );
