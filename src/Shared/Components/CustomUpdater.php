@@ -6,6 +6,12 @@ namespace shellpress\v1_2_2\src\Shared\Components;
  * Time: 21:02
  */
 
+/**
+ * Class CustomUpdater
+ *
+ * @deprecated
+ * @package shellpress\v1_2_2\src\Shared\Components
+ */
 abstract class CustomUpdater extends IComponent {
 
     /** @var string */
