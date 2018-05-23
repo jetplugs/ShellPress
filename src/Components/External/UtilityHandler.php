@@ -194,11 +194,22 @@ class UtilityHandler extends IComponent {
 					$file       = realpath( $file );
 					$fileName   = basename( $file );
 
-					//  TODO - write dot directories excluding mechanism.
+					//  ----------------------------------------
+					//  Check if file is not in forbidden path
+					//  ----------------------------------------
 
-					if( strpos( $fileName, '.' ) !== 0 ){
+					if( strpos( $fileName, '.' ) === 0 ){
 						$forbiddenPaths[] = $file;
+						continue;
 					}
+
+					foreach( $forbiddenPaths as $forbiddenPath ){
+						if( strpos( $file, $forbiddenPath ) !== false ) continue 2;
+					}
+
+					//  ----------------------------------------
+					//  Add to zip
+					//  ----------------------------------------
 
 					if( is_dir( $file ) ){
 						$zip->addEmptyDir( str_replace( $cutOffPath . '/', '', $file . '/' ) );
