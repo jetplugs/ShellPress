@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_2\src\Components\External;
+namespace shellpress\v1_2_3\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -9,7 +9,7 @@ namespace shellpress\v1_2_2\src\Components\External;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use shellpress\v1_2_2\src\Shared\Components\IComponent;
+use shellpress\v1_2_3\src\Shared\Components\IComponent;
 use ZipArchive;
 
 class UtilityHandler extends IComponent {
@@ -186,11 +186,19 @@ class UtilityHandler extends IComponent {
 				// skip dot files while iterating
 				$iterator->setFlags( RecursiveDirectoryIterator::SKIP_DOTS );
 
-				$files = new RecursiveIteratorIterator( $iterator, RecursiveIteratorIterator::SELF_FIRST );
+				$files          = new RecursiveIteratorIterator( $iterator, RecursiveIteratorIterator::SELF_FIRST );
+				$forbiddenPaths = array();
 
 				foreach( $files as $file ){
 
-					$file = realpath( $file );
+					$file       = realpath( $file );
+					$fileName   = basename( $file );
+
+					//  TODO - write dot directories excluding mechanism.
+
+					if( strpos( $fileName, '.' ) !== 0 ){
+						$forbiddenPaths[] = $file;
+					}
 
 					if( is_dir( $file ) ){
 						$zip->addEmptyDir( str_replace( $cutOffPath . '/', '', $file . '/' ) );

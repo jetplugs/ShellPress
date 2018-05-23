@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_2\src\Shared\Front\Models;
+namespace shellpress\v1_2_3\src\Shared\Front\Models;
 
 /**
  * @author jakubkuranda@gmail.com

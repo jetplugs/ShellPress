@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_2_2;
+namespace shellpress\v1_2_3;
 
-use shellpress\v1_2_2\src\Shell;
+use shellpress\v1_2_3\src\Shell;
 
-if( ! class_exists( 'shellpress\v1_2_2\ShellPress', false ) ){
+if( ! class_exists( 'shellpress\v1_2_3\ShellPress', false ) ){
 
     /**
      * Core class of plugin. To use it, simple extend it.

@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_2_2\src\Components\External;
+namespace shellpress\v1_2_3\src\Components\External;
 
-use shellpress\v1_2_2\lib\KLogger\KLogger;
-use shellpress\v1_2_2\lib\Psr\Log\LogLevel;
-use shellpress\v1_2_2\src\Shared\Components\IComponent;
+use shellpress\v1_2_3\lib\KLogger\KLogger;
+use shellpress\v1_2_3\lib\Psr\Log\LogLevel;
+use shellpress\v1_2_3\src\Shared\Components\IComponent;
 
 class LogHandler extends IComponent {
 
@@ -17,7 +17,7 @@ class LogHandler extends IComponent {
 	 */
 	protected function onSetUp() {
 
-		$this->kLogger = new KLogger( dirname( $this->s()->getMainPluginFile() ) . '/log', 'debug',
+		$this->kLogger = new KLogger( dirname( $this->s()->getMainPluginFile() ) . '/.log', 'debug',
 			array(
 				'Y-m-d G:i:s.u',
 				'log_' . date( 'd-m-Y' ) . '.log',

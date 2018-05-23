@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_2\src\Shared\Components;
+namespace shellpress\v1_2_3\src\Shared\Components;
 
 /**
  * Date: 13.05.2018
@@ -10,7 +10,7 @@ namespace shellpress\v1_2_2\src\Shared\Components;
  * Class CustomUpdater
  *
  * @deprecated
- * @package shellpress\v1_2_2\src\Shared\Components
+ * @package shellpress\v1_2_3\src\Shared\Components
  */
 abstract class CustomUpdater extends IComponent {
 
