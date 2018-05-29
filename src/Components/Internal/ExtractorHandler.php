@@ -68,7 +68,7 @@ class ExtractorHandler extends IComponent {
 				$downloadUrl = add_query_arg( 'sp_download', $this->getCurrentPluginFileName() );
 				$downloadUrl = wp_nonce_url( $downloadUrl, 'sp_download' );
 
-				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, __( 'Download' ) );
+				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, __( 'Download as file' ) );
 
 			}
 

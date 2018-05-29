@@ -12,6 +12,7 @@ use shellpress\v1_2_3\ShellPress;
 use shellpress\v1_2_3\src\Components\External\AutoloadingHandler;
 use shellpress\v1_2_3\src\Components\External\EventHandler;
 use shellpress\v1_2_3\src\Components\External\UpdateHandler;
+use shellpress\v1_2_3\src\Components\Internal\DebugHandler;
 use shellpress\v1_2_3\src\Components\Internal\ExtractorHandler;
 use shellpress\v1_2_3\src\Components\External\LogHandler;
 use shellpress\v1_2_3\src\Components\External\MessagesHandler;
@@ -62,6 +63,9 @@ if( ! class_exists( 'shellpress\v1_2_3\src\Shell', false ) ) {
         /** @var ExtractorHandler */
         protected $extractor;
 
+        /** @var DebugHandler */
+        protected $debug;
+
         /**
          * Shell constructor.
          *
@@ -111,6 +115,7 @@ if( ! class_exists( 'shellpress\v1_2_3\src\Shell', false ) ) {
 	        $this->event        = new EventHandler( $shellPress );
 	        $this->update       = new UpdateHandler( $shellPress );
 	        $this->extractor    = new ExtractorHandler( $shellPress );
+	        $this->debug        = new DebugHandler( $shellPress );
 
         }
 
