@@ -8,6 +8,8 @@ namespace shellpress\v1_2_3\src\Components\External;
 
 use Mustache_Autoloader;
 use Mustache_Engine;
+use Mustache_Loader_FilesystemLoader;
+use Mustache_Loader_StringLoader;
 use shellpress\v1_2_3\src\Shared\Components\IComponent;
 
 class MustacheHandler extends IComponent {
