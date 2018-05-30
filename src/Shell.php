@@ -11,6 +11,7 @@ use shellpress\v1_2_3\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_2_3\ShellPress;
 use shellpress\v1_2_3\src\Components\External\AutoloadingHandler;
 use shellpress\v1_2_3\src\Components\External\EventHandler;
+use shellpress\v1_2_3\src\Components\External\MustacheHandler;
 use shellpress\v1_2_3\src\Components\External\UpdateHandler;
 use shellpress\v1_2_3\src\Components\Internal\DebugHandler;
 use shellpress\v1_2_3\src\Components\Internal\ExtractorHandler;
@@ -59,6 +60,9 @@ if( ! class_exists( 'shellpress\v1_2_3\src\Shell', false ) ) {
 
         /** @var UpdateHandler */
         public $update;
+
+        /** @var MustacheHandler */
+        public $mustache;
 
         /** @var ExtractorHandler */
         protected $extractor;
@@ -114,6 +118,7 @@ if( ! class_exists( 'shellpress\v1_2_3\src\Shell', false ) ) {
 	        $this->messages     = new MessagesHandler( $shellPress );
 	        $this->event        = new EventHandler( $shellPress );
 	        $this->update       = new UpdateHandler( $shellPress );
+	        $this->mustache     = new MustacheHandler( $shellPress );
 	        $this->extractor    = new ExtractorHandler( $shellPress );
 	        $this->debug        = new DebugHandler( $shellPress );
 
