@@ -14,9 +14,6 @@ use shellpress\v1_2_3\src\Shared\Components\IComponent;
 
 class MustacheHandler extends IComponent {
 
-	/** @var bool */
-	protected $isInitialized = false;
-
 	/** @var Mustache_Engine */
 	protected $engine;
 
@@ -35,7 +32,7 @@ class MustacheHandler extends IComponent {
 	 */
 	protected function getEngine() {
 
-		if( ! $this->isInitialized ){
+		if( ! $this->engine ){
 
 			//  Mustache autoloader
 
