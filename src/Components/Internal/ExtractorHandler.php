@@ -1,12 +1,12 @@
 <?php
-namespace shellpress\v1_2_1\src\Components\Internal;
+namespace shellpress\v1_2_3\src\Components\Internal;
 
 /**
  * Date: 12.04.2018
  * Time: 21:39
  */
 
-use shellpress\v1_2_1\src\Shared\Components\IComponent;
+use shellpress\v1_2_3\src\Shared\Components\IComponent;
 
 class ExtractorHandler extends IComponent {
 
@@ -17,17 +17,21 @@ class ExtractorHandler extends IComponent {
 	 */
 	protected function onSetUp() {
 
-		//  ----------------------------------------
-		//  Filters
-		//  ----------------------------------------
+		if( is_admin() ){
 
-		add_filter( 'plugin_row_meta',      array( $this, '_f_addPluginDownloadToTable' ), 10, 2 );
+			//  ----------------------------------------
+			//  Filters
+			//  ----------------------------------------
 
-		//  ----------------------------------------
-		//  Actions
-		//  ----------------------------------------
+			add_filter( 'plugin_row_meta',      array( $this, '_f_addPluginDownloadToTable' ), 10, 2 );
 
-		add_action( 'admin_init',           array( $this, '_a_downloadPluginCallback' ) );
+			//  ----------------------------------------
+			//  Actions
+			//  ----------------------------------------
+
+			add_action( 'admin_init',           array( $this, '_a_downloadPluginCallback' ) );
+
+		}
 
 	}
 
@@ -64,7 +68,7 @@ class ExtractorHandler extends IComponent {
 				$downloadUrl = add_query_arg( 'sp_download', $this->getCurrentPluginFileName() );
 				$downloadUrl = wp_nonce_url( $downloadUrl, 'sp_download' );
 
-				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, __( 'Download' ) );
+				$pluginMeta[] = sprintf( '<a href="%1$s" target="_blank">%2$s</a>', $downloadUrl, __( 'Download as file' ) );
 
 			}
 
@@ -79,8 +83,7 @@ class ExtractorHandler extends IComponent {
 	 */
 	public function _a_downloadPluginCallback() {
 
-		if( is_admin()
-		    && array_key_exists( 'sp_download', $_GET )
+		if( array_key_exists( 'sp_download', $_GET )
 		    && $this->s()->isInsidePlugin()
 		    && $_GET['sp_download'] === $this->getCurrentPluginFileName()
 		){

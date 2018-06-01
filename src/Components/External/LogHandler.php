@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_2_1\src\Components\External;
+namespace shellpress\v1_2_3\src\Components\External;
 
-use shellpress\v1_2_1\lib\KLogger\KLogger;
-use shellpress\v1_2_1\lib\Psr\Log\LogLevel;
-use shellpress\v1_2_1\src\Shared\Components\IComponent;
+use shellpress\v1_2_3\lib\KLogger\KLogger;
+use shellpress\v1_2_3\lib\Psr\Log\LogLevel;
+use shellpress\v1_2_3\src\Shared\Components\IComponent;
 
 class LogHandler extends IComponent {
 
@@ -15,17 +15,30 @@ class LogHandler extends IComponent {
 	 *
 	 * @return void
 	 */
-	protected function onSetUp() {
+	protected function onSetUp() {}
 
-		$this->kLogger = new KLogger( dirname( $this->s()->getMainPluginFile() ) . '/log', 'debug',
-			array(
-				'Y-m-d G:i:s.u',
-				'log_' . date( 'd-m-Y' ) . '.log',
-				false,
-				false,
-				true
-			)
-		);
+	/**
+	 * Safe way of instantiating KLogger.
+	 *
+	 * @return KLogger
+	 */
+	protected function getKLogger() {
+
+		if( ! $this->kLogger ){
+
+			$this->kLogger = new KLogger( dirname( $this->s()->getMainPluginFile() ) . '/.log', 'debug',
+				array(
+					'Y-m-d G:i:s.u',
+					'log_' . date( 'd-m-Y' ) . '.log',
+					false,
+					false,
+					true
+				)
+			);
+
+		}
+
+		return $this->kLogger;
 
 	}
 
@@ -43,7 +56,7 @@ class LogHandler extends IComponent {
 
         if( $filePath === null ){
 
-            $filePath = $this->kLogger->getLogFilePath();
+            $filePath = $this->getKLogger()->getLogFilePath();
 
         }
 
@@ -77,7 +90,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
     public function setLogLevel( $logLevel ) {
-    	$this->kLogger->setLogLevelThreshold( $logLevel );
+    	$this->getKLogger()->setLogLevelThreshold( $logLevel );
     }
 
 	/**
@@ -89,7 +102,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function emergency( $message, array $context = array() ) {
-		$this->kLogger->log( LogLevel::EMERGENCY, $message, $context );
+		$this->getKLogger()->log( LogLevel::EMERGENCY, $message, $context );
 	}
 
 	/**
@@ -104,7 +117,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function alert( $message, array $context = array() )  {
-		$this->kLogger->log( LogLevel::ALERT, $message, $context );
+		$this->getKLogger()->log( LogLevel::ALERT, $message, $context );
 	}
 
 	/**
@@ -118,7 +131,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function critical( $message, array $context = array() ) {
-		$this->kLogger->log( LogLevel::CRITICAL, $message, $context );
+		$this->getKLogger()->log( LogLevel::CRITICAL, $message, $context );
 	}
 
 	/**
@@ -131,7 +144,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function error( $message, array $context = array() ) {
-		$this->kLogger->log( LogLevel::ERROR, $message, $context );
+		$this->getKLogger()->log( LogLevel::ERROR, $message, $context );
 	}
 
 	/**
@@ -146,7 +159,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function warning( $message, array $context = array() ) {
-		$this->kLogger->log( LogLevel::WARNING, $message, $context );
+		$this->getKLogger()->log( LogLevel::WARNING, $message, $context );
 	}
 
 	/**
@@ -158,7 +171,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function notice( $message, array $context = array() ) {
-		$this->kLogger->log( LogLevel::NOTICE, $message, $context );
+		$this->getKLogger()->log( LogLevel::NOTICE, $message, $context );
 	}
 
 	/**
@@ -172,7 +185,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function info( $message, array $context = array() ) {
-		$this->kLogger->log( LogLevel::INFO, $message, $context );
+		$this->getKLogger()->log( LogLevel::INFO, $message, $context );
 	}
 
 	/**
@@ -184,7 +197,7 @@ class LogHandler extends IComponent {
 	 * @return void
 	 */
 	public function debug( $message, array $context = array() ) {
-		$this->kLogger->log( LogLevel::DEBUG, $message, $context );
+		$this->getKLogger()->log( LogLevel::DEBUG, $message, $context );
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace shellpress\v1_2_1\lib\Psr\Log;
+namespace shellpress\v1_2_3\lib\Psr\Log;
 
 /**
  * Describes a logger instance.

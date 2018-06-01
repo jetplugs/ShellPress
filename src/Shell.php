@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_1\src;
+namespace shellpress\v1_2_3\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,17 +7,20 @@ namespace shellpress\v1_2_1\src;
  * Time: 22:45
  */
 
-use shellpress\v1_2_1\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_2_1\ShellPress;
-use shellpress\v1_2_1\src\Components\External\AutoloadingHandler;
-use shellpress\v1_2_1\src\Components\External\EventHandler;
-use shellpress\v1_2_1\src\Components\Internal\ExtractorHandler;
-use shellpress\v1_2_1\src\Components\External\LogHandler;
-use shellpress\v1_2_1\src\Components\External\MessagesHandler;
-use shellpress\v1_2_1\src\Components\External\OptionsHandler;
-use shellpress\v1_2_1\src\Components\External\UtilityHandler;
+use shellpress\v1_2_3\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_2_3\ShellPress;
+use shellpress\v1_2_3\src\Components\External\AutoloadingHandler;
+use shellpress\v1_2_3\src\Components\External\EventHandler;
+use shellpress\v1_2_3\src\Components\External\MustacheHandler;
+use shellpress\v1_2_3\src\Components\External\UpdateHandler;
+use shellpress\v1_2_3\src\Components\Internal\DebugHandler;
+use shellpress\v1_2_3\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_2_3\src\Components\External\LogHandler;
+use shellpress\v1_2_3\src\Components\External\MessagesHandler;
+use shellpress\v1_2_3\src\Components\External\OptionsHandler;
+use shellpress\v1_2_3\src\Components\External\UtilityHandler;
 
-if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
+if( ! class_exists( 'shellpress\v1_2_3\src\Shell', false ) ) {
 
     class Shell {
 
@@ -55,8 +58,17 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
         /** @var MessagesHandler */
         public $messages;
 
+        /** @var UpdateHandler */
+        public $update;
+
+        /** @var MustacheHandler */
+        public $mustache;
+
         /** @var ExtractorHandler */
         protected $extractor;
+
+        /** @var DebugHandler */
+        protected $debug;
 
         /**
          * Shell constructor.
@@ -90,9 +102,9 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 	        //  Before auto loading
 	        //  ----------------------------------------
 
-	        if( ! class_exists( 'shellpress\v1_2_1\src\Shared\Components\IComponent', false ) )
+	        if( ! class_exists( 'shellpress\v1_2_3\src\Shared\Components\IComponent', false ) )
 		        require( __DIR__ . '/Shared/Components/IComponent.php' );
-	        if( ! class_exists( 'shellpress\v1_2_1\src\Components\External\AutoloadingHandler', false ) )
+	        if( ! class_exists( 'shellpress\v1_2_3\src\Components\External\AutoloadingHandler', false ) )
 		        require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
 
 	        //  -----------------------------------
@@ -105,7 +117,10 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
 	        $this->log          = new LogHandler( $shellPress );
 	        $this->messages     = new MessagesHandler( $shellPress );
 	        $this->event        = new EventHandler( $shellPress );
+	        $this->update       = new UpdateHandler( $shellPress );
+	        $this->mustache     = new MustacheHandler( $shellPress );
 	        $this->extractor    = new ExtractorHandler( $shellPress );
+	        $this->debug        = new DebugHandler( $shellPress );
 
         }
 
@@ -263,7 +278,8 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
         }
 
         /**
-         * Returns main plugin file basename.
+         * If app is created inside plugin, it will return plugin basename ( directory/pluginname ).
+         * If app is created inside theme, it will return theme directory name.
          *
          * @since 1.2.1
          *
@@ -271,11 +287,11 @@ if( ! class_exists( 'shellpress\v1_2_1\src\Shell', false ) ) {
          */
         public function getPluginBasename() {
 
-            if( function_exists( 'plugin_basename' ) ){
-                return plugin_basename( $this->getMainPluginFile() );
-            } else {
-                return '';
-            }
+        	if( $this->isInsidePlugin() && function_exists( 'plugin_basename' ) ){
+        		return plugin_basename( $this->getMainPluginFile() );
+	        } else {
+        		return basename( dirname( $this->getMainPluginFile() ) );
+	        }
 
         }
 
