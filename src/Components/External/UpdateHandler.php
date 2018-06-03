@@ -207,6 +207,8 @@ class UpdateHandler extends IComponent {
 
 		if( strpos( $source, $this->appDirBasename ) === false ) return $source;  //  Are we talking about this plugin/theme?
 
+		$this::s()->log->close();   //  TODO - This should be called in other hook.
+
  		$newSource  = trailingslashit( dirname( $source ) ) . trailingslashit( $this->appDirBasename );
 		$result     = rename( $source, $newSource );
 
