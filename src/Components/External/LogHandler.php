@@ -42,6 +42,17 @@ class LogHandler extends IComponent {
 
 	}
 
+	/**
+	 * Unsets KLogger instance.
+	 *
+	 * @return void
+	 */
+	public function close() {
+
+		unset( $this->kLogger );
+
+	}
+
     /**
      * Returns HTML string log of current day.
      *
