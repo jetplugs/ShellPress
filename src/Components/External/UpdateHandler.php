@@ -14,17 +14,12 @@ class UpdateHandler extends IComponent {
 	/** @var string */
 	protected $appDirBasename;
 
-	/** @var bool */
-	protected $checkedForUpdate = false;
-
 	/**
 	 * Called on creation of component.
 	 *
 	 * @return void
 	 */
-	protected function onSetUp() {
-		// TODO: Implement onSetUp() method.
-	}
+	protected function onSetUp() {}
 
 	/**
 	 * Registers update_plugins transient filter.
@@ -147,7 +142,7 @@ class UpdateHandler extends IComponent {
 		$basename = $this::s()->getPluginBasename();
 
 		if( ! isset( $transient->response ) ) return $transient;                //  Check, if we have an array set. Sometimes there are errors.
-		if( $this->checkedForUpdate ) return $transient;                        //  Do not fire remote check version twice.
+		if( isset( $transient->response[ $basename ] ) ) return $transient;     //  Do not fire remote check version twice.
 
 		//  ----------------------------------------
 		//  Prepare data for request
@@ -165,8 +160,6 @@ class UpdateHandler extends IComponent {
 		$response = wp_remote_get( $this->serverUrl, array(
 			'body'      =>  $requestBodyArgs
 		) );
-
-		$this->checkedForUpdate = true;     //  Make sure we will not make another remote get in same run.
 
 		//  ----------------------------------------
 		//  Maybe update transient
