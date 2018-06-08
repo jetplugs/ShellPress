@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_2_3\src\Components\External;
+namespace shellpress\v1_2_4\src\Components\External;
 
-use shellpress\v1_2_3\lib\KLogger\KLogger;
-use shellpress\v1_2_3\lib\Psr\Log\LogLevel;
-use shellpress\v1_2_3\src\Shared\Components\IComponent;
+use shellpress\v1_2_4\lib\KLogger\KLogger;
+use shellpress\v1_2_4\lib\Psr\Log\LogLevel;
+use shellpress\v1_2_4\src\Shared\Components\IComponent;
 
 class LogHandler extends IComponent {
 
