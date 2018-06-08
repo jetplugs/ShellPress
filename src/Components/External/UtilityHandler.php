@@ -64,11 +64,19 @@ class UtilityHandler extends IComponent {
      */
     public function getValueByKeysPath( $array, $keys, $defaultValue = null ) {
 
-        for( $i = $array; $key = array_shift( $keys ); $i = $i[$key] ){
-            if( ! isset( $i[$key] ) ) return $defaultValue;
+    	$value = (array) $array;
+
+        foreach( $keys as $key ) {
+
+        	if( is_array( $value ) && $key && isset( $value[$key] ) ){
+        		$value = $value[$key];
+	        } else {
+        		return $defaultValue;
+	        }
+
         }
 
-        return $i;
+        return $value;
 
     }
 
