@@ -427,10 +427,28 @@ abstract class LicenseManagerSLM extends IComponent {
         $this->_apfPageSlug     = $pageSlug;
         $this->_apfPageTab      = $pageTab;
 
-        add_filter( 'load_' . $pageSlug . '_' . $pageTab,   array( $this, '_a_addSectionToAPF' ) );
-        add_filter( 'load_' . $pageSlug . '_' . $pageTab,   array( $this, '_a_addFieldsToAPF' ) );
+        //  Prepare hook name.
 
-        add_filter( 'validation_' . $apfClassName,          array( $this, '_f_updateKeyButtonCallbackAPF' ), 10, 3 );
+        if( $pageSlug && $pageTab ){
+
+        	$loadHookName = 'load_' . $pageSlug . '_' . $pageTab;
+
+        } else if( $pageSlug ){
+
+        	$loadHookName = 'load_' . $pageSlug;
+
+        } else {
+
+        	$loadHookName = 'load_' . $apfClassName;
+
+        }
+
+        //  Add filters.
+
+        add_filter( $loadHookName,                  array( $this, '_a_addSectionToAPF' ) );
+        add_filter( $loadHookName,                  array( $this, '_a_addFieldsToAPF' ) );
+
+        add_filter( 'validation_' . $apfClassName,  array( $this, '_f_updateKeyButtonCallbackAPF' ), 10, 3 );
 
     }
 
