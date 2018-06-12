@@ -522,26 +522,23 @@ abstract class LicenseManagerSLM extends IComponent {
      */
     public function _f_updateKeyButtonCallbackAPF( $newOptions, $oldOptions, $pageFactory ) {
 
-    	if( isset( $newOptions[$this->_apfSectionId]['key'] ) && isset( $oldOptions[$this->_apfSectionId]['key'] ) ){
+    	$newKey = isset( $newOptions[$this->_apfSectionId]['key'] ) ? $newOptions[$this->_apfSectionId]['key'] : '';
+    	$oldKey = isset( $oldOptions[$this->_apfSectionId]['key'] ) ? $newOptions[$this->_apfSectionId]['key'] : '';
 
-		    if(
-			    $newOptions[$this->_apfSectionId]['key'] != $oldOptions[$this->_apfSectionId]['key']
-			    || isset( $_POST['updateKeySubmit'] ) && ! empty( $_POST['updateKeySubmit'] )
-		    ){
+	    if(
+		    $newKey != $oldKey
+		    || isset( $_POST['updateKeySubmit'] ) && ! empty( $_POST['updateKeySubmit'] )
+	    ){
 
-			    $key = $newOptions[$this->_apfSectionId]['key'];
+		    $this->setKey( $newKey );
+		    $this->performRemoteKeyUpdate();
 
-			    $this->setKey( $key );
-			    $this->performRemoteKeyUpdate();
+		    $pageFactory->setSettingNotice( __( 'License key has been updated.' ), 'updated' );
 
-			    $pageFactory->setSettingNotice( __( 'License key has been updated.' ), 'updated' );
+		    //  ShellPress options are older than this fresh submitted data.
+		    //  Actions are performed on ShellPress internal storage, so we return it here for update.
 
-			    //  ShellPress options are older than this fresh submitted data.
-			    //  Actions are performed on ShellPress internal storage, so we return it here for update.
-
-			    return $this::s()->options->get();
-
-		    }
+		    return $this::s()->options->get();
 
 	    }
 
