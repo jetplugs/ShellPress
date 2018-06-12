@@ -646,10 +646,20 @@ abstract class LicenseManagerSLM extends IComponent {
 
 		if( $this->getKey() && ! $this->isActive() ){    //  If key is set and is inactive.
 
-			$adminPageUrl = admin_url( 'options-general.php?page=tmc_mm_settings&tab=tools' );
+			$adminPageUrl = admin_url( 'options-general.php' );
+			$adminPageUrl = add_query_arg(
+				array(
+					'page'      =>  $this->_apfPageSlug,
+					'tab'       =>  $this->_apfPageTab
+				),
+				$adminPageUrl
+			);
+
+			$pluginData = get_plugin_data( $this::s()->getMainPluginFile() );
+			$pluginName = isset( $pluginData['Name'] ) ? $pluginData['Name'] : __( 'plugin', 'tmc_sp' );
 
 			printf( '<div class="notice notice-error"><p>%1$s %2$s</p></div>',
-				__( 'Your license for The Real Maintenance Mode TMC is inactive.', 'rm_tmc' ),
+				sprintf( __( 'Your license for %1$s is inactive.', 'rm_tmc' ), $pluginName ),
 				sprintf( '<a href="%1$s">%2$s</a>', $adminPageUrl, __( 'Please remove license to dismiss this message.', 'rm_tmc' ) )
 			);
 
