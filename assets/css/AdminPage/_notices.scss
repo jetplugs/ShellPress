@@ -1,0 +1,30 @@
+.tmc-notice {
+
+    background-color: #F55E4F;
+    color: #fff;
+
+    a {
+        color: #fff;
+    }
+
+    .notice-dismiss {
+
+        color: #fff;
+
+        &:before {
+            color: #fff;
+        }
+
+        &:hover {
+
+            color: #000;
+
+            &:before {
+                color: #000;
+            }
+
+        }
+
+    }
+
+}
