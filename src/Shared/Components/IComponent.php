@@ -1,14 +1,14 @@
 <?php
 
-namespace shellpress\v1_2_4\src\Shared\Components;
+namespace shellpress\v1_2_5\src\Shared\Components;
 
 /**
  * Date: 26.04.2018
  * Time: 23:07
  */
 
-use shellpress\v1_2_4\ShellPress;
-use shellpress\v1_2_4\src\Shell;
+use shellpress\v1_2_5\ShellPress;
+use shellpress\v1_2_5\src\Shell;
 
 abstract class IComponent {
 
