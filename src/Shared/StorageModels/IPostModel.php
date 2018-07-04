@@ -27,7 +27,7 @@ abstract class IPostModel {
 	 */
 	public function __construct( $post ) {
 
-		if( empty( $this::POST_TYPE ) ) wp_die( 'Your PostModel have to change const POST_TYPE string.' );
+		if( ! $this::POST_TYPE ) wp_die( 'Your PostModel have to change const POST_TYPE string.' );
 
 		$this->post = $post;
 
