@@ -27,7 +27,7 @@ abstract class ITermModel {
 	 */
 	public function __construct( $term ) {
 
-		if( empty( $this::TAXONOMY ) ) wp_die( 'Your TermModel have to change const TAXONOMY string.' );
+		if( ! $this::TAXONOMY ) wp_die( 'Your TermModel have to change const TAXONOMY string.' );
 
 		$this->term = $term;
 
