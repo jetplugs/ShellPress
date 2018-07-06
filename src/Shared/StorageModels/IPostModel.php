@@ -179,7 +179,7 @@ abstract class IPostModel {
 	 * Sets metadata.
 	 *
 	 * @param string $metaKey
-	 * @param string $value
+	 * @param mixed $value
 	 *
 	 * @return void
 	 */
