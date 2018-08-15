@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_6\src\Components;
+namespace shellpress\v1_2_7\src\Components;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_2_6\src\Components;
  * Time: 22:14
  */
 
-use shellpress\v1_2_6\src\Shell;
+use shellpress\v1_2_7\src\Shell;
 
 abstract class IHandler {
 

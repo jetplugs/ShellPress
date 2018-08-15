@@ -1,6 +1,6 @@
 <?php
 
-namespace shellpress\v1_2_6\src\Shared\StorageModels;
+namespace shellpress\v1_2_7\src\Shared\StorageModels;
 
 /**
  * Date: 29.04.2018
