@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_6\src\Shared\Components;
+namespace shellpress\v1_2_7\src\Shared\Components;
 use TMC_v1_0_3_AdminPageFramework;
 use WP_Upgrader;
 
