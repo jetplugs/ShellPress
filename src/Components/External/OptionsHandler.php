@@ -39,7 +39,7 @@ class OptionsHandler extends IComponent {
      */
     public function load() {
 
-        $options = get_option( $this->getOptionsKey(), array() );
+        $options = (array) get_option( $this->getOptionsKey(), array() );
 
         $this->optionsData = $options;
 
