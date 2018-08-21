@@ -136,51 +136,39 @@ if( ! class_exists( 'shellpress\v1_2_8\src\Shell', false ) ) {
          *
          * @return string
          */
-        public function getPrefix( $stringToPrefix = null ) {
+        public function getPrefix( $stringToPrefix = '' ) {
 
-            if ( $stringToPrefix === null ) {
-
-                return $this->pluginPrefix;
-
-            } else {
-
-                return $this->pluginPrefix . $stringToPrefix;
-
-            }
+	        return $this->pluginPrefix . $stringToPrefix;
 
         }
 
         /**
-         * Prepands given string with plugin directory url.
-         * Example usage: getUrl( '/assets/style.css' );
+         * Prepands given string with plugin or theme directory url.
+         * Example usage: getUrl( 'assets/style.css' );
          *
          * @param string $relativePath
          *
          * @return string - URL
          */
-        public function getUrl( $relativePath = null ) {
+        public function getUrl( $relativePath = '' ) {
 
-            $delimeter = 'wp-content';
-            $pluginDir = dirname( $this->getMainPluginFile() );
+	        //  ----------------------------------------
+	        //  Prepare url
+	        //  ----------------------------------------
 
-            $pathParts = explode( $delimeter, $pluginDir, 2 );     //  slice path by delimeter string
-
-            $wpContentDirUrl = content_url();                       //  `wp-content` directory url
-
-            $url = $wpContentDirUrl . $pathParts[ 1 ];                //  sum of wp-content url + relative path to plugin dir
-            $url = rtrim( $url, '/' );                              //  remove trailing slash
-
-            if ( $relativePath === null ) {
-
-                return $url;
-
+            if( $this->isInsidePlugin() ){
+            	$containerUrl = plugin_dir_url( $this->getMainPluginFile() );
             } else {
-
-                $relativePath = ltrim( $relativePath, '/' );
-
-                return $url . '/' . $relativePath;
-
+	        	$containerUrl = get_template_directory_uri();
             }
+
+            $containerUrl = rtrim( $containerUrl, '/' );  //  Always remove trailing slash.
+
+            //  ----------------------------------------
+            //  Result
+            //  ----------------------------------------
+
+            return $relativePath ? $containerUrl . '/' . ltrim( $relativePath, '/' ) : $containerUrl;
 
         }
 
