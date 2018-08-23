@@ -143,7 +143,7 @@ if( ! class_exists( 'shellpress\v1_2_8\src\Shell', false ) ) {
         }
 
         /**
-         * Prepands given string with plugin or theme directory url.
+         * Prepends given string with plugin or theme directory url.
          * Example usage: getUrl( 'assets/style.css' );
          *
          * @param string $relativePath
@@ -285,29 +285,35 @@ if( ! class_exists( 'shellpress\v1_2_8\src\Shell', false ) ) {
 
         /**
          * Checks if application is used inside a plugin.
-         * It returns false, if directory is not equal ../wp-content/plugins
          *
          * @return bool
          */
         public function isInsidePlugin() {
 
-            if ( strpos( __DIR__, 'wp-content/plugins' ) !== false ) {
-                return true;
-            } else {
-                return false;
-            }
+        	if( defined( 'WP_PLUGIN_DIR' ) ){
+
+        		if( strpos( __DIR__, WP_PLUGIN_DIR ) !== false ){
+        			return true;
+		        } else {
+        			return false;
+		        }
+
+	        } else {
+
+        		return false;
+
+	        }
 
         }
 
         /**
          * Checks if application is used inside a theme.
-         * It returns false, if directory is not equal ../wp-content/themes
          *
          * @return bool
          */
         public function isInsideTheme() {
 
-            if ( strpos( __DIR__, 'wp-content/themes' ) !== false ) {
+            if ( strpos( __DIR__, get_theme_root() ) !== false ) {
                 return true;
             } else {
                 return false;
