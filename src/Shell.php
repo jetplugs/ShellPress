@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_8\src;
+namespace shellpress\v1_2_9\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,25 +7,31 @@ namespace shellpress\v1_2_8\src;
  * Time: 22:45
  */
 
-use shellpress\v1_2_8\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_2_8\ShellPress;
-use shellpress\v1_2_8\src\Components\External\AutoloadingHandler;
-use shellpress\v1_2_8\src\Components\External\EventHandler;
-use shellpress\v1_2_8\src\Components\External\MustacheHandler;
-use shellpress\v1_2_8\src\Components\External\UpdateHandler;
-use shellpress\v1_2_8\src\Components\Internal\DebugHandler;
-use shellpress\v1_2_8\src\Components\Internal\ExtractorHandler;
-use shellpress\v1_2_8\src\Components\External\LogHandler;
-use shellpress\v1_2_8\src\Components\External\MessagesHandler;
-use shellpress\v1_2_8\src\Components\External\OptionsHandler;
-use shellpress\v1_2_8\src\Components\External\UtilityHandler;
+use shellpress\v1_2_9\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_2_9\ShellPress;
+use shellpress\v1_2_9\src\Components\External\AutoloadingHandler;
+use shellpress\v1_2_9\src\Components\External\EventHandler;
+use shellpress\v1_2_9\src\Components\External\MustacheHandler;
+use shellpress\v1_2_9\src\Components\External\UpdateHandler;
+use shellpress\v1_2_9\src\Components\Internal\DebugHandler;
+use shellpress\v1_2_9\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_2_9\src\Components\External\LogHandler;
+use shellpress\v1_2_9\src\Components\External\MessagesHandler;
+use shellpress\v1_2_9\src\Components\External\OptionsHandler;
+use shellpress\v1_2_9\src\Components\External\UtilityHandler;
 
-if( ! class_exists( 'shellpress\v1_2_8\src\Shell', false ) ) {
+if( ! class_exists( 'shellpress\v1_2_9\src\Shell', false ) ) {
 
     class Shell {
 
     	/** @var bool */
     	protected $isInitialized = false;
+
+    	/** @var bool|null */
+    	private $isInsidePlugin = null;
+
+    	/** @var bool|null */
+    	private $isInsideTheme = null;
 
     	//  ---
 
@@ -102,9 +108,9 @@ if( ! class_exists( 'shellpress\v1_2_8\src\Shell', false ) ) {
 	        //  Before auto loading
 	        //  ----------------------------------------
 
-	        if( ! class_exists( 'shellpress\v1_2_8\src\Shared\Components\IComponent', false ) )
+	        if( ! class_exists( 'shellpress\v1_2_9\src\Shared\Components\IComponent', false ) )
 		        require( __DIR__ . '/Shared/Components/IComponent.php' );
-	        if( ! class_exists( 'shellpress\v1_2_8\src\Components\External\AutoloadingHandler', false ) )
+	        if( ! class_exists( 'shellpress\v1_2_9\src\Components\External\AutoloadingHandler', false ) )
 		        require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
 
 	        //  -----------------------------------
@@ -290,19 +296,37 @@ if( ! class_exists( 'shellpress\v1_2_8\src\Shell', false ) ) {
          */
         public function isInsidePlugin() {
 
-        	if( defined( 'WP_PLUGIN_DIR' ) ){
+        	//  ----------------------------------------
+        	//  If bool not in memory, check it
+        	//  ----------------------------------------
 
-        		if( strpos( __DIR__, WP_PLUGIN_DIR ) !== false ){
-        			return true;
+        	if( is_null( $this->isInsidePlugin ) ){
+
+		        if( defined( 'WP_PLUGIN_DIR' ) ){
+
+			        //  Some websites have paths saved with double slashes.
+			        $fileDir        = str_replace( '/', '', __DIR__ );
+			        $wpPluginSetDir = str_replace( '/', '', WP_PLUGIN_DIR );
+
+			        if( strpos( $fileDir, $wpPluginSetDir ) !== false ){
+				        $this->isInsidePlugin = true;
+			        } else {
+				        $this->isInsidePlugin = false;
+			        }
+
 		        } else {
-        			return false;
+
+			        $this->isInsidePlugin = false;
+
 		        }
 
-	        } else {
-
-        		return false;
-
 	        }
+
+	        //  ----------------------------------------
+	        //  Return from memory
+	        //  ----------------------------------------
+
+	        return (bool) $this->isInsidePlugin;
 
         }
 
@@ -313,11 +337,29 @@ if( ! class_exists( 'shellpress\v1_2_8\src\Shell', false ) ) {
          */
         public function isInsideTheme() {
 
-            if ( strpos( __DIR__, get_theme_root() ) !== false ) {
-                return true;
-            } else {
-                return false;
-            }
+	        //  ----------------------------------------
+	        //  If bool not in memory, check it
+	        //  ----------------------------------------
+
+	        if( is_null( $this->isInsidePlugin ) ){
+
+		        //  Some websites have paths saved with double slashes.
+		        $fileDir        = str_replace( '/', '', __DIR__ );
+		        $themeRootDir   = str_replace( '/', '', get_theme_root() );
+
+		        if ( strpos( $fileDir, $themeRootDir ) !== false ) {
+			        $this->isInsideTheme = true;
+		        } else {
+			        $this->isInsideTheme = false;
+		        }
+
+	        }
+
+	        //  ----------------------------------------
+	        //  Return from memory
+	        //  ----------------------------------------
+
+	        return (bool) $this->isInsideTheme;
 
         }
 
