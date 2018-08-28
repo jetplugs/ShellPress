@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_9\src\Components\External;
+namespace shellpress\v1_2_9_1\src\Components\External;
 
 /**
  * Date: 30.05.2018
@@ -10,7 +10,7 @@ use Mustache_Autoloader;
 use Mustache_Engine;
 use Mustache_Loader_FilesystemLoader;
 use Mustache_Loader_StringLoader;
-use shellpress\v1_2_9\src\Shared\Components\IComponent;
+use shellpress\v1_2_9_1\src\Shared\Components\IComponent;
 
 class MustacheHandler extends IComponent {
 

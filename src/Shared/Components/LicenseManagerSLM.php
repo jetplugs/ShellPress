@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_9\src\Shared\Components;
+namespace shellpress\v1_2_9_1\src\Shared\Components;
 use TMC_v1_0_3_AdminPageFramework;
 use WP_Upgrader;
 
@@ -24,7 +24,7 @@ abstract class LicenseManagerSLM extends IComponent {
     const API_SECRET    = '58ba00b52427f3.50566835';
 
     /** @var string */
-    private $_apfSectionId;
+    private $_apfSectionId = 'license';
 
     /** @var string */
     private $_apfPageSlug;
