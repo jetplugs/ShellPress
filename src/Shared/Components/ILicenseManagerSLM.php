@@ -18,7 +18,7 @@ use WP_Upgrader;
  *
  * This class will be deprecated in the future.
  */
-abstract class LicenseManagerSLM extends IComponent {
+abstract class ILicenseManagerSLM extends IComponent {
 
     const API_URL       = 'https://themastercut.co';
     const API_SECRET    = '58ba00b52427f3.50566835';

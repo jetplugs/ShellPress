@@ -56,9 +56,9 @@ class UtilityHandler extends IComponent {
     /**
      * Gets value of multidimensional array by given array of keys.
      *
-     * @param array $array
-     * @param array $keys
-     * @param mixed|null $defaultValue
+     * @param array         $array
+     * @param array|string  $keys
+     * @param mixed|null    $defaultValue
      *
      * @return mixed|null
      */
@@ -66,7 +66,7 @@ class UtilityHandler extends IComponent {
 
     	$value = (array) $array;
 
-        foreach( $keys as $key ) {
+        foreach( (array) $keys as $key ) {
 
         	if( is_array( $value ) && $key && isset( $value[$key] ) ){
         		$value = $value[$key];
