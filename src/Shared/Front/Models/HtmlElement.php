@@ -78,8 +78,6 @@ class HtmlElement {
      */
     public function getAttributesAsString() {
 
-        $html = '';
-
         $attrStrings = array();
 
         foreach( $this->getAttributes() as $attrName => $values ){
