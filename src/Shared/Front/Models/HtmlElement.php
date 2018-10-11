@@ -18,8 +18,8 @@ class HtmlElement {
     /** @var array */
     protected $attributes = array();
 
-    /** @var string */
-    protected $content = '';
+    /** @var array */
+    protected $content = array();
 
     /**
      * HtmlElement constructor.
@@ -157,22 +157,22 @@ class HtmlElement {
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getContent() {
 
-        return $this->content;
+        return (array) $this->content;
 
     }
 
     /**
-     * @param HtmlElement|string $content
+     * @param HtmlElement[]|HtmlElement|string[]|string $content
      *
      * @return self
      */
     public function setContent( $content ) {
 
-        $this->content = $this->parseContentToString( $content );
+        $this->content = (array) $content;
 
         return $this;
 
@@ -185,7 +185,7 @@ class HtmlElement {
      */
     public function append( $content ) {
 
-        $this->content .= $this->parseContentToString( $content ) . PHP_EOL;
+        $this->content[] = $content;
 
         return $this;
 
@@ -231,22 +231,37 @@ class HtmlElement {
      */
     public function getDisplay() {
 
+	    //  Nested content
+
+	    $content        = (array) $this->getContent();
+	    $contentAsHtml  = '';
+
+	    foreach( $content as $elem ){   /** @var $elem HtmlElement|string */
+
+		    if( is_object( $elem ) && method_exists( $elem, 'getDisplay' ) ){
+			    $contentAsHtml .= $elem->getDisplay() . PHP_EOL;
+		    } else {
+			    $contentAsHtml .= $elem . PHP_EOL;
+		    }
+
+	    }
+
+	    //  Segments
+
+	    $firstSegment   = $this->getTag() . ' ' . $this->getAttributesAsString();
+	    $secondSegment  = $this->getTag();
+
+	    //  Returned string
+
         if( $this->isContainer() ){
 
-            $firstSegment   = $this->getTag() . ' ' . $this->getAttributesAsString();
-            $content        = $this->getContent();
-            $secondSegment  = $this->getTag();
-
-            return sprintf( '<%1$s>%2$s</%3$s>', $firstSegment, $content, $secondSegment );
+            return sprintf( '<%1$s>%2$s</%3$s>', $firstSegment, $contentAsHtml, $secondSegment );
 
         } else {
 
             //  For debugging purposes, content is not ommited, even if it's a mistake.
 
-            $firstSegment   = $this->getTag() . ' ' . $this->getAttributesAsString();
-            $content        = $this->getContent();
-
-            return sprintf( '<%1$s>%2$s', $firstSegment, $content );
+            return sprintf( '<%1$s>%2$s', $firstSegment, $contentAsHtml );
 
         }
 

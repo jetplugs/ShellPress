@@ -12,7 +12,7 @@ namespace shellpress\v1_3_0\src\Shared\Components;
  * @deprecated
  * @package shellpress\v1_3_0\src\Shared\Components
  */
-abstract class ICustomUpdater extends IComponent {
+abstract class IComponentCustomUpdater extends IComponent {
 
     /** @var string */
     protected $serverUrl;
