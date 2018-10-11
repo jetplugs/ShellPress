@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_2_9_1\src;
+namespace shellpress\v1_3_0\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,20 +7,20 @@ namespace shellpress\v1_2_9_1\src;
  * Time: 22:45
  */
 
-use shellpress\v1_2_9_1\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_2_9_1\ShellPress;
-use shellpress\v1_2_9_1\src\Components\External\AutoloadingHandler;
-use shellpress\v1_2_9_1\src\Components\External\EventHandler;
-use shellpress\v1_2_9_1\src\Components\External\MustacheHandler;
-use shellpress\v1_2_9_1\src\Components\External\UpdateHandler;
-use shellpress\v1_2_9_1\src\Components\Internal\DebugHandler;
-use shellpress\v1_2_9_1\src\Components\Internal\ExtractorHandler;
-use shellpress\v1_2_9_1\src\Components\External\LogHandler;
-use shellpress\v1_2_9_1\src\Components\External\MessagesHandler;
-use shellpress\v1_2_9_1\src\Components\External\OptionsHandler;
-use shellpress\v1_2_9_1\src\Components\External\UtilityHandler;
+use shellpress\v1_3_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_3_0\ShellPress;
+use shellpress\v1_3_0\src\Components\External\AutoloadingHandler;
+use shellpress\v1_3_0\src\Components\External\EventHandler;
+use shellpress\v1_3_0\src\Components\External\MustacheHandler;
+use shellpress\v1_3_0\src\Components\External\UpdateHandler;
+use shellpress\v1_3_0\src\Components\Internal\DebugHandler;
+use shellpress\v1_3_0\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_3_0\src\Components\External\LogHandler;
+use shellpress\v1_3_0\src\Components\External\MessagesHandler;
+use shellpress\v1_3_0\src\Components\External\OptionsHandler;
+use shellpress\v1_3_0\src\Components\External\UtilityHandler;
 
-if( ! class_exists( 'shellpress\v1_2_9_1\src\Shell', false ) ) {
+if( ! class_exists( 'shellpress\v1_3_0\src\Shell', false ) ) {
 
     class Shell {
 
@@ -108,9 +108,9 @@ if( ! class_exists( 'shellpress\v1_2_9_1\src\Shell', false ) ) {
 	        //  Before auto loading
 	        //  ----------------------------------------
 
-	        if( ! class_exists( 'shellpress\v1_2_9_1\src\Shared\Components\IComponent', false ) )
+	        if( ! class_exists( 'shellpress\v1_3_0\src\Shared\Components\IComponent', false ) )
 		        require( __DIR__ . '/Shared/Components/IComponent.php' );
-	        if( ! class_exists( 'shellpress\v1_2_9_1\src\Components\External\AutoloadingHandler', false ) )
+	        if( ! class_exists( 'shellpress\v1_3_0\src\Components\External\AutoloadingHandler', false ) )
 		        require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
 
 	        //  -----------------------------------
