@@ -34,6 +34,19 @@ abstract class ITermModel {
 	}
 
 	/**
+	 * Factory method.
+	 *
+	 * @return static|null    Returns new instance of term model or nothing.
+	 */
+	public static function getById( $termId ) {
+
+		$term = get_term( $termId, static::TAXONOMY );
+
+		return $term && ! is_wp_error( $term ) ? new static( $term ) : null;
+
+	}
+
+	/**
 	 * Returns post object bundled with this wrapper.
 	 *
 	 * @return WP_Term
