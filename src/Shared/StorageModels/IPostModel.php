@@ -34,6 +34,19 @@ abstract class IPostModel {
 	}
 
 	/**
+	 * Factory method.
+	 *
+	 * @return static|null    Returns new instance of post model or nothing.
+	 */
+	public static function getById( $postId ) {
+
+		$post = get_post( $postId );
+
+		return $post ? new static( $post ) : null;
+
+	}
+
+	/**
 	 * Returns post object bundled with this wrapper.
 	 *
 	 * @return WP_Post
