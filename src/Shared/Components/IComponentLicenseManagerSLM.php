@@ -1,13 +1,14 @@
 <?php
 namespace shellpress\v1_3_0\src\Shared\Components;
-use TMC_v1_0_3_AdminPageFramework;
-use WP_Upgrader;
 
 /**
  * @author jakubkuranda@gmail.com
  * Date: 14.03.2018
  * Time: 11:22
  */
+
+use TMC_v1_0_4_AdminPageFramework;
+use WP_Upgrader;
 
 /**
  * This little fucker is a ready-to-use component, you can extend
@@ -516,7 +517,7 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
      *
      * @param array $newOptions
      * @param array $oldOptions
-     * @param TMC_v1_0_3_AdminPageFramework $pageFactory
+     * @param TMC_v1_0_4_AdminPageFramework $pageFactory
      *
      * @return array
      */
@@ -553,7 +554,7 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
 	/**
 	 * Adds setting section on load of apf page and tab.
 	 *
-	 * @param TMC_v1_0_3_AdminPageFramework $pageFactory
+	 * @param TMC_v1_0_4_AdminPageFramework $pageFactory
 	 */
 	public function _a_addSectionToAPF( $pageFactory ) {
 
@@ -572,7 +573,7 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
 	/**
 	 * Adds setting fields on load of apf page and tab.
 	 *
-	 * @param TMC_v1_0_3_AdminPageFramework $pageFactory
+	 * @param TMC_v1_0_4_AdminPageFramework $pageFactory
 	 */
 	public function _a_addFieldsToAPF( $pageFactory ) {
 
@@ -656,8 +657,8 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
 			$pluginName = isset( $pluginData['Name'] ) ? $pluginData['Name'] : __( 'plugin', 'tmc_sp' );
 
 			printf( '<div class="notice notice-error"><p>%1$s %2$s</p></div>',
-				sprintf( __( 'Your license for %1$s is inactive.', 'rm_tmc' ), $pluginName ),
-				sprintf( '<a href="%1$s">%2$s</a>', $adminPageUrl, __( 'Please remove license to dismiss this message.', 'rm_tmc' ) )
+				sprintf( __( 'Your license for %1$s is inactive.', 'tmc_sp' ), $pluginName ),
+				sprintf( '<a href="%1$s">%2$s</a>', $adminPageUrl, __( 'Please remove license to dismiss this message.', 'tmc_sp' ) )
 			);
 
 		}

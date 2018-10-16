@@ -1,7 +1,7 @@
 <?php
 namespace shellpress\v1_3_0\src\Shared\AdminPageFramework;
 
-use TMC_v1_0_3_AdminPageFramework;
+use TMC_v1_0_4_AdminPageFramework;
 
 /**
  * # Helper class for simply code separation.
@@ -12,7 +12,7 @@ abstract class AdminPage {
     /** @var string */
     public $pageSlug;
 
-    /** @var TMC_v1_0_3_AdminPageFramework */
+    /** @var TMC_v1_0_4_AdminPageFramework */
     public $pageFactory;
 
     /** @var string */
@@ -21,7 +21,7 @@ abstract class AdminPage {
     /**
      * AdminPage constructor.
      *
-     * @param TMC_v1_0_3_AdminPageFramework $pageFactory
+     * @param TMC_v1_0_4_AdminPageFramework $pageFactory
      * @param string $pageSlug
      */
     public function __construct( $pageFactory, $pageSlug ) {
