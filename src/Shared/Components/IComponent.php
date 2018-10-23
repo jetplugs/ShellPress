@@ -19,23 +19,12 @@ abstract class IComponent {
 	 * You must pass ShellPress Object or class name.
 	 *
 	 * @param ShellPress|string $shellPress
-	 * @param string|null       $setupHook  Hook on which onSetUp method will be called.
-	 * @param int               $priority   Priority of hook.
 	 */
-	public function __construct( $shellPress, $setupHook = null, $priority = 5 ) {
+	public function __construct( $shellPress ) {
 
 		$this->shellPressClassName = is_object( $shellPress ) ? get_class( $shellPress ) : $shellPress;
 
-		/**
-		 * @since 1_3_1
-		 * When $setupHook is set, onSetUp method will be called at it.
-		 * When not, it will be called immediately.
-		 */
-		if( $setupHook ){
-			add_action( $setupHook, array( $this, 'onSetUp' ), $priority );
-		} else {
-			$this->onSetUp();
-		}
+		$this->onSetUp();
 
 	}
 
