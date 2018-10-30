@@ -305,8 +305,8 @@ if( ! class_exists( 'shellpress\v1_2_9_2\src\Shell', false ) ) {
 		        if( defined( 'WP_PLUGIN_DIR' ) ){
 
 			        //  Some websites have paths saved with double slashes.
-			        $fileDir        = str_replace( '/', '', __DIR__ );
-			        $wpPluginSetDir = str_replace( '/', '', WP_PLUGIN_DIR );
+			        $fileDir        = str_replace( array( '/', '\\' ), '', __DIR__ );
+			        $wpPluginSetDir = str_replace( array( '/', '\\' ), '', WP_PLUGIN_DIR );
 
 			        if( strpos( $fileDir, $wpPluginSetDir ) !== false ){
 				        $this->isInsidePlugin = true;
