@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_1\src\Components\External;
+namespace shellpress\v1_3_2\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_3_1\src\Components\External;
  * Time: 12:39
  */
 
-use shellpress\v1_3_1\src\Shared\Components\IComponent;
+use shellpress\v1_3_2\src\Shared\Components\IComponent;
 use WP_Error;
 
 class MessagesHandler extends IComponent {
