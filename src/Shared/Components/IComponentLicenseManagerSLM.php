@@ -581,7 +581,7 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
 			array(
 				'field_id'          =>  'key',
 				'section_id'        =>  $this->_apfSectionId,
-				'type'              =>  'text',
+				'type'              =>  'password',
 				'title'             =>  __( 'Key' ),
 				'attributes'            =>  array(
 					'class'                 =>  'regular-text',
