@@ -305,8 +305,8 @@ if( ! class_exists( 'shellpress\v1_3_3\src\Shell', false ) ) {
 		        if( defined( 'WP_PLUGIN_DIR' ) ){
 
 			        //  Some websites have paths saved with double slashes.
-			        $fileDir        = str_replace( '/', '', __DIR__ );
-			        $wpPluginSetDir = str_replace( '/', '', WP_PLUGIN_DIR );
+			        $fileDir        = str_replace( array( '/', '\\' ), '', __DIR__ );
+			        $wpPluginSetDir = str_replace( array( '/', '\\' ), '', WP_PLUGIN_DIR );
 
 			        if( strpos( $fileDir, $wpPluginSetDir ) !== false ){
 				        $this->isInsidePlugin = true;
@@ -344,8 +344,8 @@ if( ! class_exists( 'shellpress\v1_3_3\src\Shell', false ) ) {
 	        if( is_null( $this->isInsidePlugin ) ){
 
 		        //  Some websites have paths saved with double slashes.
-		        $fileDir        = str_replace( '/', '', __DIR__ );
-		        $themeRootDir   = str_replace( '/', '', get_theme_root() );
+		        $fileDir        = str_replace( array( '/', '\\' ), '', __DIR__ );
+		        $themeRootDir   = str_replace( array( '/', '\\' ), '', get_theme_root() );
 
 		        if ( strpos( $fileDir, $themeRootDir ) !== false ) {
 			        $this->isInsideTheme = true;
