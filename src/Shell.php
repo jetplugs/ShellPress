@@ -104,15 +104,6 @@ if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
 
         	if( $this->isInitialized ) return;
 
-	        //  ----------------------------------------
-	        //  Before auto loading
-	        //  ----------------------------------------
-
-	        if( ! class_exists( 'shellpress\v1_3_4\src\Shared\Components\IComponent', false ) )
-		        require( __DIR__ . '/Shared/Components/IComponent.php' );
-	        if( ! class_exists( 'shellpress\v1_3_4\src\Components\External\AutoloadingHandler', false ) )
-		        require( __DIR__ . '/Components/External/AutoloadingHandler.php' );
-
 	        //  -----------------------------------
 	        //  Initialize handlers
 	        //  -----------------------------------
