@@ -1,0 +1,15 @@
+{
+  "name": "tmc/shellpress",
+  "description": "Wordpress plugin framework",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Jakub Kuranda",
+      "email": "jakubkuranda@gmail.com"
+    }
+  ],
+  "require": {
+    "php":  ">=5.3"
+  }
+}
