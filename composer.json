@@ -15,6 +15,9 @@
   "autoload": {
     "psr-4": {
       "shellpress\\v1_3_4\\" : ""
-    }
+    },
+    "files": [
+      "src/Shared/Utility/RequirementChecker.php"
+    ]
   }
 }
