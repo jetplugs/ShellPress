@@ -12,22 +12,32 @@ use shellpress\v1_3_4\src\Shared\Components\IComponent;
 class AutoloadingHandler extends IComponent {
 
 	/** @var Psr4AutoloaderClass */
-	protected $psr4Autoloader;
+	private $_psr4Autoloader;
 
 	/**
 	 * Called on handler construction.
 	 *
 	 * @return void
 	 */
-	protected function onSetUp() {
+	protected function onSetUp() {}
 
-		if ( ! class_exists( 'shellpress\v1_3_4\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ) {
-			require( $this->s()->getShellPressDir() . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
+	/**
+	 * @return Psr4AutoloaderClass
+	 */
+	protected function getAutoloader() {
+
+		if( $this->_psr4Autoloader ){
+
+			if ( ! class_exists( 'shellpress\v1_3_4\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ) {
+				require( $this->s()->getShellPressDir() . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
+			}
+
+			$this->_psr4Autoloader = new Psr4AutoloaderClass();
+			$this->_psr4Autoloader->register();
+
 		}
 
-		$this->psr4Autoloader = new Psr4AutoloaderClass();
-		$this->psr4Autoloader->register();
-		$this->psr4Autoloader->addNamespace( 'shellpress\v1_3_4', $this->s()->getShellPressDir() );
+		return $this->_psr4Autoloader;
 
 	}
 
@@ -38,7 +48,7 @@ class AutoloadingHandler extends IComponent {
 	 */
 	public function addNamespace( $prefix, $baseDir, $prepend = false ) {
 
-		$this->psr4Autoloader->addNamespace( $prefix, $baseDir, $prepend );
+		$this->getAutoloader()->addNamespace( $prefix, $baseDir, $prepend );
 
 	}
 
