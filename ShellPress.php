@@ -5,6 +5,8 @@ use shellpress\v1_3_4\src\Shell;
 
 if( ! class_exists( 'shellpress\v1_3_4\ShellPress', false ) ){
 
+	require __DIR__ . '/vendor/autoload.php';
+
     /**
      * Core class of plugin. To use it, simple extend it.
      */
