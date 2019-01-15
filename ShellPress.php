@@ -88,8 +88,6 @@ if( ! class_exists( 'shellpress\v1_3_4\ShellPress', false ) ){
          */
         public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
 
-            require_once( __DIR__ . '/src/Shell.php' );
-
 	        static::$_instances[ get_called_class() ] = $instance = new static();
 
             $instance->_shell = new Shell( $mainPluginFile, $pluginPrefix, $pluginVersion );
