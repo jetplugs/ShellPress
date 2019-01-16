@@ -17,21 +17,7 @@ class App extends ShellPress {
 	 */
 	protected function onSetUp() {
 
-		add_action( 'admin_init',       array( $this, '_a_addAdminPages' ) );
 
-	}
-
-	//  ================================================================================
-	//  ACTIONS
-	//  ================================================================================
-
-	/**
-	 * Called on admin_init.
-	 */
-	public function _a_addAdminPages() {
-
-		$page = $this::s()->adminPage->addPage( $this::s()->getPrefix( '_settings' ) );
-		$page->setPageTitle( 'ShellPress Demo' );
 
 	}
 
