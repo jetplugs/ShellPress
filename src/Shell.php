@@ -9,6 +9,7 @@ namespace shellpress\v1_3_4\src;
 
 use shellpress\v1_3_4\lib\Psr4Autoloader\Psr4AutoloaderClass;
 use shellpress\v1_3_4\ShellPress;
+use shellpress\v1_3_4\src\Components\External\AdminPage\AdminPageHandler;
 use shellpress\v1_3_4\src\Components\External\AutoloadingHandler;
 use shellpress\v1_3_4\src\Components\External\EventHandler;
 use shellpress\v1_3_4\src\Components\External\MustacheHandler;
@@ -70,6 +71,9 @@ if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
         /** @var MustacheHandler */
         public $mustache;
 
+	    /** @var AdminPageHandler */
+	    public $adminPage;
+
         /** @var ExtractorHandler */
         protected $extractor;
 
@@ -118,6 +122,7 @@ if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
 	        $this->mustache     = new MustacheHandler( $shellPress );
 	        $this->extractor    = new ExtractorHandler( $shellPress );
 	        $this->debug        = new DebugHandler( $shellPress );
+	        $this->adminPage    = new AdminPageHandler( $shellPress );
 
         }
 
