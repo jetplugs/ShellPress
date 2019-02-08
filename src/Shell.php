@@ -19,6 +19,7 @@ use shellpress\v1_3_5\src\Components\External\LogHandler;
 use shellpress\v1_3_5\src\Components\External\MessagesHandler;
 use shellpress\v1_3_5\src\Components\External\OptionsHandler;
 use shellpress\v1_3_5\src\Components\External\UtilityHandler;
+use shellpress\v1_3_5\src\Shared\Components\External\DbModelsHandler;
 
 if( ! class_exists( 'shellpress\v1_3_5\src\Shell', false ) ) {
 
@@ -76,6 +77,9 @@ if( ! class_exists( 'shellpress\v1_3_5\src\Shell', false ) ) {
         /** @var DebugHandler */
         protected $debug;
 
+        /** @var DbModelsHandler */
+        public $dbModels;
+
         /**
          * Shell constructor.
          *
@@ -118,6 +122,7 @@ if( ! class_exists( 'shellpress\v1_3_5\src\Shell', false ) ) {
 	        $this->mustache     = new MustacheHandler( $shellPress );
 	        $this->extractor    = new ExtractorHandler( $shellPress );
 	        $this->debug        = new DebugHandler( $shellPress );
+	        $this->dbModels     = new DbModelsHandler( $shellPress );
 
         }
 

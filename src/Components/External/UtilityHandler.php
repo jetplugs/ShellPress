@@ -236,4 +236,36 @@ class UtilityHandler extends IComponent {
 
 	}
 
+	/**
+	 * Works with multidimensional array.
+	 * Returns array of found values by searching by given key.
+	 *
+	 * @param mixed  $list
+	 * @param string $searchKey
+	 *
+	 * @return mixed[]
+	 */
+	public function listPluck( $list, $searchKey ) {
+
+		$results = array();
+
+		if( is_array( $list ) ){
+
+			foreach( $list as $key => $row ){
+
+				if( $key === $searchKey ){
+					$results[] = $row;
+				} else {
+					$moreResults = $this->listPluck( $row, $searchKey );
+					$results = array_merge( $results, $moreResults );
+				}
+
+			}
+
+		}
+
+		return $results;
+
+	}
+
 }
