@@ -28,7 +28,7 @@ class DbModelsHandler extends IComponent {
 		//  ACTIONS
 		//  ----------------------------------------
 
-		register_activation_hook( $this->s()->getMainPluginFile(), array( $this, '_a_createTables' ) );
+		$this::s()->event->addOnActivate( array( $this, '_a_createTables' ) );
 
 	}
 
@@ -156,11 +156,7 @@ class DbModelsHandler extends IComponent {
 	private function _createModelFromRawDbRowResponse( $rowResponseAsArray ) {
 
 		return new DbModel( array(
-			'id'            =>  $rowResponseAsArray['id'],
-			'date'          =>  $rowResponseAsArray['model_date'],
-			'modified'      =>  $rowResponseAsArray['model_modified'],
-			'author'        =>  $rowResponseAsArray['model_author'],
-			'value'         =>  maybe_unserialize( $rowResponseAsArray['model_value'] )
+			'id'    =>  $rowResponseAsArray['id']
 		) );
 
 	}
@@ -349,12 +345,7 @@ class DbModelsHandler extends IComponent {
 		//  Prepare data
 		//  ----------------------------------------
 
-		$data = array(
-			'model_author'      =>  $model->getAuthor(),
-			'model_date'        =>  $model->getDate(),
-			'model_modified'    =>  $model->getModified(),
-			'model_value'       =>  maybe_serialize( $model->getValue() )
-		);
+		$data = array();
 
 		if( $model->getId() ) $data['id'] = $model->getId();    //  Add ID to data.
 
