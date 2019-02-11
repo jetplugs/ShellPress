@@ -134,8 +134,10 @@ class DbModelsHandler extends IComponent {
 			meta_key varchar(100) NOT NULL,
 			meta_value longtext,
 			PRIMARY KEY  (meta_id),
+			KEY meta_id (meta_id),
 			KEY model_id (model_id),
-			KEY meta_key (meta_key)
+			KEY meta_key (meta_key),
+			KEY meta_value (meta_value(25))
 			) {$charsetCollate};";
 
 		dbDelta( $sql );

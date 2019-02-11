@@ -15,7 +15,7 @@ abstract class IPostModel {
 	const POST_TYPE = '';
 
 	/** @var WP_Post */
-	private $post;
+	private $_post;
 
 	/** @var array */
 	private $_metaForUpdate = array();
@@ -29,7 +29,7 @@ abstract class IPostModel {
 
 		if( ! $this::POST_TYPE ) wp_die( 'Your PostModel have to change const POST_TYPE string.' );
 
-		$this->post = $post;
+		$this->_post = $post;
 
 	}
 
@@ -53,7 +53,7 @@ abstract class IPostModel {
 	 */
 	public function &getPost() {
 
-		return $this->post;
+		return $this->_post;
 
 	}
 
@@ -64,7 +64,7 @@ abstract class IPostModel {
 	 */
 	public function getId() {
 
-		return (int) $this->post->ID;
+		return (int) $this->_post->ID;
 
 	}
 
