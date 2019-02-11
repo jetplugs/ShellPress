@@ -109,10 +109,6 @@ class DbModelsHandler extends IComponent {
 
 		$sql = "CREATE TABLE {$tableName} (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
-			model_author bigint(20) NULL,
-			model_date datetime NOT NULL,
-			model_modified datetime NOT NULL,
-  			model_value LONGTEXT NULL,
 			PRIMARY KEY  (id)
 			) {$charsetCollate};";
 
