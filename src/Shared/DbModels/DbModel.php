@@ -11,12 +11,22 @@ class DbModel {
 	/** @var int */
 	private $_id;
 
+	/** @var string */
+	private $_modelName;
+
 	/**
 	 * DbModel constructor.
 	 *
+	 * @param string $modelName
 	 * @param int $id
 	 */
-	public function __construct( $args = array() ) {
+	public function __construct( $modelName, $args = array() ) {
+
+		$this->_modelName = $modelName;
+
+		//  ----------------------------------------
+		//  Prepare args
+		//  ----------------------------------------
 
 		$defArgs = array(
 			'id'            =>  0
@@ -29,6 +39,15 @@ class DbModel {
 		//  ----------------------------------------
 
 		$this->_id = $args['id'];
+
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getModelName() {
+
+		return $this->_modelName;
 
 	}
 

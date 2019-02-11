@@ -147,13 +147,14 @@ class DbModelsHandler extends IComponent {
 	/**
 	 * Packs raw database response to new DbModel object.
 	 *
+	 * @param string
 	 * @param array $rowResponseAsArray
 	 *
 	 * @return DbModel
 	 */
-	private function _createModelFromRawDbRowResponse( $rowResponseAsArray ) {
+	private function _createModelFromRawDbRowResponse( $modelName, $rowResponseAsArray ) {
 
-		return new DbModel( array(
+		return new DbModel( $modelName, array(
 			'id'    =>  $rowResponseAsArray['id']
 		) );
 
@@ -336,7 +337,7 @@ class DbModelsHandler extends IComponent {
 
 		//  Create default DbModel instance if mode is not given.
 		if( empty( $model ) ) {
-			$model = new DbModel();
+			$model = new DbModel( $modelName );
 		}
 
 		//  ----------------------------------------
@@ -387,7 +388,7 @@ class DbModelsHandler extends IComponent {
 
 		if( $result ){
 
-			return $this->_createModelFromRawDbRowResponse( $result );
+			return $this->_createModelFromRawDbRowResponse( $modelName, $result );
 
 		} else {
 
@@ -547,7 +548,7 @@ class DbModelsHandler extends IComponent {
 			if( $options['return'] === 'objs' ){
 
 				foreach( $results as $row ){
-					$models[] = $this->_createModelFromRawDbRowResponse( $row );
+					$models[] = $this->_createModelFromRawDbRowResponse( $modelName, $row );
 				}
 
 			}
