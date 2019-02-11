@@ -483,7 +483,9 @@ class DbModelsHandler extends IComponent {
 		//  Base of SQL
 		//  ----------------------------------------
 
-		$sql = "SELECT * FROM {$modelTableName}" . PHP_EOL;
+		$selectWhat = $options['return'] === 'ids' ? 'id' : '*';
+
+		$sql = "SELECT {$selectWhat} FROM {$modelTableName}" . PHP_EOL;
 
 		//  ----------------------------------------
 		//  Meta query
@@ -600,7 +602,7 @@ class DbModelsHandler extends IComponent {
 
 			$this->_setCacheMeta( $modelName, $modelId, $metaKey, $result );
 
-			return $result ?  : $defaultValue;
+			return $result ?: $defaultValue;
 
 		}
 
@@ -612,7 +614,7 @@ class DbModelsHandler extends IComponent {
 	 * @param string $metaKey
 	 * @param mixed $value
 	 *
-	 * @return int Meta ID or 0 if notinserted.
+	 * @return int Meta ID or 0 if not inserted.
 	 */
 	public function insertMeta( $modelName, $modelId, $metaKey, $value ) {
 
@@ -648,7 +650,7 @@ class DbModelsHandler extends IComponent {
 
 		if( $result ){
 
-			$this->_setCacheMeta( $modelName, $modelId, $metaKey, $valueSerialized );
+			$this->_setCacheMeta( $modelName, $modelId, $metaKey, $value );
 
 			return $wpdb->insert_id;
 
