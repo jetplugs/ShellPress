@@ -701,7 +701,49 @@ class DbModelsHandler extends IComponent {
 
 	}
 
+	/**
+	 * Wrapped alias for getMeta.
+	 *
+	 * @param DbModel $dbModel
+	 * @param string $metaKey
+	 * @param mixed $defaultValue
+	 *
+	 * @return mixed
+	 */
+	public function getMetaWrap( $dbModel, $metaKey, $defaultValue = '' ) {
 
+		return $this->getMeta( $dbModel->getModelName(), $dbModel->getId(), $metaKey, $defaultValue );
+
+	}
+
+	/**
+	 * Wrapped alias for insertMeta.
+	 *
+	 * @param DbModel $dbModel
+	 * @param string $metaKey
+	 * @param mixed $value
+	 *
+	 * @return int
+	 */
+	public function insertMetaWrap( $dbModel, $metaKey, $value ) {
+
+		return $this->insertMeta( $dbModel->getModelName(), $dbModel->getId(), $metaKey, $value );
+
+	}
+
+	/**
+	 * Wrapped alias for deleteMeta.
+	 *
+	 * @param DbModel $dbModel
+	 * @param string|null  $metaKey
+	 *
+	 * @return bool
+	 */
+	public function deleteMetaWrap( $dbModel, $metaKey = null ) {
+
+		return $this->deleteMeta( $dbModel->getModelName(), $dbModel->getId(), $metaKey );
+
+	}
 
 	//  ================================================================================
 	//  ACTIONS
