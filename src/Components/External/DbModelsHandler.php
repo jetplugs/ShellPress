@@ -107,6 +107,7 @@ class DbModelsHandler extends IComponent {
 
 		$sql = "CREATE TABLE {$tableName} (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
+  			created datetime NULL,
 			PRIMARY KEY  (id)
 			) {$charsetCollate};";
 
@@ -135,7 +136,7 @@ class DbModelsHandler extends IComponent {
 			KEY meta_id (meta_id),
 			KEY model_id (model_id),
 			KEY meta_key (meta_key),
-			KEY meta_value (meta_value(25))
+			KEY meta_value (meta_value(24))
 			) {$charsetCollate};";
 
 		dbDelta( $sql );
@@ -320,7 +321,7 @@ class DbModelsHandler extends IComponent {
 		//  Do DB query
 		//  ----------------------------------------
 
-		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array( 'id' => null ) );
+		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array( 'created' => current_time( 'mysql', true ) ) );
 
 		return $result ? $wpdb->insert_id : 0;
 
