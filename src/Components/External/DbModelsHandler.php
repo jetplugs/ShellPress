@@ -8,8 +8,6 @@ namespace shellpress\v1_3_5\src\Components\External;
  */
 
 use shellpress\v1_3_5\src\Shared\Components\IComponent;
-use shellpress\v1_3_5\src\Shared\DbModels\DbModel;
-use WP_Error;
 use wpdb;
 
 class DbModelsHandler extends IComponent {
@@ -141,22 +139,6 @@ class DbModelsHandler extends IComponent {
 			) {$charsetCollate};";
 
 		dbDelta( $sql );
-
-	}
-
-	/**
-	 * Packs raw database response to new DbModel object.
-	 *
-	 * @param string
-	 * @param array $rowResponseAsArray
-	 *
-	 * @return DbModel
-	 */
-	private function _createModelFromRawDbRowResponse( $modelName, $rowResponseAsArray ) {
-
-		return new DbModel( $modelName, array(
-			'id'    =>  $rowResponseAsArray['id']
-		) );
 
 	}
 
@@ -327,74 +309,20 @@ class DbModelsHandler extends IComponent {
 	 * This method may be used to generate new model or update existing one.
 	 *
 	 * @param string $modelName
-	 * @param DbModel|null $model
 	 *
-	 * @return DbModel|WP_Error
+	 * @return int
 	 */
-	public function insertModel( $modelName, $model = null ) {
+	public function insertModel( $modelName ) {
 
 		global $wpdb; /** @var wpdb $wpdb */
-
-		//  Create default DbModel instance if mode is not given.
-		if( empty( $model ) ) {
-			$model = new DbModel( $modelName );
-		}
-
-		//  ----------------------------------------
-		//  Prepare data
-		//  ----------------------------------------
-
-		$data = array();
-
-		if( $model->getId() ) $data['id'] = $model->getId();    //  Add ID to data.
 
 		//  ----------------------------------------
 		//  Do DB query
 		//  ----------------------------------------
 
-		$result = $wpdb->replace( $this->_getModelTableName( $modelName ), $data );
+		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array() );
 
-		if( $result ){
-
-			$model->setId( $wpdb->insert_id );
-
-			return $model;
-
-		} else {
-
-			return new WP_Error();
-
-		}
-
-	}
-
-	/**
-	 * @param string $modelName
-	 * @param int $modelId
-	 *
-	 * @return DbModel|WP_Error
-	 */
-	public function getModel( $modelName, $modelId ) {
-
-		global $wpdb; /** @var wpdb $wpdb */
-
-		$tableName = $this->_getModelTableName( $modelName );
-
-		//  ----------------------------------------
-		//  Do DB query
-		//  ----------------------------------------
-
-		$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tableName} WHERE id = %s", $modelId ), 'ARRAY_A' );
-
-		if( $result ){
-
-			return $this->_createModelFromRawDbRowResponse( $modelName, $result );
-
-		} else {
-
-			return new WP_Error();
-
-		}
+		return $result ? $wpdb->insert_id : 0;
 
 	}
 
@@ -458,7 +386,7 @@ class DbModelsHandler extends IComponent {
 	 * @param array $options
 	 * @param array $metaQuery
 	 *
-	 * @return DbModel[]|int[]
+	 * @return int[]
 	 */
 	public function findModels( $modelName, $options = array(), $metaQuery = array() ) {
 
@@ -474,7 +402,7 @@ class DbModelsHandler extends IComponent {
 		$defOptions = array(
 			'page'      =>  1,
 			'perPage'   =>  10,
-			'return'    =>  'objs'  //  ids,objs
+			'return'    =>  'ids'  //  For now we only support IDs
 		);
 
 		$options = wp_parse_args( $options, $defOptions );
@@ -541,33 +469,23 @@ class DbModelsHandler extends IComponent {
 		//  ----------------------------------------
 
 		$results = $wpdb->get_results( $sql, 'ARRAY_A' );
-		$models = array();
+		$ids = array();
 
 		if( is_array( $results ) ){
-
-			//  Return objects
-
-			if( $options['return'] === 'objs' ){
-
-				foreach( $results as $row ){
-					$models[] = $this->_createModelFromRawDbRowResponse( $modelName, $row );
-				}
-
-			}
 
 			//  Returns ids
 
 			if( $options['return'] === 'ids' ){
 
 				foreach( $results as $row ){
-					$models[] = $row['id'];
+					$ids[] = $row['id'];
 				}
 
 			}
 
 		}
 
-		return $models;
+		return $ids;
 
 	}
 
@@ -698,50 +616,6 @@ class DbModelsHandler extends IComponent {
 			return false;
 
 		}
-
-	}
-
-	/**
-	 * Wrapped alias for getMeta.
-	 *
-	 * @param DbModel $dbModel
-	 * @param string $metaKey
-	 * @param mixed $defaultValue
-	 *
-	 * @return mixed
-	 */
-	public function getMetaWrap( $dbModel, $metaKey, $defaultValue = '' ) {
-
-		return $this->getMeta( $dbModel->getModelName(), $dbModel->getId(), $metaKey, $defaultValue );
-
-	}
-
-	/**
-	 * Wrapped alias for insertMeta.
-	 *
-	 * @param DbModel $dbModel
-	 * @param string $metaKey
-	 * @param mixed $value
-	 *
-	 * @return int
-	 */
-	public function insertMetaWrap( $dbModel, $metaKey, $value ) {
-
-		return $this->insertMeta( $dbModel->getModelName(), $dbModel->getId(), $metaKey, $value );
-
-	}
-
-	/**
-	 * Wrapped alias for deleteMeta.
-	 *
-	 * @param DbModel $dbModel
-	 * @param string|null  $metaKey
-	 *
-	 * @return bool
-	 */
-	public function deleteMetaWrap( $dbModel, $metaKey = null ) {
-
-		return $this->deleteMeta( $dbModel->getModelName(), $dbModel->getId(), $metaKey );
 
 	}
 
