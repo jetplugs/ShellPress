@@ -402,7 +402,7 @@ class DbModelsHandler extends IComponent {
 		$defOptions = array(
 			'page'      =>  1,
 			'perPage'   =>  10,
-			'return'    =>  'ids'  //  For now we only support IDs
+			'return'    =>  'ids'  //  ids, count
 		);
 
 		$options = wp_parse_args( $options, $defOptions );
@@ -411,7 +411,18 @@ class DbModelsHandler extends IComponent {
 		//  Base of SQL
 		//  ----------------------------------------
 
-		$selectWhat = $options['return'] === 'ids' ? 'id' : '*';
+		switch( $options['return'] ){
+			case 'ids':
+				$selectWhat = 'id';
+				break;
+
+			case 'count':
+				$selectWhat = 'count(*)';
+				break;
+
+			default:
+				$selectWhat = '*';
+		}
 
 		$sql = "SELECT {$selectWhat} FROM {$modelTableName}" . PHP_EOL;
 
