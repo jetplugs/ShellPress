@@ -320,7 +320,7 @@ class DbModelsHandler extends IComponent {
 		//  Do DB query
 		//  ----------------------------------------
 
-		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array() );
+		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array( 'id' ) );
 
 		return $result ? $wpdb->insert_id : 0;
 
