@@ -320,7 +320,7 @@ class DbModelsHandler extends IComponent {
 		//  Do DB query
 		//  ----------------------------------------
 
-		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array( 'id' ) );
+		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array( 'id' => null ) );
 
 		return $result ? $wpdb->insert_id : 0;
 
@@ -567,7 +567,7 @@ class DbModelsHandler extends IComponent {
 		//  Check if its update or insert
 		//  ----------------------------------------
 
-		$getMetaIdResult = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$tableName} WHERE model_id = %s AND meta_key = %s", array( $modelId, $metaKey ) ) );
+		$getMetaIdResult = $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM {$tableName} WHERE model_id = %s AND meta_key = %s", array( $modelId, $metaKey ) ) );
 
 		if( $getMetaIdResult ) $data['id'] = $getMetaIdResult;
 
