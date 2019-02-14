@@ -570,7 +570,7 @@ class DbModelsHandler extends IComponent {
 
 		$getMetaIdResult = $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM {$tableName} WHERE model_id = %s AND meta_key = %s", array( $modelId, $metaKey ) ) );
 
-		if( $getMetaIdResult ) $data['id'] = $getMetaIdResult;
+		if( $getMetaIdResult ) $data['meta_id'] = $getMetaIdResult;
 
 		//  ----------------------------------------
 		//  Do DB query
