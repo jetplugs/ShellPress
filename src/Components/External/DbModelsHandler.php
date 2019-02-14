@@ -266,7 +266,7 @@ class DbModelsHandler extends IComponent {
 	 */
 	private function _setCacheMeta( $modelName, $modelId, $metaKey, $value ) {
 
-		$modelMetaCache = $this->_getCacheMeta( $modelName, $modelId, $metaKey );
+		$modelMetaCache = wp_cache_get( $modelId, "{$modelName}_meta" );
 
 		if( ! is_array( $modelMetaCache ) ){
 			$modelMetaCache = array();
@@ -289,7 +289,7 @@ class DbModelsHandler extends IComponent {
 
 		if( $metaKey ){
 
-			$modelMetaCache = $this->_getCacheMeta( $modelName, $modelId, $metaKey );
+			$modelMetaCache = wp_cache_get( $modelId, "{$modelName}_meta" );
 
 			if( is_array( $modelMetaCache ) && isset( $modelMetaCache[$metaKey] ) ){
 				unset( $modelMetaCache[$metaKey] );
