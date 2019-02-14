@@ -26,7 +26,7 @@ class AutoloadingHandler extends IComponent {
 	 */
 	protected function getAutoloader() {
 
-		if( $this->_psr4Autoloader ){
+		if( ! $this->_psr4Autoloader ){
 
 			if ( ! class_exists( 'shellpress\v1_3_5\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ) {
 				require( $this->s()->getShellPressDir() . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
