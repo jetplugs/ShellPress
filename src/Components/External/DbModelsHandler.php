@@ -350,6 +350,7 @@ class DbModelsHandler extends IComponent {
 		if( $result ){
 
 			$this->deleteMeta( $modelName, $modelId );
+			$this->pushChanges( $modelName, $modelId );
 
 		}
 
@@ -632,7 +633,8 @@ class DbModelsHandler extends IComponent {
 	}
 
 	/**
-	 * This method applies changes in database.
+	 * This method applies meta changes in database.
+	 * Use it every time after inserting or deleting meta from model.
 	 * - current state: not doing anything. Please use it for further compatibility.
 	 *
 	 * @param string $modelName
