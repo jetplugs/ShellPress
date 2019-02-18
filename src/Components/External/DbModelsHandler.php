@@ -635,9 +635,12 @@ class DbModelsHandler extends IComponent {
 	 * This method applies changes in database.
 	 * - current state: not doing anything. Please use it for further compatibility.
 	 *
+	 * @param string $modelName
+	 * @param int $modelId
+	 *
 	 * @return bool
 	 */
-	public function pushChanges() {
+	public function pushChanges( $modelName, $modelId ) {
 
 		//  TODO - implementation.
 
