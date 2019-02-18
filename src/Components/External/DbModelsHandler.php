@@ -631,6 +631,20 @@ class DbModelsHandler extends IComponent {
 
 	}
 
+	/**
+	 * This method applies changes in database.
+	 * - current state: not doing anything. Please use it for further compatibility.
+	 *
+	 * @return bool
+	 */
+	public function pushChanges() {
+
+		//  TODO - implementation.
+
+		return true;
+
+	}
+
 	//  ================================================================================
 	//  ACTIONS
 	//  ================================================================================
