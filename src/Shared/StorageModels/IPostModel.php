@@ -205,9 +205,22 @@ abstract class IPostModel {
 	/**
 	 * Updates post data and all set meta.
 	 *
+	 * @deprecated - use: pushChanges()
+	 *
 	 * @return void
 	 */
 	public function flush() {
+
+		$this->pushChanges();
+
+	}
+
+	/**
+	 * Updates post data and all set meta.
+	 *
+	 * @return void
+	 */
+	public function pushChanges() {
 
 		wp_update_post( $this->getPost(), true );
 

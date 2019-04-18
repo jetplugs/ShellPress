@@ -205,9 +205,22 @@ abstract class ITermModel {
 	/**
 	 * Updates post data and all set meta.
 	 *
+	 * @deprecated - use: pushChanges()
+	 *
 	 * @return void
 	 */
 	public function flush() {
+
+		$this->pushChanges();
+
+	}
+
+	/**
+	 * Updates post data and all set meta.
+	 *
+	 * @return void
+	 */
+	public function pushChanges() {
 
 		$args = array(
 			'name'          =>  $this->getName(),
