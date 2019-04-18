@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_5\src\Shared\Front\Models;
+namespace shellpress\v1_3_6\src\Shared\Front\Models;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -172,7 +172,7 @@ class HtmlElement {
      */
     public function setContent( $content ) {
 
-        $this->content = (array) $content;
+        $this->content = is_array( $content ) ? $content : array( $content );
 
         return $this;
 
@@ -181,15 +181,28 @@ class HtmlElement {
     /**
      * @param HtmlElement|string $content
      *
+     * @deprecated use: addContent()
+     *
      * @return self
      */
     public function append( $content ) {
 
-        $this->content[] = $content;
-
-        return $this;
+        return $this->addContent( $content );
 
     }
+
+	/**
+	 * @param HtmlElement|string $content
+	 *
+	 * @return self
+	 */
+	public function addContent( $content ) {
+
+		$this->content[] = $content;
+
+		return $this;
+
+	}
 
     /**
      * @param HtmlElement|string $content

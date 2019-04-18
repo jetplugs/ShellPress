@@ -1,6 +1,6 @@
 <?php
 
-namespace shellpress\v1_3_5\lib\Psr\Log;
+namespace shellpress\v1_3_6\lib\Psr\Log;
 
 /**
  * Describes log levels.
