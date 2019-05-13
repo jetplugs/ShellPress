@@ -8,8 +8,6 @@ namespace shellpress\v1_3_7\src\Components\External;
 
 use Mustache_Autoloader;
 use Mustache_Engine;
-use Mustache_Loader_FilesystemLoader;
-use Mustache_Loader_StringLoader;
 use shellpress\v1_3_7\src\Shared\Components\IComponent;
 
 class MustacheHandler extends IComponent {
@@ -35,8 +33,6 @@ class MustacheHandler extends IComponent {
 		if( ! $this->engine ){
 
 			//  Mustache autoloader
-
-			$this::s()->requireFile( 'lib/ShellPress/lib/Mustache/Autoloader.php', 'Mustache_Autoloader' );
 			Mustache_Autoloader::register();
 
 			//  Construct Mustache instance
