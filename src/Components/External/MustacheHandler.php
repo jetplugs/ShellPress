@@ -6,7 +6,6 @@ namespace shellpress\v1_3_7\src\Components\External;
  * Time: 21:36
  */
 
-use Mustache_Autoloader;
 use Mustache_Engine;
 use shellpress\v1_3_7\src\Shared\Components\IComponent;
 
