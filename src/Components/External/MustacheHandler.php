@@ -32,11 +32,7 @@ class MustacheHandler extends IComponent {
 
 		if( ! $this->engine ){
 
-			//  Mustache autoloader
-			Mustache_Autoloader::register();
-
 			//  Construct Mustache instance
-
 			$this->engine           = new Mustache_Engine();
 			$this->isInitialized    = true;
 
