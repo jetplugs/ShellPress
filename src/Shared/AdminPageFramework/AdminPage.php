@@ -13,7 +13,7 @@ abstract class AdminPage {
     public $pageSlug;
 
     /**
-     * @var stdClass AdminPageFramework instance
+     * @var mixed AdminPageFramework instance
      */
     public $pageFactory;
 

@@ -13,7 +13,7 @@ abstract class AdminPageTab extends AdminPage {
     /**
      * AdminPage constructor.
      *
-     * @param @var stdClass AdminPageFramework instance
+     * @param mixed AdminPageFramework instance
      * @param string $pageSlug
      * @param string $tabSlug
      */
