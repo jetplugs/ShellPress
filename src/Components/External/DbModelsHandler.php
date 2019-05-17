@@ -223,7 +223,7 @@ class DbModelsHandler extends IComponent {
 				} else {
 
 					//  This is nested group. Run recursive method.
-					$sqlParts[] = $this->_getSqlPartForMetaQuery( $modelName, $condition, @$metaTableAliasIndex );
+					$sqlParts[] = $this->_getSqlPartForMetaQuery( $modelName, $condition, $metaTableAliasIndex );
 
 				}
 
