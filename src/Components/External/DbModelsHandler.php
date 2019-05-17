@@ -153,9 +153,15 @@ class DbModelsHandler extends IComponent {
 	 *
 	 * @return string
 	 */
-	private function _getSqlPartForMetaQuery( $modelName, $conditions, &$metaTableAliasIndex = 1 ) {
+	private function _getSqlPartForMetaQuery( $modelName, $conditions, &$metaTableAliasIndex = null ) {
 
 		global $wpdb;   /** @var wpdb $wpdb */
+
+		/**
+		 * Make sure $metaTableAliasIndex is variable.
+		 * Some versions of PHP have problems with passing default parameters as reference.
+		 */
+		if( is_null( $metaTableAliasIndex ) ) $metaTableAliasIndex = 1;
 
 		$sqlParts = array();
 
