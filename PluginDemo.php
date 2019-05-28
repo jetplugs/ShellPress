@@ -2,7 +2,7 @@
 /**
  * Plugin Name:     ShellPress Demo
  * Description:     Development demo for ShellPress framework.
- * Version:         1.0.0
+ * Version:         1.0.1
  * Plugin URI:      https://themastercut.co
  * Author:          TheMasterCut.co
  * License:         GPL-2.0+
@@ -27,4 +27,4 @@ if( ! $checkPHP || ! $checkWP ) return;
 //  ShellPress
 //  ----------------------------------------
 
-\shellpress\v1_3_71\demo\App::initShellPress( __FILE__, 'spdemo', '1.0.0' );   //  <--- Remember to always change version here
+\shellpress\v1_3_72\demo\App::initShellPress( __FILE__, 'spdemo', '1.0.1' );   //  <--- Remember to always change version here
