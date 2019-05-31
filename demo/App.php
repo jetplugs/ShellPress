@@ -27,7 +27,7 @@ class App extends ShellPress {
 		//  Filters
 		//  ----------------------------------------
 
-		add_filter( 'plugin_action_links_' . $this::s()->getPluginBasename(),   array( $this, '_f_addPluginLink' ) );
+		add_action( 'plugin_row_meta',   array( $this, '_f_addPluginLink' ), 10, 4 );
 
 	}
 
@@ -35,11 +35,15 @@ class App extends ShellPress {
 	//  FILTERS
 	//  ================================================================================
 
-	public function _f_addPluginLink( $links ) {
+	public function _f_addPluginLink( $plugin_meta, $plugin_file, $plugin_data, $status ) {
 
-		$links[] = $this->universalFrontExample->getDisplay();
+		if( strpos( $this::s()->getMainPluginFile(), $plugin_file ) !== false ){
 
-		return $links;
+			$plugin_meta[] = $this->universalFrontExample->getDisplay();
+
+		}
+
+		return $plugin_meta;
 
 	}
 
