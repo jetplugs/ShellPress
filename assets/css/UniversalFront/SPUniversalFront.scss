@@ -72,14 +72,14 @@
 
                 display: block;
                 content: '';
-                width: 20px;
-                height: 20px;
+                width: 10px;
+                height: 10px;
                 border-radius: 50%;
-                border-width: 4px;
-                border-color: #000;
+                border-width: 3px;
+                border-color: transparent;
                 border-style: solid;
-                border-bottom-color: transparent !important;
-                animation: rotation 1s infinite linear;
+                border-bottom-color: #000 !important;
+                animation: rotation 0.5s infinite linear;
 
                 @-webkit-keyframes rotation {
                     from {

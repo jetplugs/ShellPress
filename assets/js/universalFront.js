@@ -161,9 +161,6 @@
                 $.post( plugin.$element.attr( 'action' ), submittedFormData )
                     .done( function( response ){
 
-                        //  Clear notifications.
-                        plugin.$notifArea.empty();
-
                         //  Replace HTML.
                         if( response.hasOwnProperty( 'replacementHtml' ) && response.replacementHtml.length > 0 ){
 
@@ -229,8 +226,6 @@
      * @return boolean|Plugin
      */
     Plugin.prototype.isLocked = function( value = null ){
-
-        console.log( value );
 
         if( typeof value === "boolean" ){
 
@@ -315,20 +310,6 @@
             this._$fakeSubmitButton = null;
 
         }
-
-    };
-
-    /**
-     * Just removes all child nodes from notification area.
-     *
-     * @name Plugin#cleaNotifications
-     * @return {Plugin}
-     */
-    Plugin.prototype.cleaNotifications = function() {
-
-        this.$notifArea.empty();
-
-        return this;
 
     };
 

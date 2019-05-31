@@ -27,7 +27,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		add_action( 'init',                             array( $this, '_a_registerShortcode' ) );
 		add_action( 'rest_api_init',                    array( $this, '_a_initializeRestRoutes' ) );
-		add_action( 'wp_enqueue_scripts',               array( $this,  '' ) );
+		add_action( 'wp_enqueue_scripts',               array( $this,  '_a_enqueueAssets' ) );
+		add_action( 'admin_enqueue_scripts',            array( $this,  '_a_enqueueAssets' ) );
 
 	}
 
