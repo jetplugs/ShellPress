@@ -50,12 +50,14 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 	 * Called when front end form is sent to rest API.
 	 * Returns UniversalFrontResponse object.
 	 *
-	 * @param UniversalFrontResponse
+	 * @param UniversalFrontResponse $universalFrontResponse
 	 * @param WP_REST_Request $request
 	 *
 	 * @return UniversalFrontResponse
 	 */
 	protected function processUniversalFrontResponse( $universalFrontResponse, $request ) {
+
+		$universalFrontResponse->setReplacementHtml( $this->getInnerHtml( $request ) );
 
 		return $universalFrontResponse;
 

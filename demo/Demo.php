@@ -9,7 +9,7 @@ namespace shellpress\v1_3_72\demo;
 use shellpress\v1_3_72\demo\src\Components\UniversalFrontExample;
 use shellpress\v1_3_72\ShellPress;
 
-class App extends ShellPress {
+class Demo extends ShellPress {
 
 	/** @var UniversalFrontExample */
 	public $universalFrontExample;

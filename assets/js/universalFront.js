@@ -19,8 +19,10 @@
         //  Core elements
         //  ----------------------------------------
 
-        this.$element   = $( target );
-        this.$fieldset  = this.$element.find( '> fieldset' );
+        this.$element       = $( target );
+        this.$form          = $( '#' + this.$element.data( 'form-id' ) );
+        this.$fieldset      = this.$element.find( '.sp-universalfront-fieldset' );
+        this.$dynamicArea   = this.$element.find( '.sp-universalfront-dynamic-area' );
 
         //  ----------------------------------------
         //  Private properties
@@ -110,7 +112,7 @@
         //  Submitter
         //  ----------------------------------------
 
-        plugin.$element.on( 'submit', function( event, action = 'submit' ){
+        plugin.$form.on( 'submit', function( event, action = 'submit' ){
 
             event.preventDefault();
 
@@ -129,7 +131,7 @@
             //  Prepare submitted form data
             //  ----------------------------------------
 
-            var submittedFormData = plugin.$element.serializeArray();
+            var submittedFormData = plugin.$form.serializeArray();
 
             if( action === 'refresh' ){
 
@@ -140,7 +142,7 @@
                  */
                 submittedFormData = $.grep( submittedFormData, function( input ){
 
-                    return input.name.indexOf( 'shortcode[' ) === 0;
+                    return input.name.indexOf( 'sp-universalfront[' ) === 0;
 
                 } );
 
@@ -158,13 +160,13 @@
 
             setTimeout( function(){
 
-                $.post( plugin.$element.attr( 'action' ), submittedFormData )
+                $.post( plugin.$form.attr( 'action' ), submittedFormData )
                     .done( function( response ){
 
                         //  Replace HTML.
                         if( response.hasOwnProperty( 'replacementHtml' ) && response.replacementHtml.length > 0 ){
 
-                            plugin.$fieldset.html( response.replacementHtml );
+                            plugin.$dynamicArea.html( response.replacementHtml );
 
                         }
 
@@ -202,11 +204,20 @@
                         //  We always want to remove fake submit input.
                         plugin._maybeRemoveFakeSubmitInput();
 
+                        //  Re-bind all fields to form.
+                        plugin.bindAllFieldsToForm();
+
                     } );
 
             }, plugin.options.requestDelay );
 
         } );
+
+        //  ----------------------------------------
+        //  Bind all fields, just to be sure.
+        //  ----------------------------------------
+
+        plugin.bindAllFieldsToForm();
 
         //  ----------------------------------------
         //  Mark form as initialized
@@ -266,7 +277,7 @@
      */
     Plugin.prototype.triggerSubmit = function( action = 'submit' ) {
 
-        this.$element.trigger( 'submit', [ action ] );
+        this.$form.trigger( 'submit', [ action ] );
 
         //  Return self for chaining.
         return this;
@@ -281,7 +292,7 @@
      * @param {$} $button
      * @return {$}
      */
-    Plugin.prototype._appendFakeSubmitInputToButton = function($button ) {
+    Plugin.prototype._appendFakeSubmitInputToButton = function( $button ) {
 
         this._$fakeSubmitButton = $( '<input>' ).attr( {
             'type':     'hidden',
@@ -310,6 +321,19 @@
             this._$fakeSubmitButton = null;
 
         }
+
+    };
+
+    /**
+     * Rebinds all fields inside fieldset to form.
+     *
+     * @name Plugin#bindAllFieldsToForm
+     *
+     * @return {$}
+     */
+    Plugin.prototype.bindAllFieldsToForm = function() {
+
+        this.$fieldset.find( 'input, textarea, button, select' ).attr( 'form', this.$form.attr( 'id' ) );
 
     };
 

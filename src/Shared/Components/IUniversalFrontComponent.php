@@ -7,12 +7,20 @@ namespace shellpress\v1_3_72\src\Shared\Components;
  * Time: 13:50
  */
 
+use shellpress\v1_3_72\src\Shared\Front\Models\HtmlElement;
 use shellpress\v1_3_72\src\Shared\RestModels\UniversalFrontResponse;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
 abstract class IUniversalFrontComponent extends IComponent {
+
+	/**
+     * Array of form id's to create in future.
+     *
+	 * @var string[]
+	 */
+    private $_formIdsToCreate = array();
 
 	/**
 	 * Called on creation of component.
@@ -27,8 +35,10 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		add_action( 'init',                             array( $this, '_a_registerShortcode' ) );
 		add_action( 'rest_api_init',                    array( $this, '_a_initializeRestRoutes' ) );
-		add_action( 'wp_enqueue_scripts',               array( $this,  '_a_enqueueAssets' ) );
-		add_action( 'admin_enqueue_scripts',            array( $this,  '_a_enqueueAssets' ) );
+		add_action( 'wp_enqueue_scripts',               array( $this, '_a_enqueueAssets' ) );
+		add_action( 'admin_enqueue_scripts',            array( $this, '_a_enqueueAssets' ) );
+		add_action( 'wp_footer',                        array( $this, '_a_createForms' ) );
+		add_action( 'admin_footer',                     array( $this, '_a_createForms' ) );
 
 	}
 
@@ -57,7 +67,7 @@ abstract class IUniversalFrontComponent extends IComponent {
      * Called when front end form is sent to rest API.
      * Returns UniversalFrontResponse object.
      *
-     * @param UniversalFrontResponse
+     * @param UniversalFrontResponse $universalFrontResponse
 	 * @param WP_REST_Request $request
 	 *
 	 * @return UniversalFrontResponse
@@ -136,7 +146,10 @@ abstract class IUniversalFrontComponent extends IComponent {
 	 */
 	public function getDisplay( $attrs = array(), $content = null ) {
 
-		$thisElementId = $this::s()->getPrefix( uniqid() );
+		$thisElementId  = $this::s()->getPrefix( uniqid() );
+		$thisFormId     = $this::s()->getPrefix( uniqid() );
+
+		$this->_formIdsToCreate[] = $thisFormId;  //  Add form ID for further creation.
 
 		//  ----------------------------------------
 		//  Prepare fake request for passing
@@ -172,27 +185,30 @@ abstract class IUniversalFrontComponent extends IComponent {
 		ob_start();
 		?>
 
-		<form
-            method="post"
+		<div
             class="<?= esc_attr( implode( ' ', $thisElementClasses ) ) ?>"
             id="<?= esc_attr( $thisElementId ) ?>"
-            action="<?= esc_attr( $this->getRestRouteUrl() ) ?>"
+            data-form-id="<?= esc_attr( $thisFormId ) ?>"
         >
 
 			<div class="sp-universalfront-loader">
 				<span></span>
 			</div>
 
-            <input type="hidden" name="sp-universalfront[attrs-json]"   value="<?= esc_attr( $shortcodeData['attrs-json'] ); ?>">
-            <input type="hidden" name="sp-universalfront[content]"      value="<?= esc_attr( $shortcodeData['content'] ); ?>">
-            <input type="hidden" name="sp-universalfront[form-id]"      value="<?= esc_attr( $shortcodeData['form-id'] ); ?>">
-            <input type="hidden" name="sp-universalfront[action]"       value="<?= esc_attr( $shortcodeData['action'] ) ?>">
+			<fieldset form="<?= esc_attr( $thisFormId ) ?>" class="sp-universalfront-fieldset" style="visibility: hidden;" disabled="disabled">
 
-            <input type="submit" name="submit" value="submit" style="width:0; height:0; position:absolute; visibility:hidden">
+                <input type="hidden" name="sp-universalfront[attrs-json]"   value="<?= esc_attr( $shortcodeData['attrs-json'] ); ?>">
+                <input type="hidden" name="sp-universalfront[content]"      value="<?= esc_attr( $shortcodeData['content'] ); ?>">
+                <input type="hidden" name="sp-universalfront[form-id]"      value="<?= esc_attr( $shortcodeData['form-id'] ); ?>">
+                <input type="hidden" name="sp-universalfront[action]"       value="<?= esc_attr( $shortcodeData['action'] ) ?>">
 
-			<fieldset style="visibility: hidden;" disabled="disabled">
+                <input type="submit" name="submit" value="submit" style="width:0; height:0; position:absolute; visibility:hidden">
 
-				<?php echo $this->getInnerHtml( $fakeRequest ); ?>
+                <div class="sp-universalfront-dynamic-area">
+
+	                <?php echo $this->getInnerHtml( $fakeRequest ); ?>
+
+                </div>
 
 			</fieldset>
 
@@ -204,7 +220,7 @@ abstract class IUniversalFrontComponent extends IComponent {
                 } );
             </script>
 
-		</form>
+		</div>
 
 		<?php
 		return ob_get_clean();
@@ -248,6 +264,29 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 	    wp_enqueue_script( 'spUniversalFront', $this::s()->getUrl( 'assets/js/universalFront.js' ), array( 'jquery' ), $this::s()->getFullPluginVersion(), true );
 	    wp_enqueue_style( 'spUniversalFront', $this::s()->getUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), $this::s()->getFullPluginVersion() );
+
+    }
+
+	/**
+     * Called on wp_footer and admin_footer.
+     * Creates <form> tags to hook up with universal front components.
+     *
+	 * @return void
+	 */
+    public function _a_createForms() {
+
+        foreach( $this->_formIdsToCreate as $formId ){
+
+            $formEl = HtmlElement::create( 'form' );
+            $formEl->setAttributes( array(
+                'method'    =>  'POST',
+                'action'    =>  esc_attr( $this->getRestRouteUrl() ),
+                'id'        =>  esc_attr( $formId )
+            ) );
+
+            echo $formEl->getDisplay();
+
+        }
 
     }
 
