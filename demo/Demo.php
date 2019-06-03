@@ -23,28 +23,6 @@ class Demo extends ShellPress {
 
 		$this->universalFrontExample = new UniversalFrontExample( $this );
 
-		//  ----------------------------------------
-		//  Filters
-		//  ----------------------------------------
-
-		add_action( 'plugin_row_meta',   array( $this, '_f_addPluginLink' ), 10, 4 );
-
-	}
-
-	//  ================================================================================
-	//  FILTERS
-	//  ================================================================================
-
-	public function _f_addPluginLink( $plugin_meta, $plugin_file, $plugin_data, $status ) {
-
-		if( strpos( $this::s()->getMainPluginFile(), $plugin_file ) !== false ){
-
-			$plugin_meta[] = $this->universalFrontExample->getDisplay();
-
-		}
-
-		return $plugin_meta;
-
 	}
 
 }
