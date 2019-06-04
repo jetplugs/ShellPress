@@ -262,8 +262,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 	 */
 	public function _a_enqueueAssets() {
 
-	    wp_enqueue_script( 'spUniversalFront', $this::s()->getUrl( 'assets/js/universalFront.js' ), array( 'jquery' ), $this::s()->getFullPluginVersion(), true );
-	    wp_enqueue_style( 'spUniversalFront', $this::s()->getUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), $this::s()->getFullPluginVersion() );
+	    wp_enqueue_script( 'spUniversalFront', $this::s()->getShellUrl( 'assets/js/universalFront.js' ), array( 'jquery' ), $this::s()->getFullPluginVersion(), true );
+	    wp_enqueue_style( 'spUniversalFront', $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), $this::s()->getFullPluginVersion() );
 
     }
 

@@ -148,29 +148,48 @@ if( ! class_exists( 'shellpress\v1_3_72\src\Shell', false ) ) {
          * Prepends given string with plugin or theme directory url.
          * Example usage: getUrl( 'assets/style.css' );
          *
-         * @param string $relativePath
+         * @param string      $relativePath
+         * @param string|null $relativeToFileOrDir - To which file or dir we are relating to?
+         *                                    If null, it will be relative to main plugin file.
          *
          * @return string - URL
          */
-        public function getUrl( $relativePath = '' ) {
+        public function getUrl( $relativePath = '', $relativeToFileOrDir = null ) {
+
+        	if( $relativeToFileOrDir ){
+        		$relativePointer = is_dir( $relativeToFileOrDir ) ? $relativeToFileOrDir : dirname( $relativeToFileOrDir );
+	        } else {
+        		$relativePointer = dirname( $this->getMainPluginFile() );
+	        }
+
+        	$relativePointer = str_replace( '\\', '/', $relativePointer );  //  Normalize on Windows.
 
 	        //  ----------------------------------------
 	        //  Prepare url
 	        //  ----------------------------------------
 
-            if( $this->isInsidePlugin() ){
-            	$containerUrl = plugin_dir_url( $this->getMainPluginFile() );
-            } else {
-	        	$containerUrl = get_template_directory_uri();
-            }
+	        $containerUrl = str_replace( WP_CONTENT_DIR, '', $relativePointer );
 
-            $containerUrl = rtrim( $containerUrl, '/' );  //  Always remove trailing slash.
+	        $containerUrl = ltrim( $containerUrl, '/' );  //  Always remove beginning slash.
+	        $containerUrl = rtrim( $containerUrl, '/' );  //  Always remove trailing slash.
 
-            //  ----------------------------------------
-            //  Result
-            //  ----------------------------------------
+	        //  ----------------------------------------
+	        //  Result
+	        //  ----------------------------------------
 
-            return $relativePath ? $containerUrl . '/' . ltrim( $relativePath, '/' ) : $containerUrl;
+	        return $relativePath ? content_url( $containerUrl . '/' . ltrim( $relativePath, '/' ) ) : $containerUrl;
+
+        }
+
+	    /**
+	     * Prepends given string with ShellPress directory url.
+	     * Example usage: getUrl( 'assets/style.css' );
+	     *
+	     * @return string
+	     */
+        public function getShellUrl( $relativePath = '' ) {
+
+	        return $this->getUrl( $relativePath, $this->getShellPressDir() );
 
         }
 
