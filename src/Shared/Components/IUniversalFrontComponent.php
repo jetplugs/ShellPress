@@ -159,7 +159,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 	    $shortcodeData = array(
             'attrs-json'        =>  json_encode( $attrs ),
             'content'           =>  $content,
-            'form-id'           =>  $thisElementId,
+            'form-id'           =>  $thisFormId,
+            'component-id'      =>  $thisElementId,
             'action'            =>  "load"
         );
 
@@ -200,6 +201,7 @@ abstract class IUniversalFrontComponent extends IComponent {
                 <input type="hidden" name="sp-universalfront[attrs-json]"   value="<?= esc_attr( $shortcodeData['attrs-json'] ); ?>">
                 <input type="hidden" name="sp-universalfront[content]"      value="<?= esc_attr( $shortcodeData['content'] ); ?>">
                 <input type="hidden" name="sp-universalfront[form-id]"      value="<?= esc_attr( $shortcodeData['form-id'] ); ?>">
+                <input type="hidden" name="sp-universalfront[component-id]" value="<?= esc_attr( $shortcodeData['component-id'] ); ?>">
                 <input type="hidden" name="sp-universalfront[action]"       value="<?= esc_attr( $shortcodeData['action'] ) ?>">
 
                 <input type="submit" name="submit" value="submit" style="width:0; height:0; position:absolute; visibility:hidden">
