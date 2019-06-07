@@ -158,10 +158,14 @@
             //  Make ajax request
             //  ----------------------------------------
 
+            plugin.$element.trigger( 'onSubmit/send/before' );  //  HOOK! Since v1_3_72.
+
             setTimeout( function(){
 
                 $.post( plugin.$form.attr( 'action' ), submittedFormData )
                     .done( function( response ){
+
+                        plugin.$element.trigger( 'onSubmit/send/done' );  //  HOOK! Since v1_3_72.
 
                         //  Replace HTML.
                         if( response.hasOwnProperty( 'replacementHtml' ) && response.replacementHtml.length > 0 ){
@@ -197,9 +201,12 @@
                     } )
                     .fail( function( response ){
 
+                        plugin.$element.trigger( 'onSubmit/send/fail' );  //  HOOK! Since v1_3_72.
 
                     } )
                     .always( function( response ){
+
+                        plugin.$element.trigger( 'onSubmit/send/always' );  //  HOOK! Since v1_3_72.
 
                         //  We always want to remove fake submit input.
                         plugin._maybeRemoveFakeSubmitInput();
