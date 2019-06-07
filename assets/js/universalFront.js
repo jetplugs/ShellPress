@@ -121,6 +121,8 @@
                 return;
             }
 
+            plugin.$element.trigger( 'onSubmit/begin' );  //  HOOK! Since v1_3_72.
+
             //  ----------------------------------------
             //  Change action type input value
             //  ----------------------------------------
@@ -157,8 +159,6 @@
             //  ----------------------------------------
             //  Make ajax request
             //  ----------------------------------------
-
-            plugin.$element.trigger( 'onSubmit/send/before' );  //  HOOK! Since v1_3_72.
 
             setTimeout( function(){
 
