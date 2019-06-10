@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_72\src\Components\External;
+namespace shellpress\v1_3_73\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_3_72\src\Components\External;
  * Time: 18:33
  */
 
-use shellpress\v1_3_72\src\Shared\Components\IComponent;
+use shellpress\v1_3_73\src\Shared\Components\IComponent;
 
 class OptionsHandler extends IComponent {
 
