@@ -73,7 +73,7 @@
 
     #{$root}-loader-spinner {
 
-        animation: #{$root}-loader-spin 0.5s linear infinite;
+        animation: sp-universalfront-spin 0.5s linear infinite;
         border: solid 5px transparent;
         border-top: solid 5px #4DB6AC;
         border-radius: 100%;
@@ -82,7 +82,7 @@
 
     }
 
-    @keyframes #{$root}-loader-spin {
+    @keyframes sp-universalfront-spin {
         0% {
             transform: rotate(0deg);
         }

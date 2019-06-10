@@ -304,6 +304,7 @@
         this._$fakeSubmitButton = $( '<input>' ).attr( {
             'type':     'hidden',
             'name':     $button.attr( 'name' ),
+            'form':     $button.attr( 'form' ),
             'value':    $button.val()
         } );
 
