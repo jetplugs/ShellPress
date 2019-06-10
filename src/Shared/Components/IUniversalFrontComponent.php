@@ -193,7 +193,9 @@ abstract class IUniversalFrontComponent extends IComponent {
         >
 
 			<div class="sp-universalfront-loader">
-				<span></span>
+				<div class="sp-universalfront-loader-canvas">
+                    <div class="sp-universalfront-loader-spinner"></div>
+                </div>
 			</div>
 
 			<fieldset form="<?= esc_attr( $thisFormId ) ?>" class="sp-universalfront-fieldset" style="visibility: hidden;" disabled="disabled">

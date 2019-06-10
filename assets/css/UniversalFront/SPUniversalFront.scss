@@ -60,40 +60,35 @@
 
         }
 
-        > span {
+    }
 
-            display: block;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate( -50%, -50% );
+    #{$root}-loader-canvas {
 
-            &::after {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate( -50%, -50% );
 
-                display: block;
-                content: '';
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                border-width: 3px;
-                border-color: transparent;
-                border-style: solid;
-                border-bottom-color: #000 !important;
-                animation: rotation 0.5s infinite linear;
+    }
 
-                @-webkit-keyframes rotation {
-                    from {
-                        transform: rotate( 0deg );
-                    }
-                    to {
-                        transform: rotate( 359deg );
-                    }
-                }
+    #{$root}-loader-spinner {
 
-            }
+        animation: #{$root}-loader-spin 0.5s linear infinite;
+        border: solid 5px transparent;
+        border-top: solid 5px #4DB6AC;
+        border-radius: 100%;
+        width: 20px;
+        height: 20px;
 
+    }
+
+    @keyframes #{$root}-loader-spin {
+        0% {
+            transform: rotate(0deg);
         }
-
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
 }
