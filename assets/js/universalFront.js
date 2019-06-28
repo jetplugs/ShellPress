@@ -182,7 +182,9 @@
 
                             $.each( response.triggerFrontActions, function( key, value ) {
 
-                                $( document ).trigger( value );
+                                setTimeout( function(){
+                                    $( document ).trigger( value );
+                                }, 1000 );
 
                             } );
 
