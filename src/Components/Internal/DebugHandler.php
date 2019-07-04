@@ -49,7 +49,12 @@ class DebugHandler extends IComponent {
 				$version = $namespaceParts[1];
 				$version = str_replace( '_', '.', $version );
 
-				$pluginMeta[] = sprintf( '<span>ShellPress %1$s</span>', $version );
+				$iconHtml = '';
+				if( strpos( $this::s()->getShellPressDir(), $this::s()->getPath() ) !== false ){
+					$iconHtml = '<span class="dashicons dashicons-marker"></span>';
+				}
+
+				$pluginMeta[] = sprintf( '<span>ShellPress %1$s</span>' . $iconHtml, $version );
 
 			}
 
