@@ -378,6 +378,46 @@ if( ! class_exists( 'shellpress\v1_3_74\src\Shell', false ) ) {
 
         }
 
+	    /**
+	     * Get value from something.
+	     * Key may be constructed from segments separated by slash.
+	     * Example: firstLevel/secondLevel/thing
+	     *
+	     * @param mixed  $thing
+	     * @param string|array $keys
+	     * @param mixed  $defaultValue
+	     *
+	     * @return mixed
+	     */
+        public function get( $thing, $keys, $defaultValue = null ) {
+
+        	if( is_string( $keys ) ){
+        		$keys = explode( '/', $keys );
+	        }
+
+        	if( is_array( $thing ) ){
+
+		        $value = (array) $thing;
+
+		        foreach( (array) $keys as $key ) {
+
+			        if( is_array( $value ) && $key && isset( $value[$key] ) ){
+				        $value = $value[$key];
+			        } else {
+				        return $defaultValue;
+			        }
+
+		        }
+
+		        return $value;
+
+	        }
+
+        	//  Nothing worked out.
+        	return $defaultValue;
+
+        }
+
     }
 
 }

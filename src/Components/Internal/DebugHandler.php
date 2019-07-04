@@ -51,7 +51,7 @@ class DebugHandler extends IComponent {
 
 				$iconHtml = '';
 				if( strpos( $this::s()->getShellPressDir(), $this::s()->getPath() ) !== false ){
-					$iconHtml = '<span class="dashicons dashicons-marker"></span>';
+					$iconHtml = '<span title="ShellPress is loaded from this location." class="dashicons dashicons-arrow-left"></span>';
 				}
 
 				$pluginMeta[] = sprintf( '<span>ShellPress %1$s</span>' . $iconHtml, $version );
