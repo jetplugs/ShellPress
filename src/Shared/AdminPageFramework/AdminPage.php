@@ -12,9 +12,7 @@ abstract class AdminPage {
     /** @var string */
     public $pageSlug;
 
-    /**
-     * @var mixed AdminPageFramework instance
-     */
+    /** @var mixed AdminPageFramework instance */
     public $pageFactory;
 
     /** @var string */
@@ -23,7 +21,7 @@ abstract class AdminPage {
     /**
      * AdminPage constructor.
      *
-     * @param stdClass $pageFactory
+     * @param mixed $pageFactory
      * @param string $pageSlug
      */
     public function __construct( $pageFactory, $pageSlug ) {
