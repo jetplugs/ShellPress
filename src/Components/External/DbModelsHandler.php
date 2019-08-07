@@ -15,6 +15,9 @@ class DbModelsHandler extends IComponent {
 	/** @var string[] */
 	private $_modelNames = array();
 
+	/** @var string */
+	private $_recentSql = '';
+
 	/**
 	 * Called on creation of component.
 	 *
@@ -64,13 +67,37 @@ class DbModelsHandler extends IComponent {
 	}
 
 	/**
+	 * Returns recently used SQL.
+	 *
+	 * @return string
+	 */
+	public function getRecentSql() {
+
+		return $this->_recentSql;
+
+	}
+
+	/**
+	 * Sets recently used SQL.
+	 *
+	 * @param string $sql
+	 *
+	 * @return void
+	 */
+	private function _setRecentSql( $sql ) {
+
+		$this->_recentSql = $sql;
+
+	}
+
+	/**
 	 * Returns database base table name for given model name.
 	 *
 	 * @param string $name
 	 *
 	 * @return string
 	 */
-	private function _getModelTableName( $name ) {
+	public function getModelTableName( $name ) {
 
 		global $wpdb;   /** @var wpdb $wpdb */
 
@@ -85,7 +112,7 @@ class DbModelsHandler extends IComponent {
 	 *
 	 * @return string
 	 */
-	private function _getMetaTableName( $name ) {
+	public function getMetaTableName( $name ) {
 
 		global $wpdb;   /** @var wpdb $wpdb */
 
@@ -102,7 +129,7 @@ class DbModelsHandler extends IComponent {
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
-		$tableName      = $this->_getModelTableName( $name );
+		$tableName      = $this->getModelTableName( $name );
 		$charsetCollate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE {$tableName} (
@@ -124,7 +151,7 @@ class DbModelsHandler extends IComponent {
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
-		$tableName      = $this->_getMetaTableName( $name );
+		$tableName      = $this->getMetaTableName( $name );
 		$charsetCollate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE {$tableName} (
@@ -206,7 +233,11 @@ class DbModelsHandler extends IComponent {
 						case '>':
 						case '<':
 
-							$sqlParts[] = $wpdb->prepare( "( {$tableName}.meta_key = %s AND {$tableName}.meta_value {$condition['compare']} %s )", array( $condition['key'], $condition['value'] ) );
+							//  We need to check if compared value is number or not.
+							$valueType      = is_numeric( $condition['value'] ) ? '%f' : '%s';
+							$prepareString  = "( {$tableName}.meta_key = %s AND {$tableName}.meta_value {$condition['compare']} {$valueType} )";
+
+							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $condition['value'] ) );
 
 							break;
 
@@ -218,7 +249,12 @@ class DbModelsHandler extends IComponent {
 							    && isset( $condition['value'][0] )
 							    && isset( $condition['value'][1] ) ){
 
-								$sqlParts[] = $wpdb->prepare( "( {$tableName}.meta_key = %s AND ( {$tableName}.meta_value BETWEEN %s AND %s ) )", array( $condition['key'], $condition['value'][0], $condition['value'][1] ) );
+								//  We need to check if compared values are numbers or not.
+								$valueType1     = is_numeric( $condition['value'][0] ) ? '%f' : '%s';
+								$valueType2     = is_numeric( $condition['value'][1] ) ? '%f' : '%s';
+								$prepareString  = "( {$tableName}.meta_key = %s AND ( {$tableName}.meta_value BETWEEN {$valueType1} AND {$valueType2} ) )";
+
+								$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $condition['value'][0], $condition['value'][1] ) );
 
 							}
 
@@ -327,7 +363,7 @@ class DbModelsHandler extends IComponent {
 		//  Do DB query
 		//  ----------------------------------------
 
-		$result = $wpdb->insert( $this->_getModelTableName( $modelName ), array( 'created' => current_time( 'mysql', true ) ) );
+		$result = $wpdb->insert( $this->getModelTableName( $modelName ), array( 'created' => current_time( 'mysql', true ) ) );
 
 		return $result ? $wpdb->insert_id : 0;
 
@@ -347,7 +383,7 @@ class DbModelsHandler extends IComponent {
 		//  Do DB query
 		//  ----------------------------------------
 
-		$result = $wpdb->delete( $this->_getModelTableName( $modelName ), array( 'id' => $modelId ) );
+		$result = $wpdb->delete( $this->getModelTableName( $modelName ), array( 'id' => $modelId ) );
 
 		//  ----------------------------------------
 		//  Delete meta
@@ -394,14 +430,14 @@ class DbModelsHandler extends IComponent {
 	 * @param array $options
 	 * @param array $metaQuery
 	 *
-	 * @return int[]
+	 * @return int[]|int
 	 */
 	public function findModels( $modelName, $options = array(), $metaQuery = array() ) {
 
 		global $wpdb;   /** @var wpdb $wpdb */
 
-		$modelTableName = $this->_getModelTableName( $modelName );
-		$metaTableName  = $this->_getMetaTableName( $modelName );
+		$modelTableName = $this->getModelTableName( $modelName );
+		$metaTableName  = $this->getMetaTableName( $modelName );
 
 		//  ----------------------------------------
 		//  Options
@@ -484,17 +520,27 @@ class DbModelsHandler extends IComponent {
 		}
 
 		//  ----------------------------------------
+		//  Save recently used sql
+		//  ----------------------------------------
+
+		$this->_setRecentSql( $sql );
+
+		//  ----------------------------------------
 		//  Return
 		//  ----------------------------------------
 
-		$results = $wpdb->get_results( $sql, 'ARRAY_A' );
-		$ids = array();
+		if( $options['return'] === 'count' ){
 
-		if( is_array( $results ) ){
+			$result = $wpdb->get_var( $sql );
 
-			//  Returns ids
+			return intval( $result );
 
-			if( $options['return'] === 'ids' ){
+		} else {
+
+			$results = $wpdb->get_results( $sql, 'ARRAY_A' );
+			$ids = array();
+
+			if( is_array( $results ) ){
 
 				foreach( $results as $row ){
 					$ids[] = $row['id'];
@@ -502,9 +548,9 @@ class DbModelsHandler extends IComponent {
 
 			}
 
-		}
+			return $ids;
 
-		return $ids;
+		}
 
 	}
 
@@ -520,7 +566,7 @@ class DbModelsHandler extends IComponent {
 
 		global $wpdb; /** @var wpdb $wpdb */
 
-		$tableName = $this->_getMetaTableName( $modelName );
+		$tableName = $this->getMetaTableName( $modelName );
 
 		//  ----------------------------------------
 		//  Do DB query
@@ -557,7 +603,7 @@ class DbModelsHandler extends IComponent {
 
 		global $wpdb; /** @var wpdb $wpdb */
 
-		$tableName = $this->_getMetaTableName( $modelName );
+		$tableName = $this->getMetaTableName( $modelName );
 
 		$valueSerialized = maybe_serialize( $value );
 
@@ -616,11 +662,11 @@ class DbModelsHandler extends IComponent {
 
 		if( $metaKey ){
 
-			$result = $wpdb->delete( $this->_getMetaTableName( $modelName ), array( 'meta_key' => $metaKey, 'model_id' => $modelId ) );
+			$result = $wpdb->delete( $this->getMetaTableName( $modelName ), array( 'meta_key' => $metaKey, 'model_id' => $modelId ) );
 
 		} else {
 
-			$result = $wpdb->delete( $this->_getMetaTableName( $modelName ), array( 'model_id' => $modelId ) );
+			$result = $wpdb->delete( $this->getMetaTableName( $modelName ), array( 'model_id' => $modelId ) );
 
 		}
 
