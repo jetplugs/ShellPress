@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_74\src\Shared\AdminPageFramework;
+namespace shellpress\v1_3_75\src\Shared\AdminPageFramework;
 
 /**
  * # Helper class for simply code separation.

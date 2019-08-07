@@ -1,6 +1,6 @@
 <?php
 
-namespace shellpress\v1_3_74\lib\Psr\Log;
+namespace shellpress\v1_3_75\lib\Psr\Log;
 
 /**
  * This LogHandler can be used to avoid conditional log calls.
