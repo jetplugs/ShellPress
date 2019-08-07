@@ -498,24 +498,36 @@ class DbModelsHandler extends IComponent {
 		//  GROUP BY
 		//  ----------------------------------------
 
-		$sql .= " GROUP BY {$modelTableName}.id" . PHP_EOL;
+		if( $options['return'] !== 'count' ){
+
+			$sql .= " GROUP BY {$modelTableName}.id" . PHP_EOL;
+
+		}
 
 		//  ----------------------------------------
 		//  ORDER BY
 		//  ----------------------------------------
 
-		$sql .= " ORDER BY {$modelTableName}.id" . PHP_EOL;
+		if( $options['return'] !== 'count' ){
+
+			$sql .= " ORDER BY {$modelTableName}.id" . PHP_EOL;
+
+		}
 
 		//  ----------------------------------------
 		//  Pagination
 		//  ----------------------------------------
 
-		if( (int) $options['perPage'] > 0 ){    //  If perPage is set to 0, it will not set any limits.
+		if( $options['return'] !== 'count' ) {
 
-			$limit = (int) $options['perPage'];
-			$offset = ( intval( $options['page'] ) - 1 ) * $limit;
+			if( (int) $options[ 'perPage' ] > 0 ) {    //  If perPage is set to 0, it will not set any limits.
 
-			$sql .= " LIMIT {$limit} OFFSET {$offset}";
+				$limit  = (int) $options[ 'perPage' ];
+				$offset = ( intval( $options[ 'page' ] ) - 1 ) * $limit;
+
+				$sql .= " LIMIT {$limit} OFFSET {$offset}";
+
+			}
 
 		}
 
