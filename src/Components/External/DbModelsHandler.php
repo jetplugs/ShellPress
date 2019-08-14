@@ -171,16 +171,61 @@ class DbModelsHandler extends IComponent {
 	}
 
 	/**
+	 * Returns array of names for grouping by them.
+	 *
+	 * @param array $conditions
+	 * @param int $metaTableAliasIndex
+	 */
+	private function _getGroupByListNamesFromMetaQuery( $conditions, &$metaTableAliasIndex = null ) {
+
+		/**
+		 * Make sure $metaTableAliasIndex is variable.
+		 * Some versions of PHP have problems with passing default parameters as reference.
+		 */
+		if( is_null( $metaTableAliasIndex ) ) $metaTableAliasIndex = 1;
+
+		$groupByListNames = array();
+
+		foreach( $conditions as $condition ){
+
+			$tableName = "m" . $metaTableAliasIndex;
+
+			if( is_array( $condition ) ){
+
+				//  Condition or nested group?
+
+				if( $this::s()->get( $condition, 'key' ) && $this::s()->get( $condition, 'group' ) ){
+
+					$groupByListNames[] = "{$tableName}.meta_value";
+
+				} else {
+
+					//  This is nested group. Run recursive method.
+					$nestedKeys = $this->_getGroupByListNamesFromMetaQuery( $condition, $metaTableAliasIndex );
+
+					$groupByListNames = array_merge( $groupByListNames, $nestedKeys );
+
+				}
+
+			}
+
+			$metaTableAliasIndex++; //  <-- Important! Make index bigger.
+
+		}
+
+		return $groupByListNames;
+
+	}
+
+	/**
 	 * Creates sql part for multidimensional metaquery.
 	 *
-	 *
-	 * @param string $modelName
 	 * @param array $conditions
 	 * @param int $metaTableAliasIndex
 	 *
 	 * @return string
 	 */
-	private function _getSqlPartForMetaQuery( $modelName, $conditions, &$metaTableAliasIndex = null ) {
+	private function _getSqlPartForMetaQuery( $conditions, &$metaTableAliasIndex = null ) {
 
 		global $wpdb;   /** @var wpdb $wpdb */
 
@@ -215,7 +260,8 @@ class DbModelsHandler extends IComponent {
 					$defCondition = array(
 						'key'       =>  '',
 						'value'     =>  '',
-						'compare'   =>  '='
+						'compare'   =>  '',
+						'group'     =>  false
 					);
 
 					$condition = wp_parse_args( $condition, $defCondition );
@@ -225,6 +271,14 @@ class DbModelsHandler extends IComponent {
 					//  ----------------------------------------
 
 					switch( $condition['compare'] ){
+
+						case '':
+
+							$prepareString  = "( {$tableName}.meta_key = %s )";
+
+							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'] ) );
+
+							break;
 
 						case '=':
 						case '>=':
@@ -265,7 +319,7 @@ class DbModelsHandler extends IComponent {
 				} else {
 
 					//  This is nested group. Run recursive method.
-					$sqlParts[] = $this->_getSqlPartForMetaQuery( $modelName, $condition, $metaTableAliasIndex );
+					$sqlParts[] = $this->_getSqlPartForMetaQuery( $condition, $metaTableAliasIndex );
 
 				}
 
@@ -417,6 +471,10 @@ class DbModelsHandler extends IComponent {
 	 *          'compare'   =>  '<='
 	 *      ),
 	 *      array(
+	 *          'key'       =>  'keyForGroupBy',
+	 *          'group'     =>  true
+	 *      ),
+	 *      array(
 	 *          'relation'  =>  'AND',
 	 *          array(
 	 *              'key'       =>  'key3',
@@ -438,6 +496,9 @@ class DbModelsHandler extends IComponent {
 
 		$modelTableName = $this->getModelTableName( $modelName );
 		$metaTableName  = $this->getMetaTableName( $modelName );
+
+		$groupBy = array();
+		$orderBy = array();
 
 		//  ----------------------------------------
 		//  Options
@@ -490,7 +551,7 @@ class DbModelsHandler extends IComponent {
 				$sql .= " LEFT JOIN {$metaTableName} m{$leftJoinIndex} ON ( {$modelTableName}.id = m{$leftJoinIndex}.model_id )" . PHP_EOL;
 			}
 
-			$sql .= " WHERE " . $this->_getSqlPartForMetaQuery( $modelName, $metaQuery ) . PHP_EOL;
+			$sql .= " WHERE " . $this->_getSqlPartForMetaQuery( $metaQuery ) . PHP_EOL;
 
 		}
 
@@ -498,9 +559,16 @@ class DbModelsHandler extends IComponent {
 		//  GROUP BY
 		//  ----------------------------------------
 
-		if( $options['return'] !== 'count' ){
+		if( ! empty( $metaQuery ) ){
 
-			$sql .= " GROUP BY {$modelTableName}.id" . PHP_EOL;
+			$groupByFromMetaQuery = $this->_getGroupByListNamesFromMetaQuery( $metaQuery );
+			$groupBy = array_merge( $groupBy, $groupByFromMetaQuery );
+
+		}
+
+		if( $groupBy ){
+
+			$sql .= ' GROUP BY ' . implode( ', ', $groupBy ) . PHP_EOL;
 
 		}
 
@@ -510,7 +578,20 @@ class DbModelsHandler extends IComponent {
 
 		if( $options['return'] !== 'count' ){
 
-			$sql .= " ORDER BY {$modelTableName}.id" . PHP_EOL;
+			$orderBy[ $modelTableName . '.id' ] = 'DESC';
+
+		}
+
+		if( $orderBy ){
+
+			$orderByGlued = array();
+
+			//  We want to glue key and value together( ex. m1.meta_value DESC )
+			foreach( $orderBy as $key => $value ){
+				$orderByGlued[] = $key . ' ' . $value;
+			}
+
+			$sql .= ' ORDER BY ' . implode( ', ', $orderByGlued ) . PHP_EOL;
 
 		}
 
