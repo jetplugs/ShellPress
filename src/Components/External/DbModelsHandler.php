@@ -317,9 +317,9 @@ class DbModelsHandler extends IComponent {
 						case 'like':
 						case 'LIKE':
 
-							$prepareString  = "( {$tableName}.meta_key = %s AND {$tableName}.meta_value LIKE %%%s%% )";
+							$prepareString  = "( {$tableName}.meta_key = %s AND {$tableName}.meta_value LIKE %s )";
 
-							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $wpdb->esc_like( $condition['value'] ) ) );
+							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], '%' . $wpdb->esc_like( $condition['value'] ) . '%' ) );
 
 							break;
 
