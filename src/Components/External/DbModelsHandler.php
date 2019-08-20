@@ -314,6 +314,14 @@ class DbModelsHandler extends IComponent {
 
 							break;
 
+						default:
+
+							$prepareString  = "( {$tableName}.meta_key = %s AND {$tableName}.meta_value {$condition['compare']} %s )";
+
+							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $condition['value'] ) );
+
+							break;
+
 					}
 
 				} else {
