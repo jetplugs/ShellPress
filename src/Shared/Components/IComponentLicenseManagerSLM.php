@@ -7,7 +7,6 @@ namespace shellpress\v1_3_76\src\Shared\Components;
  * Time: 11:22
  */
 
-use TMC_v1_0_4_AdminPageFramework;
 use WP_Upgrader;
 
 /**
@@ -517,7 +516,7 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
      *
      * @param array $newOptions
      * @param array $oldOptions
-     * @param TMC_v1_0_4_AdminPageFramework $pageFactory
+     * @param mixed $pageFactory
      *
      * @return array
      */
@@ -554,7 +553,7 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
 	/**
 	 * Adds setting section on load of apf page and tab.
 	 *
-	 * @param TMC_v1_0_4_AdminPageFramework $pageFactory
+	 * @param mixed $pageFactory
 	 */
 	public function _a_addSectionToAPF( $pageFactory ) {
 
@@ -573,7 +572,7 @@ abstract class IComponentLicenseManagerSLM extends IComponent {
 	/**
 	 * Adds setting fields on load of apf page and tab.
 	 *
-	 * @param TMC_v1_0_4_AdminPageFramework $pageFactory
+	 * @param mixed $pageFactory
 	 */
 	public function _a_addFieldsToAPF( $pageFactory ) {
 
