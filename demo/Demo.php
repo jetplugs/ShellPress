@@ -1,13 +1,13 @@
 <?php
-namespace shellpress\v1_3_75\demo;
+namespace shellpress\v1_3_76\demo;
 
 /**
  * Date: 15.01.2019
  * Time: 21:40
  */
 
-use shellpress\v1_3_75\demo\src\Components\UniversalFrontExample;
-use shellpress\v1_3_75\ShellPress;
+use shellpress\v1_3_76\demo\src\Components\UniversalFrontExample;
+use shellpress\v1_3_76\ShellPress;
 
 class Demo extends ShellPress {
 
