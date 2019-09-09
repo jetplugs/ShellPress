@@ -16,6 +16,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	/** @var string */
 	private $_apiUrl = '';
 
+	/** @var string */
+	private $_productId = '';
+
 	/**
 	 * Returns name of shortcode.
 	 *
@@ -104,21 +107,129 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	}
 
 	/**
-	 * @return WP_Error|array
+	 * @return string
+	 */
+	private function _getProductId() {
+
+		return $this->_productId;
+
+	}
+
+	/**
+	 * Sets product ID from your EDD store.
+	 *
+	 * @param string $productId
+	 *
+	 * @return void
+	 */
+	public function setProductId( $productId ) {
+
+		$this->_productId = $productId;
+
+	}
+
+	/**
+	 * Sets license to operate with.
+	 *
+	 * @return bool
+	 */
+	private function _setLicense( $license ) {
+
+		return update_option( sanitize_key( __CLASS__ ) . '_license', $license );
+
+	}
+
+	/**
+	 * @return string
+	 */
+	private function _getLicense() {
+
+		return get_option( sanitize_key( __CLASS__ ) . '_license', '' );
+
+	}
+
+	/**
+	 * Sets license data.
+	 *
+	 * @param array
+	 *
+	 * @return bool
+	 */
+	private function _setCachedData( $data ) {
+
+		return update_option( sanitize_key( __CLASS__ ) . '_data', (array) $data );
+
+	}
+
+	/**
+	 * Returns cached license data.
+	 *
+	 * @return array
+	 */
+	private function _getCachedData() {
+
+		return (array) get_option( sanitize_key( __CLASS__ ) . '_data', array() );
+
+	}
+
+	/**
+	 * @return WP_Error|bool
 	 */
 	public function remoteActivateLicense(){
 
-		if( ! $this->_getApiUrl() ) return new WP_Error( '', 'API url is not defined.' );   //  Bail early.
+		//  ----------------------------------------
+		//  Check requirements
+		//  ----------------------------------------
+
+		if( ! $this->_getApiUrl() ) return new WP_Error( '', 'API url is not defined.' );
+		if( ! $this->_getProductId() ) return new WP_Error( '', 'Product ID is not defined.' );
+		if( ! $this->_getLicense() ) return new WP_Error( '', 'License is not defined.' );
+
+		//  ----------------------------------------
+		//  Make request
+		//  ----------------------------------------
 
 		//  Prepare URL with arguments.
 		$fullUrl = add_query_arg( array(
 			'edd_action'        =>  'activate_license',
-			'item_id'           =>  '',
-			'license'           =>  '',
+			'item_id'           =>  $this->_getProductId(),
+			'license'           =>  $this->_getLicense(),
 			'url'               =>  get_home_url()
 		), $this->_apiUrl );
 
-		if( $request = wp_remote_get( $fullUrl ) ){
+		if( is_wp_error( $response = wp_remote_get( $fullUrl ) ) ){
+
+			return $response;
+
+		} else {
+
+			$responseBody = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if( $responseBody ){
+
+				$this->_setCachedData( $responseBody );
+
+				switch( $this::s()->get( $responseBody, 'license' ) ){
+
+					case 'valid':
+						return true;
+						break;
+
+					case 'invalid':
+						return false;
+						break;
+
+					default:
+						return false;
+						break;
+
+				}
+
+			} else {
+
+				return new WP_Error( '', 'Remote data has wrong format.' );
+
+			}
 
 		}
 
