@@ -207,21 +207,75 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 			if( $responseBody ){
 
-				$this->_setCachedData( $responseBody );
+				$licenseStatus = $this::s()->get( $responseBody, 'license' );
 
-				switch( $this::s()->get( $responseBody, 'license' ) ){
+				if( $licenseStatus === 'valid' ){
+					$this->_setCachedData( $responseBody );
+					return true;
+				}
 
-					case 'valid':
-						return true;
-						break;
+				if( $licenseStatus === 'invalid' ){
+					$this->_setCachedData( $responseBody );
+					return false;
+				}
 
-					case 'invalid':
-						return false;
-						break;
+				return new WP_Error( '', 'License check failed.' );
 
-					default:
-						return false;
-						break;
+			} else {
+
+				return new WP_Error( '', 'Remote data has wrong format.' );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * @return bool|WP_Error
+	 */
+	public function remoteDeactivateLicense() {
+
+		//  ----------------------------------------
+		//  Check requirements
+		//  ----------------------------------------
+
+		if( ! $this->_getApiUrl() ) return new WP_Error( '', 'API url is not defined.' );
+		if( ! $this->_getProductId() ) return new WP_Error( '', 'Product ID is not defined.' );
+		if( ! $this->_getLicense() ) return new WP_Error( '', 'License is not defined.' );
+
+		//  ----------------------------------------
+		//  Make request
+		//  ----------------------------------------
+
+		//  Prepare URL with arguments.
+		$fullUrl = add_query_arg( array(
+			'edd_action'        =>  'deactivate_license',
+			'item_id'           =>  $this->_getProductId(),
+			'license'           =>  $this->_getLicense(),
+			'url'               =>  get_home_url()
+		), $this->_apiUrl );
+
+		if( is_wp_error( $response = wp_remote_get( $fullUrl ) ) ){
+
+			return $response;
+
+		} else {
+
+			$responseBody = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if( $responseBody ){
+
+				$actionStatus = $this::s()->get( $responseBody, 'success' );
+
+				if( $actionStatus ){
+
+					$this->_setCachedData( array() );
+					return true;
+
+				} else {
+
+					return new WP_Error( '', 'Could not deactivate license.' );
 
 				}
 
