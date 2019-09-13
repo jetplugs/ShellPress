@@ -135,7 +135,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	private function _setLicense( $license ) {
 
-		return update_option( sanitize_key( __CLASS__ ) . '_license', $license );
+		return update_option( $this->getOptionKeyLicense(), $license );
 
 	}
 
@@ -144,7 +144,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	private function _getLicense() {
 
-		return get_option( sanitize_key( __CLASS__ ) . '_license', '' );
+		return get_option( $this->getOptionKeyLicense(), '' );
 
 	}
 
@@ -157,7 +157,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	private function _setCachedData( $data ) {
 
-		return update_option( sanitize_key( __CLASS__ ) . '_data', (array) $data );
+		return update_option( $this->getOptionKeyData(), (array) $data );
 
 	}
 
@@ -168,7 +168,29 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	private function _getCachedData() {
 
-		return (array) get_option( sanitize_key( __CLASS__ ) . '_data', array() );
+		return (array) get_option( $this->getOptionKeyData(), array() );
+
+	}
+
+	/**
+	 * Returns name of option.
+	 *
+	 * @return string
+	 */
+	public function getOptionKeyLicense() {
+
+		return sanitize_key( __CLASS__ ) . '_license';
+
+	}
+
+	/**
+	 * Returns name of option.
+	 *
+	 * @return string
+	 */
+	public function getOptionKeyData() {
+
+		return sanitize_key( __CLASS__ ) . '_data';
 
 	}
 
@@ -192,6 +214,65 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		//  Prepare URL with arguments.
 		$fullUrl = add_query_arg( array(
 			'edd_action'        =>  'activate_license',
+			'item_id'           =>  $this->_getProductId(),
+			'license'           =>  $this->_getLicense(),
+			'url'               =>  get_home_url()
+		), $this->_apiUrl );
+
+		if( is_wp_error( $response = wp_remote_get( $fullUrl ) ) ){
+
+			return $response;
+
+		} else {
+
+			$responseBody = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if( $responseBody ){
+
+				$licenseStatus = $this::s()->get( $responseBody, 'license' );
+
+				if( $licenseStatus === 'valid' ){
+					$this->_setCachedData( $responseBody );
+					return true;
+				}
+
+				if( $licenseStatus === 'invalid' ){
+					$this->_setCachedData( $responseBody );
+					return false;
+				}
+
+				return new WP_Error( '', 'License check failed.' );
+
+			} else {
+
+				return new WP_Error( '', 'Remote data has wrong format.' );
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * @return WP_Error|bool
+	 */
+	public function remoteCheckLicense(){
+
+		//  ----------------------------------------
+		//  Check requirements
+		//  ----------------------------------------
+
+		if( ! $this->_getApiUrl() ) return new WP_Error( '', 'API url is not defined.' );
+		if( ! $this->_getProductId() ) return new WP_Error( '', 'Product ID is not defined.' );
+		if( ! $this->_getLicense() ) return new WP_Error( '', 'License is not defined.' );
+
+		//  ----------------------------------------
+		//  Make request
+		//  ----------------------------------------
+
+		//  Prepare URL with arguments.
+		$fullUrl = add_query_arg( array(
+			'edd_action'        =>  'check_license',
 			'item_id'           =>  $this->_getProductId(),
 			'license'           =>  $this->_getLicense(),
 			'url'               =>  get_home_url()
