@@ -12,4 +12,13 @@ use shellpress\v1_3_76\src\Shared\Components\IUniversalFrontComponentEDDLicenser
  */
 class EddLicenseManagerExample extends IUniversalFrontComponentEDDLicenser {
 
+	/**
+	 * This method should be used to set up configuration.
+	 *
+	 * @return void
+	 */
+	public function onSetUpLicenser() {
+		// TODO: Implement onSetUpLicenser() method.
+	}
+
 }
