@@ -1,6 +1,7 @@
 <?php
 namespace shellpress\v1_3_76\src\Shared\Components;
 
+use shellpress\v1_3_76\src\Shared\Front\Models\HtmlElement;
 use shellpress\v1_3_76\src\Shared\RestModels\UniversalFrontResponse;
 use WP_Error;
 use WP_REST_Request;
@@ -63,6 +64,22 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	protected function processUniversalFrontResponse( $universalFrontResponse, $request ) {
 
+		//  ----------------------------------------
+		//  Process saving
+		//  ----------------------------------------
+
+		if( $license = $request->get_param( 'license' ) ){
+
+			$this->_setLicense( $license );
+
+		}
+
+		//  ----------------------------------------
+		//  Process display
+		//  ----------------------------------------
+
+		$universalFrontResponse->setReplacementHtml( $this->getInnerHtml( $request ) );
+
 		return $universalFrontResponse;
 
 	}
@@ -79,6 +96,16 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	public function getInnerHtml( $request ) {
 
 		$html = '';
+
+		$inputLicenseEl = HtmlElement::create( 'input', false );
+		$inputLicenseEl->setAttributes( array(
+			'type'          =>  'text',
+			'class'         =>  'regular-text',
+			'value'         =>  esc_attr( $this->_getLicense() ),
+			'name'          =>  'license'
+		) );
+
+		$html .= $inputLicenseEl->getDisplay();
 
 		return $html;
 
@@ -270,15 +297,14 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		//  Make request
 		//  ----------------------------------------
 
-		//  Prepare URL with arguments.
-		$fullUrl = add_query_arg( array(
+		$apiParams = array(
 			'edd_action'        =>  'check_license',
 			'item_id'           =>  $this->_getProductId(),
 			'license'           =>  $this->_getLicense(),
 			'url'               =>  get_home_url()
-		), $this->_apiUrl );
+		);
 
-		if( is_wp_error( $response = wp_remote_get( $fullUrl ) ) ){
+		if( is_wp_error( $response = wp_remote_post( $this->_getApiUrl(), array( 'body' => $apiParams, 'timeout' => 15, 'sslverify' => false ) ) ) ){
 
 			return $response;
 
@@ -329,15 +355,14 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		//  Make request
 		//  ----------------------------------------
 
-		//  Prepare URL with arguments.
-		$fullUrl = add_query_arg( array(
+		$apiParams = array(
 			'edd_action'        =>  'deactivate_license',
 			'item_id'           =>  $this->_getProductId(),
 			'license'           =>  $this->_getLicense(),
 			'url'               =>  get_home_url()
-		), $this->_apiUrl );
+		);
 
-		if( is_wp_error( $response = wp_remote_get( $fullUrl ) ) ){
+		if( is_wp_error( $response = wp_remote_post( $this->_getApiUrl(), array( 'body' => $apiParams, 'timeout' => 15, 'sslverify' => false ) ) ) ){
 
 			return $response;
 
