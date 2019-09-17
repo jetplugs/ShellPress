@@ -116,8 +116,6 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		$html = '';
 
-		$html .= sprintf( '<div class="notice notice-info" style="margin: 0 0 0.5em;"><p>%1$s</p></div>', 'Test' );
-
 		$inputLicenseEl = HtmlElement::create( 'input', false );
 		$inputLicenseEl->setAttributes( array(
 			'type'          =>  'text',
@@ -136,17 +134,6 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$buttonUpdateLicense->setContent( 'Update License' );
 
 		$html .= $buttonUpdateLicense->getDisplay();
-
-		//  ----------------------------------------
-		//  Info about license
-		//  ----------------------------------------
-
-		if( $cachedData = $this->_getCachedData() ){
-
-			$html .= sprintf( '<div>Expires in: %1$s</div>', $this::s()->get( $cachedData, 'expires' ) );
-			$html .= sprintf( '<div>Licensed for: %1$s (%2$s)</div>', $this::s()->get( $cachedData, 'customer_name' ), $this::s()->get( $cachedData, 'customer_email' ) );
-
-		}
 
 		return $html;
 	}
