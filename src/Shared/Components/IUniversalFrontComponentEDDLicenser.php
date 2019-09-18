@@ -79,19 +79,56 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	protected function processUniversalFrontResponse( $universalFrontResponse, $request ) {
 
+		$oldLicense = $this->getLicense();
+		$newLicense = $request->get_param( 'license' ) ?: '';
+
 		//  ----------------------------------------
-		//  Process saving
+		//  Just remove cached data when switched
 		//  ----------------------------------------
 
-		if( $license = $request->get_param( 'license' ) ){
+		if( $oldLicense !== $newLicense ){
 
-			$this->_setLicense( $license );
+			$this->_setCachedData( array() );
 
 		}
 
 		//  ----------------------------------------
-		//  Process
+		//  Process deactivation
 		//  ----------------------------------------
+
+		if( $oldLicense && $oldLicense !== $newLicense ){
+
+			$this->_setLicense( $oldLicense );
+
+			$deactivationResult = $this->remoteDeactivateLicense();
+
+			if( is_wp_error( $deactivationResult ) ){
+				$request->set_param( 'noticeError', $deactivationResult->get_error_message() );
+			}
+
+		}
+
+		//  ----------------------------------------
+		//  Process activation
+		//  ----------------------------------------
+
+		if( $newLicense ){
+
+			$this->_setLicense( $newLicense );
+			
+			$activationResult = $this->remoteActivateLicense();
+
+			if( is_wp_error( $activationResult ) ){
+				$request->set_param( 'noticeError', $activationResult->get_error_message() );
+			}
+
+		}
+
+		//  ----------------------------------------
+		//  Always save
+		//  ----------------------------------------
+
+		$this->_setLicense( $newLicense );
 
 		//  ----------------------------------------
 		//  Process display
@@ -118,9 +155,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		$inputLicenseEl = HtmlElement::create( 'input', false );
 		$inputLicenseEl->setAttributes( array(
-			'type'          =>  'text',
+			'type'          =>  'password',
 			'class'         =>  'regular-text',
-			'value'         =>  esc_attr( $this->_getLicense() ),
+			'value'         =>  esc_attr( $this->getLicense() ),
 			'name'          =>  'license'
 		) );
 
@@ -134,6 +171,33 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$buttonUpdateLicense->setContent( 'Update License' );
 
 		$html .= $buttonUpdateLicense->getDisplay();
+
+		//  ----------------------------------------
+		//  Notifications
+		//  ----------------------------------------
+
+		if( $noticeError = $request->get_param( 'noticeError' ) ){
+			$html .= sprintf( '<div class="notice notice-error" style="margin: 0.5em 0 0;"><p>%1$s</p></div>', $noticeError );
+		}
+
+		if( $noticeSuccess = $request->get_param( 'noticeSuccess' ) ){
+			$html .= sprintf( '<div class="notice notice-success" style="margin: 0.5em 0 0;"><p>%1$s</p></div>', $noticeSuccess );
+		}
+
+		if( $noticeInfo = $request->get_param( 'noticeInfo' ) ){
+			$html .= sprintf( '<div class="notice notice-success" style="margin: 0.5em 0 0;"><p>%1$s</p></div>', $noticeInfo );
+		}
+
+		if( $cachedData = $this->_getCachedData() ){
+			$html .= '<div class="notice" style="margin: 0.5em 0 0;">';
+			$html .= sprintf( '<p><small>Licensed to: <strong>%1s</strong></small></p>', $this::s()->get( $cachedData, 'customer_name' ) );
+			$html .= sprintf( '<p><small>Expires on: <strong>%1s</strong></small></p>', $this::s()->get( $cachedData, 'expires' ) );
+			$html .= '</div>';
+		}
+
+		if( $this->getLicense() && ! $this->_getCachedData() || $this->getLicense() && ! $this->isLicenseActive() ){
+			$html .= sprintf( '<div class="notice notice-warning" style="margin: 0.5em 0 0;"><p>%1$s</p></div>', 'License is inactive' );
+		}
 
 		return $html;
 	}
@@ -196,7 +260,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	/**
 	 * @return string
 	 */
-	private function _getLicense() {
+	private function getLicense() {
 
 		return get_option( $this->getOptionKeyLicense(), '' );
 
@@ -249,6 +313,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	}
 
 	/**
+	 * If something goes wrong, it will return WP_Error object.
+	 * If everything is fine and license is active, cached data is set to requested body.
+	 *
 	 * @return WP_Error|bool
 	 */
 	public function remoteActivateLicense(){
@@ -257,9 +324,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		//  Check requirements
 		//  ----------------------------------------
 
-		if( ! $this->_getApiUrl() ) return new WP_Error( '', 'API url is not defined.' );
-		if( ! $this->_getProductId() ) return new WP_Error( '', 'Product ID is not defined.' );
-		if( ! $this->_getLicense() ) return new WP_Error( '', 'License is not defined.' );
+		if( ! $this->_getApiUrl() ) return new WP_Error( 'error', 'API url is not defined.' );
+		if( ! $this->_getProductId() ) return new WP_Error( 'error', 'Product ID is not defined.' );
+		if( ! $this->getLicense() ) return new WP_Error( 'error', 'License is not defined.' );
 
 		//  ----------------------------------------
 		//  Make request
@@ -269,7 +336,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$fullUrl = add_query_arg( array(
 			'edd_action'        =>  'activate_license',
 			'item_id'           =>  $this->_getProductId(),
-			'license'           =>  $this->_getLicense(),
+			'license'           =>  $this->getLicense(),
 			'url'               =>  get_home_url()
 		), $this->_apiUrl );
 
@@ -279,7 +346,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		} else {
 
-			$responseBody = json_decode( wp_remote_retrieve_body( $response ) );
+			$responseBody = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if( $responseBody ){
 
@@ -291,15 +358,14 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				}
 
 				if( $licenseStatus === 'invalid' ){
-					$this->_setCachedData( $responseBody );
-					return false;
+					return new WP_Error( 'error', 'License is invalid.' );
 				}
 
-				return new WP_Error( '', 'License check failed.' );
+				return new WP_Error( 'error', 'License check failed.' );
 
 			} else {
 
-				return new WP_Error( '', 'Remote data has wrong format.' );
+				return new WP_Error( 'error', 'Remote data has wrong format.' );
 
 			}
 
@@ -308,6 +374,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	}
 
 	/**
+	 * If something goes wrong, it will return WP_Error object.
+	 * If everything is fine and license is active, cached data is set to requested body.
+	 *
 	 * @return WP_Error|bool
 	 */
 	public function remoteCheckLicense(){
@@ -316,9 +385,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		//  Check requirements
 		//  ----------------------------------------
 
-		if( ! $this->_getApiUrl() ) return new WP_Error( '', 'API url is not defined.' );
-		if( ! $this->_getProductId() ) return new WP_Error( '', 'Product ID is not defined.' );
-		if( ! $this->_getLicense() ) return new WP_Error( '', 'License is not defined.' );
+		if( ! $this->_getApiUrl() ) return new WP_Error( 'error', 'API url is not defined.' );
+		if( ! $this->_getProductId() ) return new WP_Error( 'error', 'Product ID is not defined.' );
+		if( ! $this->getLicense() ) return new WP_Error( 'error', 'License is not defined.' );
 
 		//  ----------------------------------------
 		//  Make request
@@ -327,7 +396,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$apiParams = array(
 			'edd_action'        =>  'check_license',
 			'item_id'           =>  $this->_getProductId(),
-			'license'           =>  $this->_getLicense(),
+			'license'           =>  $this->getLicense(),
 			'url'               =>  get_home_url()
 		);
 
@@ -337,7 +406,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		} else {
 
-			$responseBody = json_decode( wp_remote_retrieve_body( $response ) );
+			$responseBody = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if( $responseBody ){
 
@@ -349,15 +418,14 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				}
 
 				if( $licenseStatus === 'invalid' ){
-					$this->_setCachedData( $responseBody );
-					return false;
+					return new WP_Error( 'error', 'License is invalid.' );
 				}
 
-				return new WP_Error( '', 'License check failed.' );
+				return new WP_Error( 'error', 'License check failed.' );
 
 			} else {
 
-				return new WP_Error( '', 'Remote data has wrong format.' );
+				return new WP_Error( 'error', 'Remote data has wrong format.' );
 
 			}
 
@@ -366,6 +434,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	}
 
 	/**
+	 * If something goes wrong, it will return WP_Error object.
+	 * If everything is fine, cached data is set to empty array.
+	 *
 	 * @return bool|WP_Error
 	 */
 	public function remoteDeactivateLicense() {
@@ -374,9 +445,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		//  Check requirements
 		//  ----------------------------------------
 
-		if( ! $this->_getApiUrl() ) return new WP_Error( '', 'API url is not defined.' );
-		if( ! $this->_getProductId() ) return new WP_Error( '', 'Product ID is not defined.' );
-		if( ! $this->_getLicense() ) return new WP_Error( '', 'License is not defined.' );
+		if( ! $this->_getApiUrl() ) return new WP_Error( 'error', 'API url is not defined.' );
+		if( ! $this->_getProductId() ) return new WP_Error( 'error', 'Product ID is not defined.' );
+		if( ! $this->getLicense() ) return new WP_Error( 'error', 'License is not defined.' );
 
 		//  ----------------------------------------
 		//  Make request
@@ -385,7 +456,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$apiParams = array(
 			'edd_action'        =>  'deactivate_license',
 			'item_id'           =>  $this->_getProductId(),
-			'license'           =>  $this->_getLicense(),
+			'license'           =>  $this->getLicense(),
 			'url'               =>  get_home_url()
 		);
 
@@ -395,7 +466,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		} else {
 
-			$responseBody = json_decode( wp_remote_retrieve_body( $response ) );
+			$responseBody = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if( $responseBody ){
 
@@ -408,13 +479,13 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 				} else {
 
-					return new WP_Error( '', 'Could not deactivate license.' );
+					return new WP_Error( 'error', 'Could not deactivate license.' );
 
 				}
 
 			} else {
 
-				return new WP_Error( '', 'Remote data has wrong format.' );
+				return new WP_Error( 'error', 'Remote data has wrong format.' );
 
 			}
 
@@ -422,8 +493,30 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 	}
 
-	//  ================================================================================
-	//
-	//  ================================================================================
+	/**
+	 * @return bool
+	 */
+	public function isLicenseActive() {
+
+		if( $this->getLicense() ){
+
+			if( $this::s()->get( $this->_getCachedData(), 'license' ) === 'valid' ){
+
+				$timeNow    = time();
+				$timeExpire = $this::s()->get( $this->_getCachedData(), 'expires' );
+
+				if( $timeNow > $timeExpire ){
+
+					return true;
+
+				}
+
+			}
+
+		}
+
+		return false;
+
+	}
 
 }

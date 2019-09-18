@@ -1,8 +1,6 @@
 <?php
-
 namespace shellpress\v1_3_76\demo\src\Components;
 
-use shellpress\v1_3_76\src\Shared\Components\IComponent;
 use shellpress\v1_3_76\src\Shared\Components\IUniversalFrontComponentEDDLicenser;
 
 /**
@@ -18,7 +16,10 @@ class EddLicenseManagerExample extends IUniversalFrontComponentEDDLicenser {
 	 * @return void
 	 */
 	public function onSetUpLicenser() {
-		// TODO: Implement onSetUpLicenser() method.
+
+		$this->setApiUrl( 'https://easydigitaldownloads.com' );
+		$this->setProductId( '5' );
+
 	}
 
 }
