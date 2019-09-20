@@ -1,0 +1,94 @@
+.sp-universalfront {
+
+    $root: &;
+
+    display: inline-block;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    border: 0;
+
+    > fieldset {
+
+        display: block;
+        margin: 0;
+        padding: 0;
+        border: 0;
+
+        &:disabled {
+
+            pointer-events: none;
+
+        }
+
+    }
+
+    &.is-locked {
+
+        > fieldset {
+
+            opacity: 0.2;
+            pointer-events: none;
+
+        }
+
+        > #{$root}-loader {
+
+            visibility: visible;
+
+        }
+
+    }
+
+    #{$root}-loader {
+
+        position: absolute;
+        z-index: 10;
+        display: block;
+        visibility: hidden;
+        opacity: 1;
+        content: '';
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        pointer-events: none;
+
+        &.is-active {
+
+            visibility: visible;
+
+        }
+
+    }
+
+    #{$root}-loader-canvas {
+
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate( -50%, -50% );
+
+    }
+
+    #{$root}-loader-spinner {
+
+        animation: sp-universalfront-spin 0.5s linear infinite;
+        border: solid 3px transparent;
+        border-top: solid 3px #4DB6AC;
+        border-radius: 100%;
+        width: 10px;
+        height: 10px;
+
+    }
+
+    @keyframes sp-universalfront-spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+}

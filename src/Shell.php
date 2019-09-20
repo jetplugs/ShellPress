@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_4\src;
+namespace shellpress\v1_3_76\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,20 +7,21 @@ namespace shellpress\v1_3_4\src;
  * Time: 22:45
  */
 
-use shellpress\v1_3_4\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_3_4\ShellPress;
-use shellpress\v1_3_4\src\Components\External\AutoloadingHandler;
-use shellpress\v1_3_4\src\Components\External\EventHandler;
-use shellpress\v1_3_4\src\Components\External\MustacheHandler;
-use shellpress\v1_3_4\src\Components\External\UpdateHandler;
-use shellpress\v1_3_4\src\Components\Internal\DebugHandler;
-use shellpress\v1_3_4\src\Components\Internal\ExtractorHandler;
-use shellpress\v1_3_4\src\Components\External\LogHandler;
-use shellpress\v1_3_4\src\Components\External\MessagesHandler;
-use shellpress\v1_3_4\src\Components\External\OptionsHandler;
-use shellpress\v1_3_4\src\Components\External\UtilityHandler;
+use shellpress\v1_3_76\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_3_76\ShellPress;
+use shellpress\v1_3_76\src\Components\External\AutoloadingHandler;
+use shellpress\v1_3_76\src\Components\External\DbModelsHandler;
+use shellpress\v1_3_76\src\Components\External\EventHandler;
+use shellpress\v1_3_76\src\Components\External\MustacheHandler;
+use shellpress\v1_3_76\src\Components\External\UpdateHandler;
+use shellpress\v1_3_76\src\Components\Internal\DebugHandler;
+use shellpress\v1_3_76\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_3_76\src\Components\External\LogHandler;
+use shellpress\v1_3_76\src\Components\External\MessagesHandler;
+use shellpress\v1_3_76\src\Components\External\OptionsHandler;
+use shellpress\v1_3_76\src\Components\External\UtilityHandler;
 
-if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
+if( ! class_exists( 'shellpress\v1_3_76\src\Shell', false ) ) {
 
     class Shell {
 
@@ -76,6 +77,9 @@ if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
         /** @var DebugHandler */
         protected $debug;
 
+        /** @var DbModelsHandler */
+        public $dbModels;
+
         /**
          * Shell constructor.
          *
@@ -118,6 +122,7 @@ if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
 	        $this->mustache     = new MustacheHandler( $shellPress );
 	        $this->extractor    = new ExtractorHandler( $shellPress );
 	        $this->debug        = new DebugHandler( $shellPress );
+	        $this->dbModels     = new DbModelsHandler( $shellPress );
 
         }
 
@@ -143,29 +148,48 @@ if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
          * Prepends given string with plugin or theme directory url.
          * Example usage: getUrl( 'assets/style.css' );
          *
-         * @param string $relativePath
+         * @param string      $relativePath
+         * @param string|null $relativeToFileOrDir - To which file or dir we are relating to?
+         *                                    If null, it will be relative to main plugin file.
          *
          * @return string - URL
          */
-        public function getUrl( $relativePath = '' ) {
+        public function getUrl( $relativePath = '', $relativeToFileOrDir = null ) {
+
+        	if( $relativeToFileOrDir ){
+        		$relativePointer = is_dir( $relativeToFileOrDir ) ? $relativeToFileOrDir : dirname( $relativeToFileOrDir );
+	        } else {
+        		$relativePointer = dirname( $this->getMainPluginFile() );
+	        }
+
+        	$relativePointer = str_replace( '\\', '/', $relativePointer );  //  Normalize on Windows.
 
 	        //  ----------------------------------------
 	        //  Prepare url
 	        //  ----------------------------------------
 
-            if( $this->isInsidePlugin() ){
-            	$containerUrl = plugin_dir_url( $this->getMainPluginFile() );
-            } else {
-	        	$containerUrl = get_template_directory_uri();
-            }
+	        $containerUrl = str_replace( WP_CONTENT_DIR, '', $relativePointer );
 
-            $containerUrl = rtrim( $containerUrl, '/' );  //  Always remove trailing slash.
+	        $containerUrl = ltrim( $containerUrl, '/' );  //  Always remove beginning slash.
+	        $containerUrl = rtrim( $containerUrl, '/' );  //  Always remove trailing slash.
 
-            //  ----------------------------------------
-            //  Result
-            //  ----------------------------------------
+	        //  ----------------------------------------
+	        //  Result
+	        //  ----------------------------------------
 
-            return $relativePath ? $containerUrl . '/' . ltrim( $relativePath, '/' ) : $containerUrl;
+	        return $relativePath ? content_url( $containerUrl . '/' . ltrim( $relativePath, '/' ) ) : $containerUrl;
+
+        }
+
+	    /**
+	     * Prepends given string with ShellPress directory url.
+	     * Example usage: getUrl( 'assets/style.css' );
+	     *
+	     * @return string
+	     */
+        public function getShellUrl( $relativePath = '' ) {
+
+	        return $this->getUrl( $relativePath, $this->getShellPressDir() );
 
         }
 
@@ -351,6 +375,46 @@ if( ! class_exists( 'shellpress\v1_3_4\src\Shell', false ) ) {
 	        //  ----------------------------------------
 
 	        return (bool) $this->isInsideTheme;
+
+        }
+
+	    /**
+	     * Get value from something.
+	     * Key may be constructed from segments separated by slash.
+	     * Example: firstLevel/secondLevel/thing
+	     *
+	     * @param mixed  $thing
+	     * @param string|array $keys
+	     * @param mixed  $defaultValue
+	     *
+	     * @return mixed
+	     */
+        public function get( $thing, $keys, $defaultValue = null ) {
+
+        	if( is_string( $keys ) ){
+        		$keys = explode( '/', $keys );
+	        }
+
+        	if( is_array( $thing ) ){
+
+		        $value = (array) $thing;
+
+		        foreach( (array) $keys as $key ) {
+
+			        if( is_array( $value ) && $key && isset( $value[$key] ) ){
+				        $value = $value[$key];
+			        } else {
+				        return $defaultValue;
+			        }
+
+		        }
+
+		        return $value;
+
+	        }
+
+        	//  Nothing worked out.
+        	return $defaultValue;
 
         }
 

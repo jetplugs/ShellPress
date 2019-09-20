@@ -1,6 +1,6 @@
 <?php
 
-namespace shellpress\v1_3_4\src\Shared\StorageModels;
+namespace shellpress\v1_3_76\src\Shared\StorageModels;
 
 /**
  * Date: 29.04.2018
@@ -205,9 +205,22 @@ abstract class ITermModel {
 	/**
 	 * Updates post data and all set meta.
 	 *
+	 * @deprecated - use: pushChanges()
+	 *
 	 * @return void
 	 */
 	public function flush() {
+
+		$this->pushChanges();
+
+	}
+
+	/**
+	 * Updates post data and all set meta.
+	 *
+	 * @return void
+	 */
+	public function pushChanges() {
 
 		$args = array(
 			'name'          =>  $this->getName(),

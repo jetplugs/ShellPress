@@ -1,16 +1,13 @@
 <?php
-namespace shellpress\v1_3_4\src\Components\External;
+namespace shellpress\v1_3_76\src\Components\External;
 
 /**
  * Date: 30.05.2018
  * Time: 21:36
  */
 
-use Mustache_Autoloader;
 use Mustache_Engine;
-use Mustache_Loader_FilesystemLoader;
-use Mustache_Loader_StringLoader;
-use shellpress\v1_3_4\src\Shared\Components\IComponent;
+use shellpress\v1_3_76\src\Shared\Components\IComponent;
 
 class MustacheHandler extends IComponent {
 
@@ -34,13 +31,7 @@ class MustacheHandler extends IComponent {
 
 		if( ! $this->engine ){
 
-			//  Mustache autoloader
-
-			$this::s()->requireFile( 'lib/ShellPress/lib/Mustache/Autoloader.php', 'Mustache_Autoloader' );
-			Mustache_Autoloader::register();
-
 			//  Construct Mustache instance
-
 			$this->engine           = new Mustache_Engine();
 			$this->isInitialized    = true;
 

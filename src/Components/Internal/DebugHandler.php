@@ -1,12 +1,12 @@
 <?php
-namespace shellpress\v1_3_4\src\Components\Internal;
+namespace shellpress\v1_3_76\src\Components\Internal;
 
 /**
  * Date: 29.05.2018
  * Time: 22:19
  */
 
-use shellpress\v1_3_4\src\Shared\Components\IComponent;
+use shellpress\v1_3_76\src\Shared\Components\IComponent;
 
 class DebugHandler extends IComponent {
 
@@ -49,7 +49,12 @@ class DebugHandler extends IComponent {
 				$version = $namespaceParts[1];
 				$version = str_replace( '_', '.', $version );
 
-				$pluginMeta[] = sprintf( '<span>ShellPress %1$s</span>', $version );
+				$iconHtml = '';
+				if( strpos( $this::s()->getShellPressDir(), $this::s()->getPath() ) !== false ){
+					$iconHtml = '<span title="ShellPress is loaded from this location." class="dashicons dashicons-arrow-left"></span>';
+				}
+
+				$pluginMeta[] = sprintf( '<span>ShellPress %1$s</span>' . $iconHtml, $version );
 
 			}
 

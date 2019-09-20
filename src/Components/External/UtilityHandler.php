@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_4\src\Components\External;
+namespace shellpress\v1_3_76\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -9,7 +9,7 @@ namespace shellpress\v1_3_4\src\Components\External;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use shellpress\v1_3_4\src\Shared\Components\IComponent;
+use shellpress\v1_3_76\src\Shared\Components\IComponent;
 use ZipArchive;
 
 class UtilityHandler extends IComponent {
@@ -233,6 +233,38 @@ class UtilityHandler extends IComponent {
 		}
 
 		return $zip->close();
+
+	}
+
+	/**
+	 * Works with multidimensional array.
+	 * Returns array of found values by searching by given key.
+	 *
+	 * @param mixed  $list
+	 * @param string $searchKey
+	 *
+	 * @return mixed[]
+	 */
+	public function listPluck( $list, $searchKey ) {
+
+		$results = array();
+
+		if( is_array( $list ) ){
+
+			foreach( $list as $key => $row ){
+
+				if( $key === $searchKey ){
+					$results[] = $row;
+				} else {
+					$moreResults = $this->listPluck( $row, $searchKey );
+					$results = array_merge( $results, $moreResults );
+				}
+
+			}
+
+		}
+
+		return $results;
 
 	}
 

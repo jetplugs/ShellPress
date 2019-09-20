@@ -1,7 +1,5 @@
 <?php
-namespace shellpress\v1_3_4\src\Shared\AdminPageFramework;
-
-use TMC_v1_0_4_AdminPageFramework;
+namespace shellpress\v1_3_76\src\Shared\AdminPageFramework;
 
 /**
  * # Helper class for simply code separation.
@@ -15,7 +13,7 @@ abstract class AdminPageTab extends AdminPage {
     /**
      * AdminPage constructor.
      *
-     * @param TMC_v1_0_4_AdminPageFramework $pageFactory
+     * @param mixed $pageFactory AdminPageFramework instance
      * @param string $pageSlug
      * @param string $tabSlug
      */
