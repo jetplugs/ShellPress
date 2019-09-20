@@ -227,17 +227,18 @@ if( ! class_exists( 'shellpress\v1_3_76\src\Shell', false ) ) {
          * @param string      $path      - Relative file path
          * @param string|null $className - Class name to check against.
          *
-         * @return void
+         * @return bool - if file was required from here.
          */
         public function requireFile( $path, $className = null ) {
 
             if ( $className && class_exists( $className, false ) ) {
 
-                return; //  End method. Do not load file.
+                return false; //  End method. Do not load file.
 
             }
 
             require( $this->getPath( $path ) );
+            return true;
 
         }
 
