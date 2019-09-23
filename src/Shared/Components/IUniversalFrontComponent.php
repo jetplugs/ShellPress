@@ -29,6 +29,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 	 */
 	protected function onSetUp() {
 
+	    $this->onSetUpComponent();
+
 		//  ----------------------------------------
 		//  Actions
 		//  ----------------------------------------
@@ -41,6 +43,15 @@ abstract class IUniversalFrontComponent extends IComponent {
 		add_action( 'admin_footer',                     array( $this, '_a_createForms' ) );
 
 	}
+
+	/**
+     * Called on basic set up, just before everything else.
+     *
+     * @since 1_3_77
+     *
+	 * @return void
+	 */
+	public abstract function onSetUpComponent();
 
 	/**
      * Returns name of shortcode.
