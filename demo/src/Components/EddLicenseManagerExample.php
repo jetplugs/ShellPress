@@ -1,7 +1,7 @@
 <?php
-namespace shellpress\v1_3_76\demo\src\Components;
+namespace shellpress\v1_3_77\demo\src\Components;
 
-use shellpress\v1_3_76\src\Shared\Components\IUniversalFrontComponentEDDLicenser;
+use shellpress\v1_3_77\src\Shared\Components\IUniversalFrontComponentEDDLicenser;
 
 /**
  * @author jakubkuranda@gmail.com
