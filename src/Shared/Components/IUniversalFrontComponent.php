@@ -47,8 +47,6 @@ abstract class IUniversalFrontComponent extends IComponent {
 	/**
      * Called on basic set up, just before everything else.
      *
-     * @since 1_3_77
-     *
 	 * @return void
 	 */
 	public abstract function onSetUpComponent();
