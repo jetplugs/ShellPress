@@ -81,7 +81,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		//  Process deactivation
 		//  ----------------------------------------
 
-		if( $oldLicense && $oldLicense !== $newLicense ){
+		if( $request->get_param( 'deactivateSubmit' ) ){
 
 			$this->_setLicense( $oldLicense );
 
@@ -89,6 +89,8 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 			if( is_wp_error( $deactivationResult ) ){
 				$request->set_param( 'noticeError', $deactivationResult->get_error_message() );
+			} else {
+				$request->set_param( 'noticeSuccess', "Successfully deactivated license." );
 			}
 
 		}
@@ -105,6 +107,8 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 			if( is_wp_error( $activationResult ) ){
 				$request->set_param( 'noticeError', $activationResult->get_error_message() );
+			} else {
+				$request->set_param( 'noticeSuccess', "Successfully activated license." );
 			}
 
 		}
@@ -138,24 +142,54 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		$html = '';
 
-		$inputLicenseEl = HtmlElement::create( 'input', false );
-		$inputLicenseEl->setAttributes( array(
-			'type'          =>  'password',
-			'class'         =>  'regular-text',
-			'value'         =>  esc_attr( $this->getLicense() ),
-			'name'          =>  'license'
-		) );
+		if( $this->isLicenseActive() ){
 
-		$html .= $inputLicenseEl->getDisplay();
+			$inputLicenseEl = HtmlElement::create( 'input', false );
+			$inputLicenseEl->setAttributes( array(
+				'type'          =>  'password',
+				'class'         =>  'regular-text',
+				'value'         =>  esc_attr( $this->getLicense() ),
+				'name'          =>  'license',
+				'disabled'      =>  'disabled'
+			) );
 
-		$buttonUpdateLicense = HtmlElement::create( 'button' );
-		$buttonUpdateLicense->setAttributes( array(
-			'type'          =>  'submit',
-			'class'         =>  'button'
-		) );
-		$buttonUpdateLicense->setContent( 'Update License' );
+			$html .= $inputLicenseEl->getDisplay();
 
-		$html .= $buttonUpdateLicense->getDisplay();
+			$buttonUpdateLicense = HtmlElement::create( 'button' );
+			$buttonUpdateLicense->setAttributes( array(
+				'type'          =>  'submit',
+				'class'         =>  'button',
+				'name'          =>  'deactivateSubmit',
+				'value'         =>  '1'
+			) );
+			$buttonUpdateLicense->setContent( 'Deactivate License' );
+
+			$html .= $buttonUpdateLicense->getDisplay();
+
+		} else {
+
+			$inputLicenseEl = HtmlElement::create( 'input', false );
+			$inputLicenseEl->setAttributes( array(
+				'type'          =>  'password',
+				'class'         =>  'regular-text',
+				'value'         =>  esc_attr( $this->getLicense() ),
+				'name'          =>  'license'
+			) );
+
+			$html .= $inputLicenseEl->getDisplay();
+
+			$buttonUpdateLicense = HtmlElement::create( 'button' );
+			$buttonUpdateLicense->setAttributes( array(
+				'type'          =>  'submit',
+				'class'         =>  'button',
+				'name'          =>  'updateSubmit',
+				'value'         =>  '1'
+			) );
+			$buttonUpdateLicense->setContent( 'Update License' );
+
+			$html .= $buttonUpdateLicense->getDisplay();
+
+		}
 
 		//  ----------------------------------------
 		//  Notifications
@@ -490,7 +524,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				$timeNow    = time();
 				$timeExpire = $this::s()->get( $this->_getCachedData(), 'expires' );
 
-				if( $timeNow > $timeExpire ){
+				if( $timeNow > $timeExpire || $timeExpire === 'lifetime' ){
 
 					return true;
 
