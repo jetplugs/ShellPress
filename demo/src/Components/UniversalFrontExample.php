@@ -80,4 +80,13 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 
 	}
 
+	/**
+	 * Called on basic set up, just before everything else.
+	 *
+	 * @return void
+	 */
+	public function onSetUpComponent() {
+		// TODO: Implement onSetUpComponent() method.
+	}
+
 }

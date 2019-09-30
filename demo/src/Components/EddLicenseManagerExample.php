@@ -10,12 +10,13 @@ use shellpress\v1_3_77\src\Shared\Components\IUniversalFrontComponentEDDLicenser
  */
 class EddLicenseManagerExample extends IUniversalFrontComponentEDDLicenser {
 
+
 	/**
-	 * This method should be used to set up configuration.
+	 * Called on basic set up, just before everything else.
 	 *
 	 * @return void
 	 */
-	public function onSetUpLicenser() {
+	public function onSetUpComponent() {
 
 		$this->setApiUrl( 'https://easydigitaldownloads.com' );
 		$this->setProductId( '5' );
