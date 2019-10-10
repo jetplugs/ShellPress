@@ -1,6 +1,7 @@
 <?php
 namespace shellpress\v1_3_77\src\Shared\Components;
 
+use shellpress\v1_3_77\lib\EasyDigitalDownloads\EDDPluginUpdater;
 use shellpress\v1_3_77\src\Shared\Front\Models\HtmlElement;
 use shellpress\v1_3_77\src\Shared\RestModels\UniversalFrontResponse;
 use WP_Error;
@@ -535,6 +536,36 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		}
 
 		return false;
+
+	}
+
+	/**
+	 * Enables software updates from set shop uri.
+	 * License is required for updating.
+	 */
+	public function enableSoftwareUpdates() {
+
+		add_action( 'init', array( $this, '_a_registerSoftwareUpdates' ) );
+
+	}
+
+	//  ================================================================================
+	//  ACTIONS
+	//  ================================================================================
+
+	public function _a_registerSoftwareUpdates() {
+
+		if( $this->isLicenseActive() && $this->_getApiUrl() && $this->_getProductId() ){
+
+			new EDDPluginUpdater( $this->_getApiUrl(), $this::s()->getMainPluginFile(), array(
+				'version'   =>  $this::s()->getFullPluginVersion(),
+				'license'   =>  $this->getLicense(),
+				'item_id'   =>  $this->_getProductId(),
+				'author'    =>  'TheMasterCut.co',
+				'beta'      =>  false,
+			) );
+
+		}
 
 	}
 
