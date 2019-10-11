@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_77\src\Shared\AdminPageFramework;
+namespace shellpress\v1_3_78\src\Shared\AdminPageFramework;
 
 use stdClass;
 

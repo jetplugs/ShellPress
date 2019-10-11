@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_3_77\src\Shared\Components;
+namespace shellpress\v1_3_78\src\Shared\Components;
 
-use shellpress\v1_3_77\lib\EasyDigitalDownloads\EDDPluginUpdater;
-use shellpress\v1_3_77\src\Shared\Front\Models\HtmlElement;
-use shellpress\v1_3_77\src\Shared\RestModels\UniversalFrontResponse;
+use shellpress\v1_3_78\lib\EasyDigitalDownloads\EDDPluginUpdater;
+use shellpress\v1_3_78\src\Shared\Front\Models\HtmlElement;
+use shellpress\v1_3_78\src\Shared\RestModels\UniversalFrontResponse;
 use WP_Error;
 use WP_REST_Request;
 
@@ -28,7 +28,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	public function getShortCodeName() {
 
-		return sanitize_key( __CLASS__ );
+		return sanitize_key( get_class( $this ) );
 
 	}
 
@@ -209,9 +209,11 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		}
 
 		if( $cachedData = $this->_getCachedData() ){
-			$html .= '<div class="notice" style="margin: 0.5em 0 0;">';
+			$html .= '<div class="postbox" style="margin: 0.5em 0 0;">';
+			$html .= '<div class="inside" style="margin: 0;">';
 			$html .= sprintf( '<p><small>Licensed to: <strong>%1s</strong></small></p>', $this::s()->get( $cachedData, 'customer_name' ) );
 			$html .= sprintf( '<p><small>Expires on: <strong>%1s</strong></small></p>', $this::s()->get( $cachedData, 'expires' ) );
+			$html .= '</div>';
 			$html .= '</div>';
 		}
 
@@ -317,7 +319,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	public function getOptionKeyLicense() {
 
-		return sanitize_key( __CLASS__ ) . '_license';
+		return sanitize_key( get_class( $this ) ) . '_license';
 
 	}
 
@@ -328,7 +330,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	public function getOptionKeyData() {
 
-		return sanitize_key( __CLASS__ ) . '_data';
+		return sanitize_key( get_class( $this ) ) . '_data';
 
 	}
 
