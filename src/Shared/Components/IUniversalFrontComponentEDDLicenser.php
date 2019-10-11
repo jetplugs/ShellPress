@@ -544,6 +544,8 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	/**
 	 * Enables software updates from set shop uri.
 	 * License is required for updating.
+	 *
+	 * Should be called before init action.
 	 */
 	public function enableSoftwareUpdates() {
 
@@ -560,7 +562,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		if( $this->isLicenseActive() && $this->_getApiUrl() && $this->_getProductId() ){
 
 			new EDDPluginUpdater( $this->_getApiUrl(), $this::s()->getMainPluginFile(), array(
-				'version'   =>  $this::s()->getFullPluginVersion(),
+				'version'   =>  $this::s()->getPluginVersion(),
 				'license'   =>  $this->getLicense(),
 				'item_id'   =>  $this->_getProductId(),
 				'author'    =>  'TheMasterCut.co',
