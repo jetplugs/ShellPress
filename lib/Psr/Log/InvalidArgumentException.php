@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_77\lib\Psr\Log;
+namespace shellpress\v1_3_78\lib\Psr\Log;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {
