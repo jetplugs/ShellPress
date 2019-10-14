@@ -447,7 +447,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 			} else {
 
-				return new WP_Error( 'error', 'Remote data has wrong format.' );
+				return new WP_Error( 'error', 'Request failed. Please try again in a few minutes.' );
 
 			}
 
@@ -507,7 +507,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 			} else {
 
-				return new WP_Error( 'error', 'Remote data has wrong format.' );
+				return new WP_Error( 'error', 'Request failed. Please try again in a few minutes.' );
 
 			}
 
