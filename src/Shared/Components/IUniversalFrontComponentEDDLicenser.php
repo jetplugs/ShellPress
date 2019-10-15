@@ -65,60 +65,53 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 */
 	protected function processUniversalFrontResponse( $universalFrontResponse, $request ) {
 
-		$oldLicense = $this->getLicense();
 		$newLicense = $request->get_param( 'license' ) ?: '';
 
 		//  ----------------------------------------
 		//  Just remove cached data when switched
 		//  ----------------------------------------
 
-		if( $oldLicense !== $newLicense ){
-
-			$this->_setCachedData( array() );
-
-		}
-
-		//  ----------------------------------------
-		//  Process deactivation
-		//  ----------------------------------------
 
 		if( $request->get_param( 'deactivateSubmit' ) ){
 
-			$this->_setLicense( $oldLicense );
+			//  ----------------------------------------
+			//  Process deactivation
+			//  ----------------------------------------
 
-			$deactivationResult = $this->remoteDeactivateLicense();
+			$deactivationResult = $this->remoteDeactivateLicense( $newLicense );
 
 			if( is_wp_error( $deactivationResult ) ){
 				$request->set_param( 'noticeError', $deactivationResult->get_error_message() );
 			} else {
+				$this->_setLicense( '' );
+				$this->_setCachedData( array() );
 				$request->set_param( 'noticeSuccess', "Successfully deactivated license." );
 			}
 
-		}
+		} else if( ! $this->isLicenseActive() && $newLicense ){
 
-		//  ----------------------------------------
-		//  Process activation
-		//  ----------------------------------------
-
-		if( $newLicense ){
-
-			$this->_setLicense( $newLicense );
+			//  ----------------------------------------
+			//  Process activation
+			//  ----------------------------------------
 			
-			$activationResult = $this->remoteActivateLicense();
+			$activationResult = $this->remoteActivateLicense( $newLicense );
 
 			if( is_wp_error( $activationResult ) ){
 				$request->set_param( 'noticeError', $activationResult->get_error_message() );
 			} else {
-				$request->set_param( 'noticeSuccess', "Successfully activated license." );
+
+				if( $activationResult ){
+					$this->_setLicense( $newLicense );
+					$this->_setCachedData( $activationResult );
+					$request->set_param( 'noticeSuccess', "Successfully activated license." );
+				} else {
+					$this->_setCachedData( array() );
+					$request->set_param( 'noticeError', "License is invalid." );
+				}
+
 			}
 
 		}
-
-		//  ----------------------------------------
-		//  Always save
-		//  ----------------------------------------
-
-		$this->_setLicense( $newLicense );
 
 		//  ----------------------------------------
 		//  Process display
@@ -151,7 +144,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				'class'         =>  'regular-text',
 				'value'         =>  esc_attr( $this->getLicense() ),
 				'name'          =>  'license',
-				'disabled'      =>  'disabled'
+				'readonly'      =>  'readonly'
 			) );
 
 			$html .= $inputLicenseEl->getDisplay();
@@ -208,7 +201,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 			$html .= sprintf( '<div class="notice notice-success" style="margin: 0.5em 0 0;"><p>%1$s</p></div>', $noticeInfo );
 		}
 
-		if( $cachedData = $this->_getCachedData() ){
+		if( ( $cachedData = $this->_getCachedData() ) && $this->getLicense() ){
 			$html .= '<div class="postbox" style="margin: 0.5em 0 0;">';
 			$html .= '<div class="inside" style="margin: 0;">';
 			$html .= sprintf( '<p><small>Licensed to: <strong>%1s</strong></small></p>', $this::s()->get( $cachedData, 'customer_name' ) );
@@ -336,11 +329,12 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 	/**
 	 * If something goes wrong, it will return WP_Error object.
-	 * If everything is fine and license is active, cached data is set to requested body.
+	 * If everything is fine and license is active, it will return data.
+	 * If license is inactive it will return false.
 	 *
-	 * @return WP_Error|bool
+	 * @return WP_Error|false|array
 	 */
-	public function remoteActivateLicense(){
+	public function remoteActivateLicense( $license ){
 
 		//  ----------------------------------------
 		//  Check requirements
@@ -348,7 +342,6 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		if( ! $this->_getApiUrl() ) return new WP_Error( 'error', 'API url is not defined.' );
 		if( ! $this->_getProductId() ) return new WP_Error( 'error', 'Product ID is not defined.' );
-		if( ! $this->getLicense() ) return new WP_Error( 'error', 'License is not defined.' );
 
 		//  ----------------------------------------
 		//  Make request
@@ -358,7 +351,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$fullUrl = add_query_arg( array(
 			'edd_action'        =>  'activate_license',
 			'item_id'           =>  $this->_getProductId(),
-			'license'           =>  $this->getLicense(),
+			'license'           =>  $license,
 			'url'               =>  get_home_url()
 		), $this->_apiUrl );
 
@@ -375,12 +368,11 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				$licenseStatus = $this::s()->get( $responseBody, 'license' );
 
 				if( $licenseStatus === 'valid' ){
-					$this->_setCachedData( $responseBody );
-					return true;
+					return $responseBody;
 				}
 
 				if( $licenseStatus === 'invalid' ){
-					return new WP_Error( 'error', 'License is invalid.' );
+					return false;
 				}
 
 				return new WP_Error( 'error', 'License check failed.' );
@@ -397,11 +389,14 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 	/**
 	 * If something goes wrong, it will return WP_Error object.
-	 * If everything is fine and license is active, cached data is set to requested body.
+	 * If everything is fine and license is active, it will return data.
+	 * If license is inactive, it will return false.
 	 *
-	 * @return WP_Error|bool
+	 * @param string $license
+	 *
+	 * @return WP_Error|false|array
 	 */
-	public function remoteCheckLicense(){
+	public function remoteCheckLicense( $license ){
 
 		//  ----------------------------------------
 		//  Check requirements
@@ -409,7 +404,6 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		if( ! $this->_getApiUrl() ) return new WP_Error( 'error', 'API url is not defined.' );
 		if( ! $this->_getProductId() ) return new WP_Error( 'error', 'Product ID is not defined.' );
-		if( ! $this->getLicense() ) return new WP_Error( 'error', 'License is not defined.' );
 
 		//  ----------------------------------------
 		//  Make request
@@ -418,7 +412,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$apiParams = array(
 			'edd_action'        =>  'check_license',
 			'item_id'           =>  $this->_getProductId(),
-			'license'           =>  $this->getLicense(),
+			'license'           =>  $license,
 			'url'               =>  get_home_url()
 		);
 
@@ -435,12 +429,11 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				$licenseStatus = $this::s()->get( $responseBody, 'license' );
 
 				if( $licenseStatus === 'valid' ){
-					$this->_setCachedData( $responseBody );
-					return true;
+					return $responseBody;
 				}
 
 				if( $licenseStatus === 'invalid' ){
-					return new WP_Error( 'error', 'License is invalid.' );
+					return false;
 				}
 
 				return new WP_Error( 'error', 'License check failed.' );
@@ -457,11 +450,14 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 	/**
 	 * If something goes wrong, it will return WP_Error object.
-	 * If everything is fine, cached data is set to empty array.
+	 * If everything is fine, it will return true.
+	 * If could not deactivate license, because it is disabled etc. it will return false.
 	 *
-	 * @return bool|WP_Error
+	 * @param string $license
+	 *
+	 * @return true|false|WP_Error
 	 */
-	public function remoteDeactivateLicense() {
+	public function remoteDeactivateLicense( $license ) {
 
 		//  ----------------------------------------
 		//  Check requirements
@@ -469,7 +465,6 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 		if( ! $this->_getApiUrl() ) return new WP_Error( 'error', 'API url is not defined.' );
 		if( ! $this->_getProductId() ) return new WP_Error( 'error', 'Product ID is not defined.' );
-		if( ! $this->getLicense() ) return new WP_Error( 'error', 'License is not defined.' );
 
 		//  ----------------------------------------
 		//  Make request
@@ -478,7 +473,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 		$apiParams = array(
 			'edd_action'        =>  'deactivate_license',
 			'item_id'           =>  $this->_getProductId(),
-			'license'           =>  $this->getLicense(),
+			'license'           =>  $license,
 			'url'               =>  get_home_url()
 		);
 
@@ -493,15 +488,23 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 			if( $responseBody ){
 
 				$actionStatus = $this::s()->get( $responseBody, 'success' );
+				$actionLicense = $this::s()->get( $responseBody, 'license' );
 
 				if( $actionStatus ){
 
-					$this->_setCachedData( array() );
 					return true;
 
 				} else {
 
-					return new WP_Error( 'error', 'Could not deactivate license.' );
+					if( $actionLicense === 'failed' ){
+
+						return false;
+
+					} else {
+
+						return new WP_Error( 'error', 'Could not deactivate license.' . $this::s()->utility->getFormattedVarExport( $responseBody ) );
+
+					}
 
 				}
 
