@@ -530,10 +530,10 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				$timeNow    = time();
 				$timeExpire = $this::s()->get( $this->_getCachedData(), 'expires' );
 
-				if( $timeNow > $timeExpire || $timeExpire === 'lifetime' ){
-
+				if( $timeExpire === 'lifetime' ){
 					return true;
-
+				} else if( $timeNow < strtotime( $timeExpire ) ){
+					return true;
 				}
 
 			}
