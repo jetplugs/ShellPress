@@ -402,7 +402,7 @@ if( ! class_exists( 'shellpress\v1_3_79\src\Shell', false ) ) {
 
 		        foreach( (array) $keys as $key ) {
 
-			        if( is_array( $value ) && $key && isset( $value[$key] ) ){
+			        if( is_array( $value ) && is_string( $key ) && isset( $value[$key] ) ){
 				        $value = $value[$key];
 			        } else {
 				        return $defaultValue;
