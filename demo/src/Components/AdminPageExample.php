@@ -55,6 +55,13 @@ class AdminPageExample extends IComponent {
 
 		echo Demo::i()->eddLicenseManagerExample2->getDisplay();
 
+		echo '<br/>';
+		echo '<br/>';
+		echo '<br/>';
+		echo '<br/>';
+
+		echo Demo::s()->getUrl( 'demo/src/Components/AdminPageExample.php' );
+
 	}
 
 }
