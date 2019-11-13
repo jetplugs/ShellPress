@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_3_79\demo\src\Components;
+namespace shellpress\v1_3_8\demo\src\Components;
 
-use shellpress\v1_3_79\src\Shared\Components\IUniversalFrontComponent;
-use shellpress\v1_3_79\src\Shared\Front\Models\HtmlElement;
-use shellpress\v1_3_79\src\Shared\RestModels\UniversalFrontResponse;
+use shellpress\v1_3_8\src\Shared\Components\IUniversalFrontComponent;
+use shellpress\v1_3_8\src\Shared\Front\Models\HtmlElement;
+use shellpress\v1_3_8\src\Shared\RestModels\UniversalFrontResponse;
 use WP_REST_Request;
 
 /**
