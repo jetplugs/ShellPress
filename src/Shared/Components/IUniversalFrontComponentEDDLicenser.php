@@ -21,6 +21,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	/** @var string */
 	private $_productId = '';
 
+	/** @var string */
+	private $_licenseForUpdates = '';
+
 	/**
 	 * Returns name of shortcode.
 	 *
@@ -549,8 +552,16 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 * License is required for updating.
 	 *
 	 * Should be called before init action.
+	 *
+	 * @param string|null $licenseForUpdates
+	 *
+	 * @return void
 	 */
-	public function enableSoftwareUpdates() {
+	public function enableSoftwareUpdates( $licenseForUpdates = null ) {
+
+		if( ! is_null( $licenseForUpdates ) ){
+			$this->_licenseForUpdates = $licenseForUpdates;
+		}
 
 		add_action( 'init', array( $this, '_a_registerSoftwareUpdates' ) );
 
@@ -562,11 +573,11 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 	public function _a_registerSoftwareUpdates() {
 
-		if( $this->isLicenseActive() && $this->_getApiUrl() && $this->_getProductId() ){
+		if( ( $this->_licenseForUpdates || $this->isLicenseActive() ) && $this->_getApiUrl() && $this->_getProductId() ){
 
 			new EDDPluginUpdater( $this->_getApiUrl(), $this::s()->getMainPluginFile(), array(
 				'version'   =>  $this::s()->getPluginVersion(),
-				'license'   =>  $this->getLicense(),
+				'license'   =>  $this->_licenseForUpdates ?: $this->getLicense(),
 				'item_id'   =>  $this->_getProductId(),
 				'author'    =>  'TheMasterCut.co',
 				'beta'      =>  false,
