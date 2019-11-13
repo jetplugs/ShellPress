@@ -1,16 +1,16 @@
 <?php
-namespace shellpress\v1_3_79\demo;
+namespace shellpress\v1_3_8\demo;
 
 /**
  * Date: 15.01.2019
  * Time: 21:40
  */
 
-use shellpress\v1_3_79\demo\src\Components\AdminPageExample;
-use shellpress\v1_3_79\demo\src\Components\EddLicenseManagerExample;
-use shellpress\v1_3_79\demo\src\Components\EddLicenseManagerExample2;
-use shellpress\v1_3_79\demo\src\Components\UniversalFrontExample;
-use shellpress\v1_3_79\ShellPress;
+use shellpress\v1_3_8\demo\src\Components\AdminPageExample;
+use shellpress\v1_3_8\demo\src\Components\EddLicenseManagerExample;
+use shellpress\v1_3_8\demo\src\Components\EddLicenseManagerExample2;
+use shellpress\v1_3_8\demo\src\Components\UniversalFrontExample;
+use shellpress\v1_3_8\ShellPress;
 
 class Demo extends ShellPress {
 
