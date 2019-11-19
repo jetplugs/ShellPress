@@ -170,7 +170,8 @@ abstract class IUniversalFrontComponent extends IComponent {
             'content'           =>  $content,
             'form-id'           =>  $thisFormId,
             'component-id'      =>  $thisElementId,
-            'action'            =>  "load"
+            'action'            =>  "load",
+            'eventName'         =>  ''
         );
 
 	    $fakeRequest = new WP_REST_Request();
@@ -214,6 +215,7 @@ abstract class IUniversalFrontComponent extends IComponent {
                 <input type="hidden" name="sp-universalfront[form-id]"      value="<?= esc_attr( $shortcodeData['form-id'] ); ?>">
                 <input type="hidden" name="sp-universalfront[component-id]" value="<?= esc_attr( $shortcodeData['component-id'] ); ?>">
                 <input type="hidden" name="sp-universalfront[action]"       value="<?= esc_attr( $shortcodeData['action'] ) ?>">
+                <input type="hidden" name="sp-universalfront[eventName]"    value="<?= esc_attr( $shortcodeData['eventName'] ) ?>">
 
                 <input type="submit" name="submit" value="submit" style="width:0; height:0; position:absolute; visibility:hidden">
 

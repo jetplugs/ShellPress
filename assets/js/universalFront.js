@@ -74,7 +74,7 @@
         $.each( plugin.options.refreshOnActions, function( key, value ){
 
             $( document ).on( value, function( event ){
-                plugin.triggerSubmit( 'refresh' );
+                plugin.triggerSubmit( 'refresh', value );
             } );
 
         } );
@@ -84,7 +84,7 @@
         $.each( plugin.options.submitOnActions, function( key, value ){
 
             $( document ).on( value, function( event ){
-                plugin.triggerSubmit( 'submit' );
+                plugin.triggerSubmit( 'submit', value );
             } );
 
         } );
@@ -112,7 +112,7 @@
         //  Submitter
         //  ----------------------------------------
 
-        plugin.$form.on( 'submit', function( event, action = 'submit' ){
+        plugin.$form.on( 'submit', function( event, action = 'submit', eventName = 'default' ){
 
             event.preventDefault();
 
@@ -128,6 +128,7 @@
             //  ----------------------------------------
 
             plugin.$fieldset.find( '[name="sp-universalfront[action]"]' ).val( action );
+            plugin.$fieldset.find( '[name="sp-universalfront[eventName]"]' ).val( eventName );
 
             //  ----------------------------------------
             //  Prepare submitted form data
@@ -281,12 +282,13 @@
      *
      * @name Plugin#triggerSubmit
      * @param {string} action submit,refresh
+     * @param {string} eventName
      *
      * @return {Plugin}
      */
-    Plugin.prototype.triggerSubmit = function( action = 'submit' ) {
+    Plugin.prototype.triggerSubmit = function( action = 'submit', eventName = 'default' ) {
 
-        this.$form.trigger( 'submit', [ action ] );
+        this.$form.trigger( 'submit', [ action, eventName ] );
 
         //  Return self for chaining.
         return this;
