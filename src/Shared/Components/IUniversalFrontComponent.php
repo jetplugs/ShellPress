@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_8\src\Shared\Components;
+namespace shellpress\v1_3_81\src\Shared\Components;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,8 +7,8 @@ namespace shellpress\v1_3_8\src\Shared\Components;
  * Time: 13:50
  */
 
-use shellpress\v1_3_8\src\Shared\Front\Models\HtmlElement;
-use shellpress\v1_3_8\src\Shared\RestModels\UniversalFrontResponse;
+use shellpress\v1_3_81\src\Shared\Front\Models\HtmlElement;
+use shellpress\v1_3_81\src\Shared\RestModels\UniversalFrontResponse;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
