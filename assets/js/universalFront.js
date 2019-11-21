@@ -134,9 +134,16 @@
             //  Prepare submitted form data
             //  ----------------------------------------
 
-            var submittedFormData = plugin.$form.serializeArray();
+            var submittedFormData       = null;
+            var isFormDataSerialized    = null;
+
+            //  TODO - I think, that refresh should not modify data here. Maybe we should clear form data on the backend.
 
             if( action === 'refresh' ){
+
+                //  Here submitted data is just an array.
+                submittedFormData    = plugin.$form.serializeArray();
+                isFormDataSerialized = true;
 
                 /**
                  * When refreshing, we only want to simulate "fresh request".
@@ -148,6 +155,12 @@
                     return input.name.indexOf( 'sp-universalfront[' ) === 0;
 
                 } );
+
+            } else {
+
+                //  Here submitted data is whole FormData object.
+                submittedFormData       = new FormData( plugin.$form[0] );
+                isFormDataSerialized    = false;
 
             }
 
@@ -163,8 +176,14 @@
 
             setTimeout( function(){
 
-                $.post( plugin.$form.attr( 'action' ), submittedFormData )
-                    .done( function( response ){
+                $.ajax( {
+                    url: plugin.$form.attr( 'action' ),
+                    data: submittedFormData,
+                    processData: isFormDataSerialized ? true : false,
+                    contentType: isFormDataSerialized ? 'application/x-www-form-urlencoded; charset=UTF-8' : false,
+                    cache: false,
+                    type: 'POST',
+                    success: function( response ){
 
                         plugin.$element.trigger( 'onSubmit/send/done' );  //  HOOK! Since v1_3_72.
 
@@ -201,13 +220,13 @@
                         //  I am ready!
                         plugin.isLocked( false );
 
-                    } )
-                    .fail( function( response ){
+                    },
+                    error: function( response ){
 
                         plugin.$element.trigger( 'onSubmit/send/fail' );  //  HOOK! Since v1_3_72.
 
-                    } )
-                    .always( function( response ){
+                    },
+                    complete: function( response ){
 
                         plugin.$element.trigger( 'onSubmit/send/always' );  //  HOOK! Since v1_3_72.
 
@@ -217,7 +236,8 @@
                         //  Re-bind all fields to form.
                         plugin.bindAllFieldsToForm();
 
-                    } );
+                    }
+                } );
 
             }, plugin.options.requestDelay );
 
