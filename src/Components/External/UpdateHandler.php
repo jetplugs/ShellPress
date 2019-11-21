@@ -1,7 +1,7 @@
 <?php
-namespace shellpress\v1_3_8\src\Components\External;
+namespace shellpress\v1_3_81\src\Components\External;
 
-use shellpress\v1_3_8\src\Shared\Components\IComponent;
+use shellpress\v1_3_81\src\Shared\Components\IComponent;
 
 class UpdateHandler extends IComponent {
 

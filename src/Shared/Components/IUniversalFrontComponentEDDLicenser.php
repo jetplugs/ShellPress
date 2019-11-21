@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_3_8\src\Shared\Components;
+namespace shellpress\v1_3_81\src\Shared\Components;
 
-use shellpress\v1_3_8\lib\EasyDigitalDownloads\EDDPluginUpdater;
-use shellpress\v1_3_8\src\Shared\Front\Models\HtmlElement;
-use shellpress\v1_3_8\src\Shared\RestModels\UniversalFrontResponse;
+use shellpress\v1_3_81\lib\EasyDigitalDownloads\EDDPluginUpdater;
+use shellpress\v1_3_81\src\Shared\Front\Models\HtmlElement;
+use shellpress\v1_3_81\src\Shared\RestModels\UniversalFrontResponse;
 use WP_Error;
 use WP_REST_Request;
 
