@@ -163,7 +163,7 @@ class DbModelsHandler extends IComponent {
 			KEY meta_id (meta_id),
 			KEY model_id (model_id),
 			KEY meta_key (meta_key),
-			KEY meta_value (meta_value(24))
+			FULLTEXT KEY meta_value (meta_value)
 			) {$charsetCollate};";
 
 		dbDelta( $sql );
@@ -281,6 +281,13 @@ class DbModelsHandler extends IComponent {
 							break;
 
 						case '=':
+
+							$prepareString  = "( {$tableName}.meta_key = %s AND MATCH( {$tableName}.meta_value ) AGAINST( %s ) )";
+
+							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $condition['value'] ) );
+
+							break;
+
 						case '>=':
 						case '<=':
 						case '!=':
