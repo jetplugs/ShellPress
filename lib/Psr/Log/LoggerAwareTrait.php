@@ -1,6 +1,6 @@
 <?php
 
-namespace shellpress\v1_3_81\lib\Psr\Log;
+namespace shellpress\v1_3_82\lib\Psr\Log;
 
 /**
  * Basic Implementation of LoggerAwareInterface.
