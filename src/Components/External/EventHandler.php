@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_82\src\Components\External;
+namespace shellpress\v1_3_83\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_3_82\src\Components\External;
  * Time: 02:29
  */
 
-use shellpress\v1_3_82\src\Shared\Components\IComponent;
+use shellpress\v1_3_83\src\Shared\Components\IComponent;
 
 class EventHandler extends IComponent {
 
