@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_82\src\Components\External;
+namespace shellpress\v1_3_83\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_3_82\src\Components\External;
  * Time: 15:31
  */
 
-use shellpress\v1_3_82\src\Shared\Components\IComponent;
+use shellpress\v1_3_83\src\Shared\Components\IComponent;
 use wpdb;
 
 class DbModelsHandler extends IComponent {
@@ -282,7 +282,7 @@ class DbModelsHandler extends IComponent {
 
 						case '=':
 
-							$prepareString  = "( {$tableName}.meta_key = %s AND MATCH( {$tableName}.meta_value ) AGAINST( %s ) )";
+							$prepareString  = "( {$tableName}.meta_key = %s AND MATCH( {$tableName}.meta_value ) AGAINST( '+\"%s\"' IN BOOLEAN MODE ) )";
 
 							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $condition['value'] ) );
 
