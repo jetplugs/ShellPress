@@ -282,9 +282,7 @@ class DbModelsHandler extends IComponent {
 
 						case '=':
 
-							$prepareString  = "( {$tableName}.meta_key = %s AND MATCH( {$tableName}.meta_value ) AGAINST( '+\"%s\"' IN BOOLEAN MODE ) )";
-
-							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $condition['value'] ) );
+							$sqlParts[] = "( {$tableName}.meta_key = '{$condition['key']}' AND MATCH( {$tableName}.meta_value ) AGAINST( '+\"{$condition['value']}\"' IN BOOLEAN MODE ) )";
 
 							break;
 
