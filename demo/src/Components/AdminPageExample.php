@@ -60,7 +60,7 @@ class AdminPageExample extends IComponent {
 		echo '<br/>';
 		echo '<br/>';
 
-		echo Demo::s()->getUrl( 'demo/src/Components/AdminPageExample.php' );
+		echo Demo::i()->universalFrontExample->getDisplay();
 
 	}
 

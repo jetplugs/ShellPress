@@ -190,7 +190,7 @@
                         //  Replace HTML.
                         if( response.hasOwnProperty( 'replacementHtml' ) && response.replacementHtml.length > 0 ){
 
-                            plugin.$dynamicArea.html( response.replacementHtml ).find( 'script' ).each( function (index, element) { $.globalEval( element.innerHTML ); }  );
+                            plugin.$dynamicArea.html( response.replacementHtml );
 
                         }
 
