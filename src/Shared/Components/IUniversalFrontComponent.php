@@ -228,11 +228,23 @@ abstract class IUniversalFrontComponent extends IComponent {
 			</fieldset>
 
             <script>
-                if( window.jQuery ) if( window.jQuery ) window.jQuery( document ).ready( function( $ ) {
+                (function(){
+                    if( typeof window.jQuery !== "undefined" ){
 
-                    if( $.fn.spUniversalFront ) $( '#<?= $thisElementId ?>' ).spUniversalFront( <?= json_encode( $thisElementJsArgs ) ?> );
+                        var x = function($){ if( $.fn.spUniversalFront ) $( '#<?= $thisElementId ?>' ).spUniversalFront( <?= json_encode( $thisElementJsArgs ) ?> ); }
 
-                } );
+                        switch (document.readyState) {
+                            case "loading":
+                            case "interactive":
+                                x( window.jQuery );
+                                break;
+                            default:
+                                window.jQuery( document ).ready( x );
+                                break;
+                        }
+
+                    }
+                })();
             </script>
 
 		</div>
