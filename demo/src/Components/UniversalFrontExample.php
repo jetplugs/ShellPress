@@ -74,9 +74,20 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 	 */
 	public function getInnerHtml( $request ) {
 
-		return HtmlElement::create( 'button' )->setContent( time() )->setAttributes( array(
-			'type'  =>  'submit'
-		) );
+		ob_start();
+		?>
+
+		<?php
+		if($this::s()->get( $request->get_params(), 'submit' )){
+			echo do_shortcode( sprintf( '[%1$s]', $this->getShortCodeName() ) );
+		}
+		?>
+
+		<script>(function(){console.log( "Hello!" );})();</script>
+		<button name="submit" type="submit" value="submit">Submit</button>
+
+		<?php
+		return ob_get_clean();
 
 	}
 
