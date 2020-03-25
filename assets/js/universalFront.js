@@ -7,6 +7,9 @@
      */
     var PLUGIN_NS = 'spUniversalFront';
 
+    //  Prevent duplicates.
+    if( typeof $.fn[ PLUGIN_NS ] !== "undefined" ) return;
+
     /**
      * @param target
      * @param options
@@ -121,7 +124,7 @@
                 return;
             }
 
-            plugin.$element.trigger( 'onSubmit/begin' );  //  HOOK! Since v1_3_72.
+            plugin.$element.trigger( 'onSubmit/begin' );  //  HOOK! Since 1_3_72.
 
             //  ----------------------------------------
             //  Change action type input value
@@ -185,7 +188,7 @@
                     type: 'POST',
                     success: function( response ){
 
-                        plugin.$element.trigger( 'onSubmit/send/done' );  //  HOOK! Since v1_3_72.
+                        plugin.$element.trigger( 'onSubmit/send/done' );  //  HOOK! Since 1_3_72.
 
                         //  Replace HTML.
                         if( response.hasOwnProperty( 'replacementHtml' ) && response.replacementHtml.length > 0 ){
@@ -223,12 +226,12 @@
                     },
                     error: function( response ){
 
-                        plugin.$element.trigger( 'onSubmit/send/fail' );  //  HOOK! Since v1_3_72.
+                        plugin.$element.trigger( 'onSubmit/send/fail' );  //  HOOK! Since 1_3_72.
 
                     },
                     complete: function( response ){
 
-                        plugin.$element.trigger( 'onSubmit/send/always' );  //  HOOK! Since v1_3_72.
+                        plugin.$element.trigger( 'onSubmit/send/always' );  //  HOOK! Since 1_3_72.
 
                         //  We always want to remove fake submit input.
                         plugin._maybeRemoveFakeSubmitInput();
