@@ -237,11 +237,9 @@ abstract class IUniversalFrontComponent extends IComponent {
                             case "interactive":
                             case "complete":
                                 x( window.jQuery );
-                                console.log( 'ShellPress will be initialized dynamically.' );
                                 break;
                             default:
                                 window.jQuery( document ).ready( x );
-                                console.log( 'ShellPress will be initialized on ready.' );
                                 break;
                         }
 
