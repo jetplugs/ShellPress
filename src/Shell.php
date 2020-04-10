@@ -149,35 +149,20 @@ if( ! class_exists( 'shellpress\v1_3_84\src\Shell', false ) ) {
          * Example usage: getUrl( 'assets/style.css' );
          *
          * @param string      $relativePath
-         * @param string|null $relativeToFileOrDir - To which file or dir we are relating to?
+         * @deprecated string|null $relativeToFileOrDir - To which file or dir we are relating to?
          *                                    If null, it will be relative to main plugin file.
          *
          * @return string - URL
          */
         public function getUrl( $relativePath = '', $relativeToFileOrDir = null ) {
 
-        	if( $relativeToFileOrDir ){
-        		$relativePointer = is_dir( $relativeToFileOrDir ) ? $relativeToFileOrDir : dirname( $relativeToFileOrDir );
-	        } else {
-        		$relativePointer = dirname( $this->getMainPluginFile() );
+	        $relativePath = ltrim( $relativePath, '/' );    //  Normalize.
+
+        	if( $this->isInsidePlugin() ){
+        		return plugins_url( $relativePath, $this->getMainPluginFile() );
 	        }
 
-        	$relativePointer = str_replace( '\\', '/', $relativePointer );  //  Normalize on Windows.
-
-	        //  ----------------------------------------
-	        //  Prepare url
-	        //  ----------------------------------------
-
-	        $containerUrl = str_replace( WP_CONTENT_DIR, '', $relativePointer );
-
-	        $containerUrl = ltrim( $containerUrl, '/' );  //  Always remove beginning slash.
-	        $containerUrl = rtrim( $containerUrl, '/' );  //  Always remove trailing slash.
-
-	        //  ----------------------------------------
-	        //  Result
-	        //  ----------------------------------------
-
-	        return $relativePath ? content_url( $containerUrl . '/' . ltrim( $relativePath, '/' ) ) : $containerUrl;
+        	return get_theme_file_uri( $relativePath );
 
         }
 
