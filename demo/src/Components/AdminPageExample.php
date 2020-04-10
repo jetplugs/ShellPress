@@ -62,6 +62,13 @@ class AdminPageExample extends IComponent {
 
 		echo Demo::i()->universalFrontExample->getDisplay();
 
+		echo '<br/>';
+		echo '<br/>';
+		echo '<br/>';
+		echo '<br/>';
+
+		echo$this::s()->getUrl( 'assets/css/Tooltip/SPTooltip.css' );
+
 	}
 
 }
