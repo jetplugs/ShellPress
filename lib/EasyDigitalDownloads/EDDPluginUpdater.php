@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_83\lib\EasyDigitalDownloads;
+namespace shellpress\v1_3_84\lib\EasyDigitalDownloads;
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
