@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_84\src\Components\External;
+namespace shellpress\v1_3_85\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_3_84\src\Components\External;
  * Time: 15:31
  */
 
-use shellpress\v1_3_84\src\Shared\Components\IComponent;
+use shellpress\v1_3_85\src\Shared\Components\IComponent;
 use wpdb;
 
 class DbModelsHandler extends IComponent {
