@@ -47,10 +47,9 @@ class AdminPageExample extends IComponent {
 		echo '<br/>';
 		echo '<br/>';
 
+		echo '<p>Example of two components.</p>';
 		echo Demo::i()->eddLicenseManagerExample->getDisplay();
 
-		echo '<br/>';
-		echo '<br/>';
 		echo '<br/>';
 
 		echo Demo::i()->eddLicenseManagerExample2->getDisplay();
@@ -60,6 +59,7 @@ class AdminPageExample extends IComponent {
 		echo '<br/>';
 		echo '<br/>';
 
+		echo '<p>Creating a shortcode inside shortcode.</p>';
 		echo Demo::i()->universalFrontExample->getDisplay();
 
 		echo '<br/>';
@@ -67,7 +67,7 @@ class AdminPageExample extends IComponent {
 		echo '<br/>';
 		echo '<br/>';
 
-		echo$this::s()->getUrl( 'assets/css/Tooltip/SPTooltip.css' );
+		echo $this::s()->getUrl( 'assets/css/Tooltip/SPTooltip.css' );
 
 	}
 
