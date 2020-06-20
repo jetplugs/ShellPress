@@ -262,6 +262,27 @@ if( ! class_exists( 'shellpress\v1_3_85\src\Shell', false ) ) {
 		}
 
 		/**
+		 * Returns version of shellpress used in project.
+		 *
+		 * @param bool $fromNamespace If true, it will return an original string from namespace path.
+		 *
+		 * @return string
+		 */
+		public function getShellVersion( $fromNamespace = false ) {
+
+			$namespaceParts = explode( '\\', __CLASS__ );
+
+			$version = $namespaceParts[1];
+
+			if( ! $fromNamespace ){
+				$version = str_replace( array( '_', 'v' ), array( '.', '' ), $version );
+			}
+
+			return $version;	//	Returns the first piece( after shellpress word ).
+
+		}
+
+		/**
 		 * Gets version of instance.
 		 *
 		 * @return string

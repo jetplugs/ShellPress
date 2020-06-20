@@ -157,6 +157,7 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		$thisElementId  = $this::s()->getPrefix( uniqid() );
 		$thisFormId     = $this::s()->getPrefix( uniqid() );
+		$jsPluginName   = 'spUniversalFront_' . $this::s()->getShellVersion( true );
 
 		$this->_formIdsToCreate[] = $thisFormId;  //  Add form ID for further creation.
 
@@ -231,7 +232,7 @@ abstract class IUniversalFrontComponent extends IComponent {
                 (function(){
                     if( typeof window.jQuery !== "undefined" ){
 
-                        var x = function($){ if( $.fn.spUniversalFront ) $( '#<?= $thisElementId ?>' ).spUniversalFront( <?= json_encode( $thisElementJsArgs ) ?> ); };
+                        var x = function($){ if( $.fn.<?= $jsPluginName ?> ) $( '#<?= $thisElementId ?>' ).<?= $jsPluginName ?>( <?= json_encode( $thisElementJsArgs ) ?> ); };
 
                         switch (document.readyState) {
                             case "interactive":
@@ -289,8 +290,10 @@ abstract class IUniversalFrontComponent extends IComponent {
 	 */
 	public function _a_enqueueAssets() {
 
-	    wp_enqueue_script( 'spUniversalFront', $this::s()->getShellUrl( 'assets/js/universalFront.js' ), array( 'jquery' ), $this::s()->getFullPluginVersion(), true );
-	    wp_enqueue_style( 'spUniversalFront', $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), $this::s()->getFullPluginVersion() );
+	    $shellVersion = $this::s()->getShellVersion();
+
+	    wp_enqueue_script( 'spUniversalFront_' . $shellVersion, $this::s()->getShellUrl( 'assets/js/universalFront.js' ), array( 'jquery' ), null, true );
+	    wp_enqueue_style( 'spUniversalFront_' . $shellVersion, $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), null );
 
     }
 
