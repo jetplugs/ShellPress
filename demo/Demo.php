@@ -23,8 +23,6 @@ class Demo extends ShellPress {
 	/** @var EddLicenseManagerExample */
 	public $eddLicenseManagerExample;
 
-	/** @var EddLicenseManagerExample2 */
-	public $eddLicenseManagerExample2;
 
 	/**
 	 * Called automatically after core is ready.
@@ -36,7 +34,6 @@ class Demo extends ShellPress {
 		$this->universalFrontExample = new UniversalFrontExample( $this );
 		$this->adminPageExample = new AdminPageExample( $this );
 		$this->eddLicenseManagerExample = new EddLicenseManagerExample( $this );
-		$this->eddLicenseManagerExample2 = new EddLicenseManagerExample2( $this );
 
 	}
 

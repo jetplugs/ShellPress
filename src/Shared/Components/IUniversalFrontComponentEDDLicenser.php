@@ -24,6 +24,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	/** @var string */
 	private $_licenseForUpdates = '';
 
+	/** @var string */
+	private $_thisHost = '';
+
 	/**
 	 * Returns name of shortcode.
 	 *
@@ -554,13 +557,18 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 * Should be called before init action.
 	 *
 	 * @param string|null $licenseForUpdates
+	 * @param bool $forceAllowUpdates - If true, updater will fake a "localhost"
 	 *
 	 * @return void
 	 */
-	public function enableSoftwareUpdates( $licenseForUpdates = null ) {
+	public function enableSoftwareUpdates( $licenseForUpdates = null, $forceAllowUpdates = false ) {
 
 		if( ! is_null( $licenseForUpdates ) ){
 			$this->_licenseForUpdates = $licenseForUpdates;
+		}
+
+		if( $forceAllowUpdates === true ){
+			$this->_thisHost = 'https://localhost/';
 		}
 
 		add_action( 'init', array( $this, '_a_registerSoftwareUpdates' ) );
@@ -581,6 +589,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				'item_id'   =>  $this->_getProductId(),
 				'author'    =>  'TheMasterCut.co',
 				'beta'      =>  false,
+				'thisHost'  =>  $this->_thisHost
 			) );
 
 		}

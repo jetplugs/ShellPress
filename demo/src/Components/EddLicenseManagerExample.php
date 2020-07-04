@@ -20,7 +20,7 @@ class EddLicenseManagerExample extends IUniversalFrontComponentEDDLicenser {
 
 		$this->setApiUrl( 'https://themastercut.co' );
 		$this->setProductId( '1344' );
-		$this->enableSoftwareUpdates( '36f884423924959bb947a3fbb4ae7c31' );
+		$this->enableSoftwareUpdates( '36f884423924959bb947a3fbb4ae7c31', true );
 
 	}
 

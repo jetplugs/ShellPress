@@ -51,10 +51,6 @@ class AdminPageExample extends IComponent {
 		echo Demo::i()->eddLicenseManagerExample->getDisplay();
 
 		echo '<br/>';
-
-		echo Demo::i()->eddLicenseManagerExample2->getDisplay();
-
-		echo '<br/>';
 		echo '<br/>';
 		echo '<br/>';
 		echo '<br/>';

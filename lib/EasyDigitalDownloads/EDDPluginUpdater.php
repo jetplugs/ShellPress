@@ -422,7 +422,7 @@ class EDDPluginUpdater {
 			'version'    => isset( $data['version'] ) ? $data['version'] : false,
 			'slug'       => $data['slug'],
 			'author'     => $data['author'],
-			'url'        => home_url(),
+			'url'        => ( isset( $data['thisHost'] ) && $data['thisHost'] ) ? $data['thisHost'] : home_url(),
 			'beta'       => ! empty( $data['beta'] ),
 		);
 
