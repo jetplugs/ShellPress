@@ -18,6 +18,9 @@ class DbModelsHandler extends IComponent {
 	/** @var string */
 	private $_recentSql = '';
 
+	/** @var bool */
+	private $_shouldSelectDistinct = false;
+
 	/**
 	 * Called on creation of component.
 	 *
@@ -238,6 +241,9 @@ class DbModelsHandler extends IComponent {
 		$sqlParts = array();
 
 		$relation = isset( $conditions['relation'] ) ? strtoupper( $conditions['relation'] ) : 'AND';
+
+		//  Mark SELECT sql as in need of DISTINCT.
+		$this->_shouldSelectDistinct = true;
 
 		//  ----------------------------------------
 		//  Let's look at conditions
@@ -514,6 +520,9 @@ class DbModelsHandler extends IComponent {
 		$groupBy = array();
 		$orderBy = array();
 
+		//  We don't know yet, so mark it as not needed for now.
+		$this->_shouldSelectDistinct = false;
+
 		//  ----------------------------------------
 		//  Options
 		//  ----------------------------------------
@@ -527,27 +536,10 @@ class DbModelsHandler extends IComponent {
 		$options = wp_parse_args( $options, $defOptions );
 
 		//  ----------------------------------------
-		//  Base of SQL
+		//  Meta query sql part
 		//  ----------------------------------------
 
-		switch( $options['return'] ){
-			case 'ids':
-				$selectWhat = 'id';
-				break;
-
-			case 'count':
-				$selectWhat = 'count(*)';
-				break;
-
-			default:
-				$selectWhat = '*';
-		}
-
-		$sql = "SELECT {$selectWhat} FROM {$modelTableName}" . PHP_EOL;
-
-		//  ----------------------------------------
-		//  Meta query
-		//  ----------------------------------------
+		$sqlForMetaQuery = '';
 
 		if( ! empty( $metaQuery ) ){
 
@@ -559,19 +551,45 @@ class DbModelsHandler extends IComponent {
 			$numLeftJoins   = count( $metaKeys );
 
 			/**
-			 * Every condidtion made with meta key needs unique join on meta table.
+			 * Every condition made with meta key needs unique join on meta table.
 			 */
 			for( $leftJoinIndex = 1; $leftJoinIndex <= $numLeftJoins; $leftJoinIndex++ ){
-				$sql .= " LEFT JOIN {$metaTableName} m{$leftJoinIndex} ON ( {$modelTableName}.id = m{$leftJoinIndex}.model_id )" . PHP_EOL;
+				$sqlForMetaQuery .= " LEFT JOIN {$metaTableName} m{$leftJoinIndex} ON ( {$modelTableName}.id = m{$leftJoinIndex}.model_id )" . PHP_EOL;
 			}
 
-			$sql .= " WHERE " . $this->_getSqlPartForMetaQuery( $metaQuery ) . PHP_EOL;
+			$sqlForMetaQuery .= " WHERE " . $this->_getSqlPartForMetaQuery( $metaQuery ) . PHP_EOL;
 
 		}
 
 		//  ----------------------------------------
-		//  GROUP BY
+		//  SELECT sql part
 		//  ----------------------------------------
+
+		//  Hey, psssst! This part of code is intentionally below meta queries part!
+		//  We want to check, if we should select distinct first.
+
+		$maybeDistinctString = $this->_shouldSelectDistinct ? 'DISTINCT ' : '';
+
+		switch( $options['return'] ){
+			case 'ids':
+				$selectWhat = "{$maybeDistinctString} id";
+				break;
+
+			case 'count':
+				$selectWhat = "count({$maybeDistinctString} *)";
+				break;
+
+			default:
+				$selectWhat = "*";
+		}
+
+		$sqlForSelect = "SELECT {$selectWhat} FROM {$modelTableName}" . PHP_EOL;
+
+		//  ----------------------------------------
+		//  GROUP BY sql part
+		//  ----------------------------------------
+
+		$sqlForGroupBy = '';
 
 		if( ! empty( $metaQuery ) ){
 
@@ -582,13 +600,15 @@ class DbModelsHandler extends IComponent {
 
 		if( $groupBy ){
 
-			$sql .= ' GROUP BY ' . implode( ', ', $groupBy ) . PHP_EOL;
+			$sqlForGroupBy .= ' GROUP BY ' . implode( ', ', $groupBy ) . PHP_EOL;
 
 		}
 
 		//  ----------------------------------------
-		//  ORDER BY
+		//  ORDER BY sql part
 		//  ----------------------------------------
+
+		$sqlForOrderBy = '';
 
 		if( $options['return'] !== 'count' ){
 
@@ -605,13 +625,15 @@ class DbModelsHandler extends IComponent {
 				$orderByGlued[] = $key . ' ' . $value;
 			}
 
-			$sql .= ' ORDER BY ' . implode( ', ', $orderByGlued ) . PHP_EOL;
+			$sqlForOrderBy .= ' ORDER BY ' . implode( ', ', $orderByGlued ) . PHP_EOL;
 
 		}
 
 		//  ----------------------------------------
-		//  Pagination
+		//  Pagination sql part
 		//  ----------------------------------------
+
+		$sqlForPagination = '';
 
 		if( $options['return'] !== 'count' ) {
 
@@ -620,17 +642,23 @@ class DbModelsHandler extends IComponent {
 				$limit  = (int) $options[ 'perPage' ];
 				$offset = ( intval( $options[ 'page' ] ) - 1 ) * $limit;
 
-				$sql .= " LIMIT {$limit} OFFSET {$offset}";
+				$sqlForPagination .= " LIMIT {$limit} OFFSET {$offset}";
 
 			}
 
 		}
 
 		//  ----------------------------------------
+		//  Combine all sql parts
+		//  ----------------------------------------
+
+		$wholeSqlString = $sqlForSelect . $sqlForMetaQuery . $sqlForGroupBy . $sqlForOrderBy . $sqlForPagination;
+
+		//  ----------------------------------------
 		//  Save recently used sql
 		//  ----------------------------------------
 
-		$this->_setRecentSql( $sql );
+		$this->_setRecentSql( $wholeSqlString );
 
 		//  ----------------------------------------
 		//  Return
@@ -638,13 +666,13 @@ class DbModelsHandler extends IComponent {
 
 		if( $options['return'] === 'count' ){
 
-			$result = $wpdb->get_var( $sql );
+			$result = $wpdb->get_var( $wholeSqlString );
 
 			return intval( $result );
 
 		} else {
 
-			$results = $wpdb->get_results( $sql, 'ARRAY_A' );
+			$results = $wpdb->get_results( $wholeSqlString, 'ARRAY_A' );
 			$ids = array();
 
 			if( is_array( $results ) ){
