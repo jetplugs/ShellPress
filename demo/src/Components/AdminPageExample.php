@@ -1,9 +1,9 @@
 <?php
 
-namespace shellpress\v1_3_85\demo\src\Components;
+namespace shellpress\v1_3_86\demo\src\Components;
 
-use shellpress\v1_3_85\demo\Demo;
-use shellpress\v1_3_85\src\Shared\Components\IComponent;
+use shellpress\v1_3_86\demo\Demo;
+use shellpress\v1_3_86\src\Shared\Components\IComponent;
 
 /**
  * @author jakubkuranda@gmail.com
