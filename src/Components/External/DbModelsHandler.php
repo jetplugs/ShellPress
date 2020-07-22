@@ -336,14 +336,14 @@ class DbModelsHandler extends IComponent {
 
 					}
 
+					$metaTableAliasIndex++; //  <-- Important! Make index bigger.
+
 				} else {
 
 					//  This is nested group. Run recursive method.
 					$sqlParts[] = $this->_getSqlPartForMetaQuery( $condition, $metaTableAliasIndex );
 
 				}
-
-				$metaTableAliasIndex++; //  <-- Important! Make index bigger.
 
 			}
 
