@@ -9,6 +9,7 @@ namespace shellpress\v1_3_86\demo;
 use shellpress\v1_3_86\demo\src\Components\AdminPageExample;
 use shellpress\v1_3_86\demo\src\Components\EddLicenseManagerExample;
 use shellpress\v1_3_86\demo\src\Components\EddLicenseManagerExample2;
+use shellpress\v1_3_86\demo\src\Components\FileUploaderExample;
 use shellpress\v1_3_86\demo\src\Components\UniversalFrontExample;
 use shellpress\v1_3_86\ShellPress;
 
@@ -23,6 +24,9 @@ class Demo extends ShellPress {
 	/** @var EddLicenseManagerExample */
 	public $eddLicenseManagerExample;
 
+	/** @var FileUploaderExample */
+	public $fileUploaderExample;
+
 
 	/**
 	 * Called automatically after core is ready.
@@ -34,6 +38,7 @@ class Demo extends ShellPress {
 		$this->universalFrontExample = new UniversalFrontExample( $this );
 		$this->adminPageExample = new AdminPageExample( $this );
 		$this->eddLicenseManagerExample = new EddLicenseManagerExample( $this );
+		$this->fileUploaderExample = new FileUploaderExample( $this );
 
 	}
 

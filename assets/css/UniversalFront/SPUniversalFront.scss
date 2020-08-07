@@ -68,17 +68,49 @@
         left: 50%;
         top: 50%;
         transform: translate( -50%, -50% );
+        text-align: center;
 
     }
 
     #{$root}-loader-spinner {
 
+        display: inline-block;
         animation: sp-universalfront-spin 0.5s linear infinite;
         border: solid 3px transparent;
-        border-top: solid 3px #4DB6AC;
+        border-top: solid 3px #0071a1;
         border-radius: 100%;
         width: 10px;
         height: 10px;
+
+    }
+
+    &.is-loading-file {
+
+        #{$root}-loader-progress-bar {
+
+            display: block;
+
+        }
+
+    }
+
+    #{$root}-loader-progress-bar {
+
+        display: none;
+        max-width: 100%;
+        width: 3em;
+        background: silver;
+        margin-top: 0.5em;
+        border-radius: 5px;
+        overflow: hidden;
+
+    }
+
+    #{$root}-loader-progress-bar-strip {
+
+        width: 0;
+        height: 0.5em;
+        background: #0071a1;
 
     }
 

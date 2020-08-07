@@ -47,6 +47,13 @@ class AdminPageExample extends IComponent {
 		echo '<br/>';
 		echo '<br/>';
 
+		echo '<p>Example of file uploader.</p>';
+		echo Demo::i()->fileUploaderExample->getDisplay();
+
+		echo '<br/>';
+		echo '<br/>';
+		echo '<br/>';
+
 		echo '<p>Example of two components.</p>';
 		echo Demo::i()->eddLicenseManagerExample->getDisplay();
 
