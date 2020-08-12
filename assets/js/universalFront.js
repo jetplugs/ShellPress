@@ -207,6 +207,7 @@
 
                                 if( plugin.$progressBarStrip.length ){
                                     plugin.$progressBarStrip.css( {'width':percent+'%'} );
+                                    plugin.$progressBarStrip.attr( 'data-sp-progress', percent );
                                 }
 
                             }, false );
