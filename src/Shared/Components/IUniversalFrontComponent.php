@@ -37,8 +37,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		add_action( 'init',                             array( $this, '_a_registerShortcode' ) );
 		add_action( 'rest_api_init',                    array( $this, '_a_initializeRestRoutes' ) );
-		add_action( 'wp_enqueue_scripts',               array( $this, '_a_enqueueAssets' ) );
-		add_action( 'admin_enqueue_scripts',            array( $this, '_a_enqueueAssets' ) );
+//		add_action( 'wp_enqueue_scripts',               array( $this, '_a_enqueueAssets' ) );
+//		add_action( 'admin_enqueue_scripts',            array( $this, '_a_enqueueAssets' ) );
 		add_action( 'wp_footer',                        array( $this, '_a_createForms' ) );
 		add_action( 'admin_footer',                     array( $this, '_a_createForms' ) );
 
@@ -158,6 +158,7 @@ abstract class IUniversalFrontComponent extends IComponent {
 		$thisElementId  = $this::s()->getPrefix( uniqid() );
 		$thisFormId     = $this::s()->getPrefix( uniqid() );
 		$jsPluginName   = 'spUniversalFront_' . $this::s()->getShellVersion( true );
+		$jsPluginUrl    = $this::s()->getUrl( 'assets/js/universalFront.js' );
 
 		$this->_formIdsToCreate[] = $thisFormId;  //  Add form ID for further creation.
 
@@ -235,23 +236,55 @@ abstract class IUniversalFrontComponent extends IComponent {
             </fieldset>
 
             <script>
-                (function(){
-                    if( typeof window.jQuery !== "undefined" ){
+                (function( $ ){
+                    if( typeof $ === "undefined" ) return;
 
-                        var x = function($){ if( $.fn.<?= $jsPluginName ?> ) $( '#<?= $thisElementId ?>' ).<?= $jsPluginName ?>( <?= json_encode( $thisElementJsArgs ) ?> ); };
+                    var runOnReady = function(){
+
+                        let x = function($){
+                            if( $.fn.<?= $jsPluginName ?> ){
+                                $( '#<?= $thisElementId ?>' ).<?= $jsPluginName ?>( <?= json_encode( $thisElementJsArgs ) ?> );
+                            }
+                        };
 
                         switch (document.readyState) {
                             case "interactive":
                             case "complete":
-                                x( window.jQuery );
+                                x( $ );
                                 break;
                             default:
-                                window.jQuery( document ).ready( x );
+                                $( document ).ready( x );
                                 break;
                         }
 
+                    };
+
+                    if( $.fn.<?= $jsPluginName ?> ){
+
+                        runOnReady();
+
+                    } else {
+
+                        if( window.isDownloading_<?= $jsPluginName ?> ){
+
+                            $( document.body ).on( "downloaded_<?= $jsPluginUrl ?>", function(){
+                                runOnReady();
+                            } );
+
+                        } else {
+
+                            window.isDownloading_<?= $jsPluginName ?> = true;
+
+                            $.getScript( "<?= $jsPluginUrl ?>" ).done(function( script, textStatus ) {
+                                $( document.body ).trigger( "downloaded_<?= $jsPluginUrl ?>" );
+                                runOnReady();
+                            });
+
+                        }
+
                     }
-                })();
+
+                })( window.jQuery );
             </script>
 
         </div>
