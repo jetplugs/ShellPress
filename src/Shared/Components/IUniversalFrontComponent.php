@@ -37,8 +37,6 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		add_action( 'init',                             array( $this, '_a_registerShortcode' ) );
 		add_action( 'rest_api_init',                    array( $this, '_a_initializeRestRoutes' ) );
-		add_action( 'wp_enqueue_scripts',               array( $this, '_a_enqueueAssets' ) );
-		add_action( 'admin_enqueue_scripts',            array( $this, '_a_enqueueAssets' ) );
 		add_action( 'wp_footer',                        array( $this, '_a_createForms' ) );
 		add_action( 'admin_footer',                     array( $this, '_a_createForms' ) );
 
@@ -158,7 +156,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 		$thisElementId  = $this::s()->getPrefix( uniqid() );
 		$thisFormId     = $this::s()->getPrefix( uniqid() );
 		$jsPluginName   = 'spUniversalFront_' . $this::s()->getShellVersion( true );
-		$jsPluginUrl    = $this::s()->getShellUrl( 'assets/js/universalFront.js' );
+		$jsPluginUrl    = $this::s()->getShellUrl( 'assets/js/universalFront.js?ver=' . $this::s()->getShellVersion() );
+		$cssUrl         = $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css?ver=' . $this::s()->getShellVersion() );
 
 		$this->_formIdsToCreate[] = $thisFormId;  //  Add form ID for further creation.
 
@@ -259,6 +258,11 @@ abstract class IUniversalFrontComponent extends IComponent {
 
                     };
 
+                    if( ! $( 'link[data-sp-style]' ).length ){
+                        $( 'head' ).append( '<link rel="stylesheet" src="<?= $cssUrl ?>" data-sp-style>' );
+                        console.log( 'downloaded SP style.' );
+                    }
+
                     if( $.fn.<?= $jsPluginName ?> ){
 
                         runOnReady();
@@ -267,7 +271,7 @@ abstract class IUniversalFrontComponent extends IComponent {
 
                         if( window.isDownloading_<?= $jsPluginName ?> ){
 
-                            $( document.body ).on( "downloaded_<?= $jsPluginUrl ?>", function(){
+                            $( document.body ).on( "downloaded_<?= $jsPluginName ?>", function(){
                                 runOnReady();
                             } );
 
@@ -275,10 +279,18 @@ abstract class IUniversalFrontComponent extends IComponent {
 
                             window.isDownloading_<?= $jsPluginName ?> = true;
 
-                            $.getScript( "<?= $jsPluginUrl ?>" ).done(function( script, textStatus ) {
-                                $( document.body ).trigger( "downloaded_<?= $jsPluginUrl ?>" );
-                                runOnReady();
-                            });
+                            jQuery.ajax( {
+                                type:       "GET",
+                                url:        "<?= $jsPluginUrl ?>",
+                                success:    function(){
+
+                                    $( document.body ).trigger( "downloaded_<?= $jsPluginName ?>" );
+                                    runOnReady();
+
+                                },
+                                dataType:   "script",
+                                cache:      true
+                            } );
 
                         }
 
@@ -319,19 +331,6 @@ abstract class IUniversalFrontComponent extends IComponent {
 		$universalFrontResponse = $this->processUniversalFrontResponse( $universalFrontResponse, $request );
 
 		return $universalFrontResponse->getPackedResponse();
-
-	}
-
-	/**
-	 * Called on wp_enqueue_scripts and admin_enqueue_scripts.
-	 *
-	 * @return void
-	 */
-	public function _a_enqueueAssets() {
-
-		$shellVersion = $this::s()->getShellVersion();
-
-		wp_enqueue_style( 'spUniversalFront_' . $shellVersion, $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), null );
 
 	}
 
