@@ -37,8 +37,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		add_action( 'init',                             array( $this, '_a_registerShortcode' ) );
 		add_action( 'rest_api_init',                    array( $this, '_a_initializeRestRoutes' ) );
-//		add_action( 'wp_enqueue_scripts',               array( $this, '_a_enqueueAssets' ) );
-//		add_action( 'admin_enqueue_scripts',            array( $this, '_a_enqueueAssets' ) );
+		add_action( 'wp_enqueue_scripts',               array( $this, '_a_enqueueAssets' ) );
+		add_action( 'admin_enqueue_scripts',            array( $this, '_a_enqueueAssets' ) );
 		add_action( 'wp_footer',                        array( $this, '_a_createForms' ) );
 		add_action( 'admin_footer',                     array( $this, '_a_createForms' ) );
 
@@ -158,7 +158,7 @@ abstract class IUniversalFrontComponent extends IComponent {
 		$thisElementId  = $this::s()->getPrefix( uniqid() );
 		$thisFormId     = $this::s()->getPrefix( uniqid() );
 		$jsPluginName   = 'spUniversalFront_' . $this::s()->getShellVersion( true );
-		$jsPluginUrl    = $this::s()->getUrl( 'assets/js/universalFront.js' );
+		$jsPluginUrl    = $this::s()->getShellUrl( 'assets/js/universalFront.js' );
 
 		$this->_formIdsToCreate[] = $thisFormId;  //  Add form ID for further creation.
 
@@ -331,7 +331,6 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		$shellVersion = $this::s()->getShellVersion();
 
-		wp_enqueue_script( 'spUniversalFront_' . $shellVersion, $this::s()->getShellUrl( 'assets/js/universalFront.js' ), array( 'jquery' ), null, true );
 		wp_enqueue_style( 'spUniversalFront_' . $shellVersion, $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), null );
 
 	}
