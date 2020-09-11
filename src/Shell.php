@@ -176,17 +176,19 @@ if( ! class_exists( 'shellpress\v1_3_86\src\Shell', false ) ) {
 			$relativePath = ltrim( $relativePath, '/' );    //  Normalize.
 
 			$shellPressDir  = wp_normalize_path( $this->getShellPressDir() );
-			$pluginDir      = wp_normalize_path( dirname( $this->getMainPluginFile() ) );
+			$pluginsDir     = wp_normalize_path( WP_PLUGIN_DIR );
+			$themesDir      = wp_normalize_path( get_theme_root() );
 
-			$relativePath = str_replace( $pluginDir, '', $shellPressDir ) . '/' . $relativePath;
-
-			if( $this->isInsidePlugin() ){
-
-				return plugins_url( $relativePath, $this->getMainPluginFile() );
-
+			if( strpos( $shellPressDir, $pluginsDir ) !== false ){
+				return plugins_url() . str_replace( $pluginsDir, '', $shellPressDir ) . '/' . $relativePath;
 			}
 
-			return get_theme_file_uri( $relativePath );
+			if( strpos( $themesDir, $shellPressDir  !== false) ){
+				return get_theme_root_uri() . str_replace( $pluginsDir, '', $shellPressDir ) . '/' . $relativePath;
+			}
+
+			//  Nothing worked.
+			return $relativePath;
 
 		}
 
