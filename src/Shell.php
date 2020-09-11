@@ -183,7 +183,7 @@ if( ! class_exists( 'shellpress\v1_3_86\src\Shell', false ) ) {
 				return plugins_url() . str_replace( $pluginsDir, '', $shellPressDir ) . '/' . $relativePath;
 			}
 
-			if( strpos( $themesDir, $shellPressDir  !== false) ){
+			if( strpos( $shellPressDir, $themesDir )  !== false ){
 				return get_theme_root_uri() . str_replace( $themesDir, '', $shellPressDir ) . '/' . $relativePath;
 			}
 
