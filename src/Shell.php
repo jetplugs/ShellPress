@@ -184,7 +184,7 @@ if( ! class_exists( 'shellpress\v1_3_86\src\Shell', false ) ) {
 			}
 
 			if( strpos( $themesDir, $shellPressDir  !== false) ){
-				return get_theme_root_uri() . str_replace( $pluginsDir, '', $shellPressDir ) . '/' . $relativePath;
+				return get_theme_root_uri() . str_replace( $themesDir, '', $shellPressDir ) . '/' . $relativePath;
 			}
 
 			//  Nothing worked.
