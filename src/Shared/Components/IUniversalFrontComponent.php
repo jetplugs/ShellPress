@@ -36,6 +36,8 @@ abstract class IUniversalFrontComponent extends IComponent {
 		//  ----------------------------------------
 
 		add_action( 'init',                             array( $this, '_a_registerShortcode' ) );
+		add_action( 'wp_head',                          array( $this, '_a_enqueueScripts' ) );
+		add_action( 'admin_head',                       array( $this, '_a_enqueueScripts' ) );
 		add_action( 'rest_api_init',                    array( $this, '_a_initializeRestRoutes' ) );
 		add_action( 'wp_footer',                        array( $this, '_a_createForms' ) );
 		add_action( 'admin_footer',                     array( $this, '_a_createForms' ) );
@@ -258,11 +260,6 @@ abstract class IUniversalFrontComponent extends IComponent {
 
                     };
 
-                    if( ! $( 'link[data-sp-style]' ).length ){
-                        $( 'head' ).append( '<link rel="stylesheet" src="<?= $cssUrl ?>" data-sp-style>' );
-                        console.log( 'downloaded SP style.' );
-                    }
-
                     if( $.fn.<?= $jsPluginName ?> ){
 
                         runOnReady();
@@ -356,6 +353,18 @@ abstract class IUniversalFrontComponent extends IComponent {
 
 		}
 
+	}
+
+	/**
+     * Echoes some dynamic styles.
+	 * Called on wp_head.
+	 */
+	public function _a_enqueueScripts() {
+	    ?>
+
+        <link rel="stylesheet" href="<?= $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ) ?>" media="none" onload="if(media!=='all')media='all'">
+
+        <?php
 	}
 
 }
