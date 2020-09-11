@@ -314,8 +314,9 @@ abstract class IUniversalFrontComponent extends IComponent {
 	public function _a_initializeRestRoutes() {
 
 		register_rest_route( $this->_getRestRouteNamespace(), $this->_getRestRouteEndpoint(), array(
-			'methods'       =>  'POST',
-			'callback'      =>  array( $this, '_a_restCallback' )
+			'methods'               =>  'POST',
+			'callback'              =>  array( $this, '_a_restCallback' ),
+            'permission_callback'   =>  '__return_true'
 		) );
 
 	}
