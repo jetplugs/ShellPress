@@ -36,8 +36,9 @@ abstract class IUniversalFrontComponent extends IComponent {
 		//  ----------------------------------------
 
 		add_action( 'init',                             array( $this, '_a_registerShortcode' ) );
-		add_action( 'wp_head',                          array( $this, '_a_enqueueScripts' ) );
-		add_action( 'admin_head',                       array( $this, '_a_enqueueScripts' ) );
+		add_action( 'wp_enqueue_scripts',               array( $this, '_a_enqueueScripts' ) );
+		add_action( 'admin_enqueue_scripts',            array( $this, '_a_enqueueScripts' ) );
+		add_filter( 'style_loader_tag',                 array( $this, '_f_styleLoaderTag' ), 10, 4 );
 		add_action( 'rest_api_init',                    array( $this, '_a_initializeRestRoutes' ) );
 		add_action( 'wp_footer',                        array( $this, '_a_createForms' ) );
 		add_action( 'admin_footer',                     array( $this, '_a_createForms' ) );
@@ -356,15 +357,37 @@ abstract class IUniversalFrontComponent extends IComponent {
 	}
 
 	/**
-     * Echoes some dynamic styles.
-	 * Called on wp_head.
+     * Enqueue styles and scripts.
+	 *
+	 * @return void
+	 * Called on wp_enqueue_scripts, admin_enqueue_scripts.
 	 */
 	public function _a_enqueueScripts() {
-	    ?>
 
-        <link rel="stylesheet" href="<?= $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ) ?>" media="none" onload="if(media!=='all')media='all'">
+	    wp_enqueue_style( 'SPUniversalFront.css', $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), $this::s()->getShellVersion(), 'none' );
 
-        <?php
+	}
+
+	/**
+     * Called on style_loader_tag.
+     * Adds lazy load.
+     *
+	 * @param string $html
+	 * @param string $handle
+	 * @param string $href
+	 * @param string $media
+     *
+     * @return string
+	 */
+	public function _f_styleLoaderTag( $html, $handle, $href, $media ) {
+
+	    //  TODO - lazy loading.
+        if( $handle === 'SPUniversalFront.css' ){
+
+        }
+
+	    return $html;
+
 	}
 
 }
