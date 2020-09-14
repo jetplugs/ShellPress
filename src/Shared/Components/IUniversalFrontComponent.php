@@ -364,7 +364,7 @@ abstract class IUniversalFrontComponent extends IComponent {
 	 */
 	public function _a_enqueueScripts() {
 
-	    wp_enqueue_style( 'SPUniversalFront.css', $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), $this::s()->getShellVersion(), 'none' );
+	    wp_enqueue_style( 'SPUniversalFront.css', $this::s()->getShellUrl( 'assets/css/UniversalFront/SPUniversalFront.css' ), array(), $this::s()->getShellVersion(), 'all' );
 
 	}
 
