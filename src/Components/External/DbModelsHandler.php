@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_86\src\Components\External;
+namespace shellpress\v1_3_87\src\Components\External;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,7 +7,7 @@ namespace shellpress\v1_3_86\src\Components\External;
  * Time: 15:31
  */
 
-use shellpress\v1_3_86\src\Shared\Components\IComponent;
+use shellpress\v1_3_87\src\Shared\Components\IComponent;
 use wpdb;
 
 class DbModelsHandler extends IComponent {
@@ -331,6 +331,15 @@ class DbModelsHandler extends IComponent {
 							$prepareString  = "( {$tableName}.meta_key = %s AND {$tableName}.meta_value LIKE %s )";
 
 							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], '%' . $wpdb->esc_like( $condition['value'] ) . '%' ) );
+
+							break;
+
+						case 'regex':
+						case 'REGEX':
+
+							$prepareString  = "( {$tableName}.meta_key = %s AND {$tableName}.meta_value REGEXP %s )";
+
+							$sqlParts[] = $wpdb->prepare( $prepareString, array( $condition['key'], $condition['value'] ) );
 
 							break;
 

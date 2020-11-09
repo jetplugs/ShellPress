@@ -27,4 +27,4 @@ if( ! $checkPHP || ! $checkWP ) return;
 //  ShellPress
 //  ----------------------------------------
 
-\shellpress\v1_3_86\demo\Demo::initShellPress( __FILE__, 'spdemo', '1.0.4' );   //  <--- Remember to always change version here
+\shellpress\v1_3_87\demo\Demo::initShellPress( __FILE__, 'spdemo', '1.0.4' );   //  <--- Remember to always change version here
