@@ -1,7 +1,7 @@
 <?php
-namespace shellpress\v1_3_84\demo\src\Components;
+namespace shellpress\v1_3_87\demo\src\Components;
 
-use shellpress\v1_3_84\src\Shared\Components\IUniversalFrontComponentEDDLicenser;
+use shellpress\v1_3_87\src\Shared\Components\IUniversalFrontComponentEDDLicenser;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -18,9 +18,9 @@ class EddLicenseManagerExample extends IUniversalFrontComponentEDDLicenser {
 	 */
 	public function onSetUpComponent() {
 
-		$this->setApiUrl( 'https://new.themastercut.co' );
+		$this->setApiUrl( 'https://themastercut.co' );
 		$this->setProductId( '1344' );
-		$this->enableSoftwareUpdates();
+		$this->enableSoftwareUpdates( '36f884423924959bb947a3fbb4ae7c31', true );
 
 	}
 

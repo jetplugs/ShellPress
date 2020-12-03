@@ -1,16 +1,17 @@
 <?php
-namespace shellpress\v1_3_84\demo;
+namespace shellpress\v1_3_87\demo;
 
 /**
  * Date: 15.01.2019
  * Time: 21:40
  */
 
-use shellpress\v1_3_84\demo\src\Components\AdminPageExample;
-use shellpress\v1_3_84\demo\src\Components\EddLicenseManagerExample;
-use shellpress\v1_3_84\demo\src\Components\EddLicenseManagerExample2;
-use shellpress\v1_3_84\demo\src\Components\UniversalFrontExample;
-use shellpress\v1_3_84\ShellPress;
+use shellpress\v1_3_87\demo\src\Components\AdminPageExample;
+use shellpress\v1_3_87\demo\src\Components\EddLicenseManagerExample;
+use shellpress\v1_3_87\demo\src\Components\EddLicenseManagerExample2;
+use shellpress\v1_3_87\demo\src\Components\FileUploaderExample;
+use shellpress\v1_3_87\demo\src\Components\UniversalFrontExample;
+use shellpress\v1_3_87\ShellPress;
 
 class Demo extends ShellPress {
 
@@ -23,8 +24,9 @@ class Demo extends ShellPress {
 	/** @var EddLicenseManagerExample */
 	public $eddLicenseManagerExample;
 
-	/** @var EddLicenseManagerExample2 */
-	public $eddLicenseManagerExample2;
+	/** @var FileUploaderExample */
+	public $fileUploaderExample;
+
 
 	/**
 	 * Called automatically after core is ready.
@@ -36,7 +38,7 @@ class Demo extends ShellPress {
 		$this->universalFrontExample = new UniversalFrontExample( $this );
 		$this->adminPageExample = new AdminPageExample( $this );
 		$this->eddLicenseManagerExample = new EddLicenseManagerExample( $this );
-		$this->eddLicenseManagerExample2 = new EddLicenseManagerExample2( $this );
+		$this->fileUploaderExample = new FileUploaderExample( $this );
 
 	}
 

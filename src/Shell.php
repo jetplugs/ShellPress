@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_84\src;
+namespace shellpress\v1_3_87\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,21 +7,21 @@ namespace shellpress\v1_3_84\src;
  * Time: 22:45
  */
 
-use shellpress\v1_3_84\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_3_84\ShellPress;
-use shellpress\v1_3_84\src\Components\External\AutoloadingHandler;
-use shellpress\v1_3_84\src\Components\External\DbModelsHandler;
-use shellpress\v1_3_84\src\Components\External\EventHandler;
-use shellpress\v1_3_84\src\Components\External\MustacheHandler;
-use shellpress\v1_3_84\src\Components\External\UpdateHandler;
-use shellpress\v1_3_84\src\Components\Internal\DebugHandler;
-use shellpress\v1_3_84\src\Components\Internal\ExtractorHandler;
-use shellpress\v1_3_84\src\Components\External\LogHandler;
-use shellpress\v1_3_84\src\Components\External\MessagesHandler;
-use shellpress\v1_3_84\src\Components\External\OptionsHandler;
-use shellpress\v1_3_84\src\Components\External\UtilityHandler;
+use shellpress\v1_3_87\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_3_87\ShellPress;
+use shellpress\v1_3_87\src\Components\External\AutoloadingHandler;
+use shellpress\v1_3_87\src\Components\External\DbModelsHandler;
+use shellpress\v1_3_87\src\Components\External\EventHandler;
+use shellpress\v1_3_87\src\Components\External\MustacheHandler;
+use shellpress\v1_3_87\src\Components\External\UpdateHandler;
+use shellpress\v1_3_87\src\Components\Internal\DebugHandler;
+use shellpress\v1_3_87\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_3_87\src\Components\External\LogHandler;
+use shellpress\v1_3_87\src\Components\External\MessagesHandler;
+use shellpress\v1_3_87\src\Components\External\OptionsHandler;
+use shellpress\v1_3_87\src\Components\External\UtilityHandler;
 
-if( ! class_exists( 'shellpress\v1_3_84\src\Shell', false ) ) {
+if( ! class_exists( 'shellpress\v1_3_87\src\Shell', false ) ) {
 
 	class Shell {
 
@@ -176,17 +176,19 @@ if( ! class_exists( 'shellpress\v1_3_84\src\Shell', false ) ) {
 			$relativePath = ltrim( $relativePath, '/' );    //  Normalize.
 
 			$shellPressDir  = wp_normalize_path( $this->getShellPressDir() );
-			$pluginDir      = wp_normalize_path( dirname( $this->getMainPluginFile() ) );
+			$pluginsDir     = wp_normalize_path( WP_PLUGIN_DIR );
+			$themesDir      = wp_normalize_path( get_theme_root() );
 
-			$relativePath = str_replace( $pluginDir, '', $shellPressDir ) . '/' . $relativePath;
-
-			if( $this->isInsidePlugin() ){
-
-				return plugins_url( $relativePath, $this->getMainPluginFile() );
-
+			if( strpos( $shellPressDir, $pluginsDir ) !== false ){
+				return plugins_url() . str_replace( $pluginsDir, '', $shellPressDir ) . '/' . $relativePath;
 			}
 
-			return get_theme_file_uri( $relativePath );
+			if( strpos( $shellPressDir, $themesDir )  !== false ){
+				return get_theme_root_uri() . str_replace( $themesDir, '', $shellPressDir ) . '/' . $relativePath;
+			}
+
+			//  Nothing worked.
+			return $relativePath;
 
 		}
 
@@ -258,6 +260,27 @@ if( ! class_exists( 'shellpress\v1_3_84\src\Shell', false ) ) {
 		public function getShellPressDir() {
 
 			return dirname( __DIR__ );
+
+		}
+
+		/**
+		 * Returns version of shellpress used in project.
+		 *
+		 * @param bool $fromNamespace If true, it will return an original string from namespace path.
+		 *
+		 * @return string
+		 */
+		public function getShellVersion( $fromNamespace = false ) {
+
+			$namespaceParts = explode( '\\', __CLASS__ );
+
+			$version = $namespaceParts[1];
+
+			if( ! $fromNamespace ){
+				$version = str_replace( array( '_', 'v' ), array( '.', '' ), $version );
+			}
+
+			return $version;	//	Returns the first piece( after shellpress word ).
 
 		}
 

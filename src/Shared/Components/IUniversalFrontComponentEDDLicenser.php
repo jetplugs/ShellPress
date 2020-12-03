@@ -1,9 +1,9 @@
 <?php
-namespace shellpress\v1_3_84\src\Shared\Components;
+namespace shellpress\v1_3_87\src\Shared\Components;
 
-use shellpress\v1_3_84\lib\EasyDigitalDownloads\EDDPluginUpdater;
-use shellpress\v1_3_84\src\Shared\Front\Models\HtmlElement;
-use shellpress\v1_3_84\src\Shared\RestModels\UniversalFrontResponse;
+use shellpress\v1_3_87\lib\EasyDigitalDownloads\EDDPluginUpdater;
+use shellpress\v1_3_87\src\Shared\Front\Models\HtmlElement;
+use shellpress\v1_3_87\src\Shared\RestModels\UniversalFrontResponse;
 use WP_Error;
 use WP_REST_Request;
 
@@ -23,6 +23,9 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 
 	/** @var string */
 	private $_licenseForUpdates = '';
+
+	/** @var string */
+	private $_thisHost = '';
 
 	/**
 	 * Returns name of shortcode.
@@ -554,13 +557,18 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 	 * Should be called before init action.
 	 *
 	 * @param string|null $licenseForUpdates
+	 * @param bool $forceAllowUpdates - If true, updater will fake a "localhost"
 	 *
 	 * @return void
 	 */
-	public function enableSoftwareUpdates( $licenseForUpdates = null ) {
+	public function enableSoftwareUpdates( $licenseForUpdates = null, $forceAllowUpdates = false ) {
 
 		if( ! is_null( $licenseForUpdates ) ){
 			$this->_licenseForUpdates = $licenseForUpdates;
+		}
+
+		if( $forceAllowUpdates === true ){
+			$this->_thisHost = 'https://localhost/';
 		}
 
 		add_action( 'init', array( $this, '_a_registerSoftwareUpdates' ) );
@@ -581,6 +589,7 @@ abstract class IUniversalFrontComponentEDDLicenser extends IUniversalFrontCompon
 				'item_id'   =>  $this->_getProductId(),
 				'author'    =>  'TheMasterCut.co',
 				'beta'      =>  false,
+				'thisHost'  =>  $this->_thisHost
 			) );
 
 		}

@@ -1,17 +1,26 @@
 <?php
+
 namespace shellpress\v1_3_87\demo\src\Components;
 
 use shellpress\v1_3_87\src\Shared\Components\IUniversalFrontComponent;
-use shellpress\v1_3_87\src\Shared\Front\Models\HtmlElement;
 use shellpress\v1_3_87\src\Shared\RestModels\UniversalFrontResponse;
 use WP_REST_Request;
 
 /**
  * @author jakubkuranda@gmail.com
- * Date: 31.05.2019
- * Time: 16:11
+ * Date: 07.08.2020
+ * Time: 13:08
  */
-class UniversalFrontExample extends IUniversalFrontComponent {
+class FileUploaderExample extends IUniversalFrontComponent {
+
+	/**
+	 * Called on basic set up, just before everything else.
+	 *
+	 * @return void
+	 */
+	public function onSetUpComponent() {
+		// TODO: Implement onSetUpComponent() method.
+	}
 
 	/**
 	 * Returns name of shortcode.
@@ -19,9 +28,7 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 	 * @return string
 	 */
 	public function getShortCodeName() {
-
-		return 'demoExample';
-
+		return sanitize_key( __CLASS__ );
 	}
 
 	/**
@@ -30,9 +37,7 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 	 * @return string[]
 	 */
 	public function getActionsToRefreshOn() {
-
 		return array();
-
 	}
 
 	/**
@@ -41,9 +46,7 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 	 * @return string[]
 	 */
 	public function getActionsToSubmitOn() {
-
 		return array();
-
 	}
 
 	/**
@@ -51,7 +54,7 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 	 * Returns UniversalFrontResponse object.
 	 *
 	 * @param UniversalFrontResponse $universalFrontResponse
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request        $request
 	 *
 	 * @return UniversalFrontResponse
 	 */
@@ -76,28 +79,13 @@ class UniversalFrontExample extends IUniversalFrontComponent {
 
 		ob_start();
 		?>
+		<input type="file" multiple="multiple" name="files[]">
+		<button type="submit" class="button btn btn-primary">Wyślij</button>
 
-		<?php
-		if($this::s()->get( $request->get_params(), 'submit' )){
-			echo do_shortcode( sprintf( '[%1$s]', $this->getShortCodeName() ) );
-		}
-		?>
-
-		<script>(function(){console.log( "Hello!" );})();</script>
-		<button name="submit" type="submit" value="submit">Submit</button>
+		<?php echo $this::s()->utility->getFormattedVarExport( $_FILES ); ?>
 
 		<?php
 		return ob_get_clean();
 
 	}
-
-	/**
-	 * Called on basic set up, just before everything else.
-	 *
-	 * @return void
-	 */
-	public function onSetUpComponent() {
-		// TODO: Implement onSetUpComponent() method.
-	}
-
 }

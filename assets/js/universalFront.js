@@ -5,7 +5,7 @@
      *
      * Also the id for storing the object state via $('.selector').data()
      */
-    var PLUGIN_NS = 'spUniversalFront';
+    var PLUGIN_NS = 'spUniversalFront_v1_3_87';
 
     //  Prevent duplicates.
     if( typeof $.fn[ PLUGIN_NS ] !== "undefined" ) return;
@@ -22,16 +22,18 @@
         //  Core elements
         //  ----------------------------------------
 
-        this.$element       = $( target );
-        this.$form          = $( '#' + this.$element.data( 'form-id' ) );
-        this.$fieldset      = this.$element.find( '.sp-universalfront-fieldset' );
-        this.$dynamicArea   = this.$element.find( '.sp-universalfront-dynamic-area' );
+        this.$element           = $( target );
+        this.$form              = $( '#' + this.$element.data( 'form-id' ) );
+        this.$fieldset          = this.$element.find( '.sp-universalfront-fieldset' );
+        this.$dynamicArea       = this.$element.find( '.sp-universalfront-dynamic-area' );
+        this.$progressBarStrip  = this.$element.find( '.sp-universalfront-loader-progress-bar-strip' );
 
         //  ----------------------------------------
         //  Private properties
         //  ----------------------------------------
 
         this._isLocked          = true;
+        this._isLoadingFile     = false;
         this._$fakeSubmitButton = null;
 
         //  ----------------------------------------
@@ -186,6 +188,33 @@
                     contentType: isFormDataSerialized ? 'application/x-www-form-urlencoded; charset=UTF-8' : false,
                     cache: false,
                     type: 'POST',
+                    xhr: function() {
+
+                        var xhr = $.ajaxSettings.xhr();
+                        if( xhr.upload ){
+
+                            xhr.upload.addEventListener( 'progress', function( event ){
+
+                                var percent = 0;
+                                if ( event.lengthComputable ) {
+                                    percent = Math.ceil( event.loaded / event.total * 100 );
+                                }
+
+                                //  Mark element as loading file, only when percent is other than those two values.
+                                if( percent > 0 && percent < 100 ){
+                                    plugin.isLoadingFile( true );
+                                }
+
+                                if( plugin.$progressBarStrip.length ){
+                                    plugin.$progressBarStrip.css( {'width':percent+'%'} );
+                                    plugin.$progressBarStrip.attr( 'data-sp-progress', percent );
+                                }
+
+                            }, false );
+
+                        }
+                        return xhr;
+                    },
                     success: function( response ){
 
                         plugin.$element.trigger( 'onSubmit/send/done' );  //  HOOK! Since 1_3_72.
@@ -239,6 +268,9 @@
                         //  Re-bind all fields to form.
                         plugin.bindAllFieldsToForm();
 
+                        //  Always disable mark of loading file.
+                        plugin.isLoadingFile( false );
+
                     }
                 } );
 
@@ -284,6 +316,42 @@
                 this._isLocked = false;
                 this.$element.removeClass( 'is-locked' );
                 this.$fieldset.prop( 'disabled', false );
+
+            }
+
+            //  Return self for chaining.
+            return this;
+
+        } else {
+
+            //  Return value;
+            return this._isLocked;
+
+        }
+
+    };
+
+    /**
+     * Multi-purpose method for setting and checking loading file value.
+     *
+     * @name Plugin#isLoadingFile
+     * @param {boolean|null} value
+     *
+     * @return boolean|Plugin
+     */
+    Plugin.prototype.isLoadingFile = function( value = null ){
+
+        if( typeof value === "boolean" ){
+
+            if( value ){
+
+                this._isLoadingFile = true;
+                this.$element.addClass( 'is-loading-file' );
+
+            } else {
+
+                this._isLoadingFile = false;
+                this.$element.removeClass( 'is-loading-file' );
 
             }
 
