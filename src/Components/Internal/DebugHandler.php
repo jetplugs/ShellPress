@@ -1,12 +1,12 @@
 <?php
-namespace shellpress\v1_3_87\src\Components\Internal;
+namespace shellpress\v1_3_88\src\Components\Internal;
 
 /**
  * Date: 29.05.2018
  * Time: 22:19
  */
 
-use shellpress\v1_3_87\src\Shared\Components\IComponent;
+use shellpress\v1_3_88\src\Shared\Components\IComponent;
 
 class DebugHandler extends IComponent {
 

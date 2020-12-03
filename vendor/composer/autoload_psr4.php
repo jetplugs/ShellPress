@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'shellpress\\v1_3_87\\' => array($baseDir . '/'),
+    'shellpress\\v1_3_88\\' => array($baseDir . '/'),
 );
