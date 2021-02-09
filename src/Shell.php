@@ -86,13 +86,25 @@ if( ! class_exists( 'shellpress\v1_3_89\src\Shell', false ) ) {
 		 * @param string        $mainPluginFile
 		 * @param string        $pluginPrefix
 		 * @param string        $pluginVersion
-		 * @param ShellPress    $shellPress
+		 * @param string|null   $softwareType
 		 */
-		public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
+		public function __construct( $mainPluginFile, $pluginPrefix, $pluginVersion, $softwareType = null ) {
 
 			$this->mainPluginFile = $mainPluginFile;
 			$this->pluginPrefix   = $pluginPrefix;
 			$this->pluginVersion  = $pluginVersion;
+			
+			//  Some users complain, because their WordPress paths are fucked up.
+			//  From v1.3.89 we can force type of software.
+			if( $softwareType ){
+				if( $softwareType === 'plugin' ){
+					$this->isInsidePlugin = true;
+					$this->isInsideTheme = false;
+				} else if( $softwareType === 'theme' ) {
+					$this->isInsidePlugin = false;
+					$this->isInsideTheme = true;
+				}
+			}
 
 		}
 
@@ -341,8 +353,8 @@ if( ! class_exists( 'shellpress\v1_3_89\src\Shell', false ) ) {
 				if( defined( 'WP_PLUGIN_DIR' ) ){
 
 					//  Some websites have paths saved with double slashes.
-					$fileDir        = str_replace( array( '/', '\\' ), '', __DIR__ );
-					$wpPluginSetDir = str_replace( array( '/', '\\' ), '', WP_PLUGIN_DIR );
+					$fileDir        = wp_normalize_path( __DIR__ );
+					$wpPluginSetDir = wp_normalize_path( WP_PLUGIN_DIR );
 
 					if( strpos( $fileDir, $wpPluginSetDir ) !== false ){
 						$this->isInsidePlugin = true;
