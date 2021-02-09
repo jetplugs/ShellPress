@@ -85,12 +85,13 @@ if( ! class_exists( 'shellpress\v1_3_89\ShellPress', false ) ){
          * @param string $mainPluginFile    - absolute path to main plugin file (__FILE__).
          * @param string $pluginPrefix      - will be used to prefix everything in plugin
          * @param string $pluginVersion     - set your plugin version. It will be used in scripts suffixing etc.
+         * @param string|null $softwareType - set type of software. Used for better paths resolving. Nor required.
          */
-        public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion ) {
+        public static function initShellPress( $mainPluginFile, $pluginPrefix, $pluginVersion, $softwareType = null ) {
 
 	        static::$_instances[ get_called_class() ] = $instance = new static();
 
-            $instance->_shell = new Shell( $mainPluginFile, $pluginPrefix, $pluginVersion );
+            $instance->_shell = new Shell( $mainPluginFile, $pluginPrefix, $pluginVersion, $softwareType );
             $instance->_shell->init( $instance );
 
             //  ----------------------------------------
