@@ -1,9 +1,9 @@
 <?php
 
-namespace shellpress\v1_3_88\demo\src\Components;
+namespace shellpress\v1_3_89\demo\src\Components;
 
-use shellpress\v1_3_88\demo\Demo;
-use shellpress\v1_3_88\src\Shared\Components\IComponent;
+use shellpress\v1_3_89\demo\Demo;
+use shellpress\v1_3_89\src\Shared\Components\IComponent;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -71,6 +71,13 @@ class AdminPageExample extends IComponent {
 		echo '<br/>';
 
 		echo $this::s()->getUrl( 'assets/css/Tooltip/SPTooltip.css' );
+		
+		echo '<br/>';
+		echo '<br/>';
+		echo '<br/>';
+		
+		echo sprintf( '<p>getUrl(): %1$s', $this::s()->getUrl() );
+		echo sprintf( '<p>getShellUrl(): %1$s', $this::s()->getShellUrl() );
 
 	}
 
