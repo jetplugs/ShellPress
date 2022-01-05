@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_89\src;
+namespace shellpress\v1_3_9\src;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -7,21 +7,21 @@ namespace shellpress\v1_3_89\src;
  * Time: 22:45
  */
 
-use shellpress\v1_3_89\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_3_89\ShellPress;
-use shellpress\v1_3_89\src\Components\External\AutoloadingHandler;
-use shellpress\v1_3_89\src\Components\External\DbModelsHandler;
-use shellpress\v1_3_89\src\Components\External\EventHandler;
-use shellpress\v1_3_89\src\Components\External\MustacheHandler;
-use shellpress\v1_3_89\src\Components\External\UpdateHandler;
-use shellpress\v1_3_89\src\Components\Internal\DebugHandler;
-use shellpress\v1_3_89\src\Components\Internal\ExtractorHandler;
-use shellpress\v1_3_89\src\Components\External\LogHandler;
-use shellpress\v1_3_89\src\Components\External\MessagesHandler;
-use shellpress\v1_3_89\src\Components\External\OptionsHandler;
-use shellpress\v1_3_89\src\Components\External\UtilityHandler;
+use shellpress\v1_3_9\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_3_9\ShellPress;
+use shellpress\v1_3_9\src\Components\External\AutoloadingHandler;
+use shellpress\v1_3_9\src\Components\External\DbModelsHandler;
+use shellpress\v1_3_9\src\Components\External\EventHandler;
+use shellpress\v1_3_9\src\Components\External\MustacheHandler;
+use shellpress\v1_3_9\src\Components\External\UpdateHandler;
+use shellpress\v1_3_9\src\Components\Internal\DebugHandler;
+use shellpress\v1_3_9\src\Components\Internal\ExtractorHandler;
+use shellpress\v1_3_9\src\Components\External\LogHandler;
+use shellpress\v1_3_9\src\Components\External\MessagesHandler;
+use shellpress\v1_3_9\src\Components\External\OptionsHandler;
+use shellpress\v1_3_9\src\Components\External\UtilityHandler;
 
-if( ! class_exists( 'shellpress\v1_3_89\src\Shell', false ) ) {
+if( ! class_exists( 'shellpress\v1_3_9\src\Shell', false ) ) {
 
 	class Shell {
 
