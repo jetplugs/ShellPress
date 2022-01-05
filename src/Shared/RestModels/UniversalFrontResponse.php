@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_89\src\Shared\RestModels;
+namespace shellpress\v1_3_9\src\Shared\RestModels;
 
 /**
  * @author jakubkuranda@gmail.com
