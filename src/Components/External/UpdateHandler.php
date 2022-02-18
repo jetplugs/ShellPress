@@ -1,7 +1,7 @@
 <?php
-namespace shellpress\v1_3_9\src\Components\External;
+namespace shellpress\v1_4_0\src\Components\External;
 
-use shellpress\v1_3_9\src\Shared\Components\IComponent;
+use shellpress\v1_4_0\src\Shared\Components\IComponent;
 
 /**
  * @deprecated

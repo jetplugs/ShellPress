@@ -16,7 +16,7 @@
     },
     "autoload" :          {
         "psr-4" :   {
-            "shellpress\\v1_3_9\\" : ""
+            "shellpress\\v1_4_0\\" : ""
         },
         "psr-0":    {
             "Mustache": "lib/Mustache/"
