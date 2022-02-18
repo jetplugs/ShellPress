@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_3_9\lib\Psr\Log;
+namespace shellpress\v1_4_0\lib\Psr\Log;
 
 /**
  * This is a simple LogHandler implementation that other Loggers can inherit from.

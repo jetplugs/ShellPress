@@ -1,6 +1,6 @@
 <?php
 
-namespace shellpress\v1_3_9\lib\Psr\Log;
+namespace shellpress\v1_4_0\lib\Psr\Log;
 
 /**
  * This is a simple LogHandler trait that classes unable to extend AbstractLogger

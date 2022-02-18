@@ -1,13 +1,13 @@
 <?php
-namespace shellpress\v1_3_9\src\Components\External;
+namespace shellpress\v1_4_0\src\Components\External;
 
 /**
  * Date: 17.04.2018
  * Time: 21:37
  */
 
-use shellpress\v1_3_9\lib\Psr4Autoloader\Psr4AutoloaderClass;
-use shellpress\v1_3_9\src\Shared\Components\IComponent;
+use shellpress\v1_4_0\lib\Psr4Autoloader\Psr4AutoloaderClass;
+use shellpress\v1_4_0\src\Shared\Components\IComponent;
 
 class AutoloadingHandler extends IComponent {
 
@@ -28,7 +28,7 @@ class AutoloadingHandler extends IComponent {
 
 		if( ! $this->_psr4Autoloader ){
 
-			if ( ! class_exists( 'shellpress\v1_3_9\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ) {
+			if ( ! class_exists( 'shellpress\v1_4_0\lib\Psr4Autoloader\Psr4AutoloaderClass' ) ) {
 				require( $this->s()->getShellPressDir() . '/lib/Psr4Autoloader/Psr4AutoloaderClass.php' );
 			}
 
