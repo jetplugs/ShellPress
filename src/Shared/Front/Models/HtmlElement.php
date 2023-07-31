@@ -1,5 +1,5 @@
 <?php
-namespace shellpress\v1_4_0\src\Shared\Front\Models;
+namespace shellpress\v1_4_1\src\Shared\Front\Models;
 
 /**
  * @author jakubkuranda@gmail.com
@@ -261,7 +261,7 @@ class HtmlElement {
 
 	    //  Segments
 
-	    $firstSegment   = $this->getTag() . ' ' . $this->getAttributesAsString();
+	    $firstSegment   = implode( ' ', array_filter( array( $this->getTag(), $this->getAttributesAsString() ) ) );
 	    $secondSegment  = $this->getTag();
 
 	    //  Returned string

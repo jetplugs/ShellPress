@@ -5,7 +5,7 @@
      *
      * Also the id for storing the object state via $('.selector').data()
      */
-    var PLUGIN_NS = 'spUniversalFront_v1_4_0';
+    var PLUGIN_NS = 'spUniversalFront_v1_4_1';
 
     //  Prevent duplicates.
     if( typeof $.fn[ PLUGIN_NS ] !== "undefined" ) return;

@@ -1,7 +1,7 @@
 <?php
-namespace shellpress\v1_4_0\src\Shared\Components;
+namespace shellpress\v1_4_1\src\Shared\Components;
 
-use shellpress\v1_4_0\src\Shared\RestModels\UniversalFrontResponse;
+use shellpress\v1_4_1\src\Shared\RestModels\UniversalFrontResponse;
 use WP_REST_Request;
 
 /**
